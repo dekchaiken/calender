@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตารางเวร Cyfence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+            <h1>ตารางเวร</h1>
+        </div>
+
+        <div class="controls">
+            <button onclick="changeMonth(-1)" class="nav-btn">← เดือนก่อนหน้า</button>
+            <div class="date-selectors">
+                <select id="monthSelect"></select>
+                <select id="yearSelect"></select>
+            </div>
+            <button onclick="changeMonth(1)" class="nav-btn">เดือนถัดไป →</button>
+        </div>
+
+        <div class="filters-container">
+            <div class="shift-filters">
+                <label class="shift-filter">
+                    <input type="checkbox" value="red" checked class="shift-checkbox" onchange="updateFilters()">
+                    <span class="checkmark red">ทีมแดง - ณัษฐพงค์ (Red Team)</span>
+                </label>
+                <label class="shift-filter">
+                    <input type="checkbox" value="green" checked class="shift-checkbox" onchange="updateFilters()">
+                    <span class="checkmark green">ทีมเขียว - ปพน (Green Team)</span>
+                </label>
+                <label class="shift-filter">
+                    <input type="checkbox" value="blue" checked class="shift-checkbox" onchange="updateFilters()">
+                    <span class="checkmark blue">ทีมน้ำเงิน - กฤษฏ์ (Blue Team)</span>
+                </label>
+                <label class="shift-filter">
+                    <input type="checkbox" value="yellow" checked class="shift-checkbox" onchange="updateFilters()">
+                    <span class="checkmark yellow">ทีมเหลือง - พิสุทธิ์ (Yellow Team)</span>
+                </label>
+            </div>
+            <div class="filter-buttons">
+                <button onclick="selectAllShifts(true)" class="filter-btn">เลือกทั้งหมด</button>
+                <button onclick="selectAllShifts(false)" class="filter-btn">ยกเลิกทั้งหมด</button>
+            </div>
+        </div>
+
+        <div class="export-controls">
+            <div class="date-range">
+                <div>
+                    <label>วันที่เริ่มต้น:</label>
+                    <select id="startMonthSelect" class="month-select"></select>
+                    <select id="startYearSelect" class="year-select"></select>
+                </div>
+                <div>
+                    <label>วันที่สิ้นสุด:</label>
+                    <select id="endMonthSelect" class="month-select"></select>
+                    <select id="endYearSelect" class="year-select"></select>
+                </div>
+            </div>
+            <button onclick="exportToPDF()" class="export-btn">
+                <i class="fas fa-file-pdf"></i>
+                ส่งออกเป็น PDF
+            </button>
+        </div>
+
+        <div id="calendar-container"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
