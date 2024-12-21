@@ -74,7 +74,7 @@ function initializeSelectors() {
     const yearSelectors = document.querySelectorAll('.year-select, #yearSelect');
     const currentYear = new Date().getFullYear();
     yearSelectors.forEach(selector => {
-        for (let year = currentYear; year <= currentYear + 5; year++) {
+        for (let year = currentYear; year <= currentYear + 50; year++) {
             const option = document.createElement('option');
             option.value = year;
             option.textContent = `${year + 543}`;
@@ -177,6 +177,37 @@ function createCalendarMonth(year, month) {
     calendarDiv.appendChild(gridDiv);
     return calendarDiv;
 }
+
+function toggleTeamMembers(teamColor) {
+    const membersDiv = document.getElementById(`${teamColor}-members`);
+    const teamCard = membersDiv.closest('.team-card');
+    
+    // Toggle expanded class on team card
+    teamCard.classList.toggle('expanded');
+    
+    // Toggle show class on members div
+    membersDiv.classList.toggle('show');
+    
+    // Update other team cards if needed
+    const allTeamCards = document.querySelectorAll('.team-card');
+    allTeamCards.forEach(card => {
+        if (card !== teamCard) {
+            card.classList.remove('expanded');
+            card.querySelector('.team-members').classList.remove('show');
+        }
+    });
+}
+
+// Add this to your existing document.addEventListener('DOMContentLoaded', ...)
+document.addEventListener('DOMContentLoaded', () => {
+    // Your existing code...
+    
+    // Initially hide all team members
+    const allTeamMembers = document.querySelectorAll('.team-members');
+    allTeamMembers.forEach(members => {
+        members.classList.remove('show');
+    });
+});
 
 // แสดงปฏิทิน
 function renderCalendar() {

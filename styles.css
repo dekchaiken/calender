@@ -4,7 +4,7 @@
     --secondary: #404040;    /* Dark Gray */
     --accent: #2D2D2D;      /* Deeper Gray */
     --text-primary: #2D2D2D;
-    --text-secondary: #666666;
+    --text-secondary: #000000;
     --background: #F5F5F5;
     --border-color: #E5E5E5;
 }
@@ -38,7 +38,7 @@ body {
 }
 
 .logo {
-    max-height: 140px;
+    max-height: 150px;
     margin-bottom: 1rem;
 }
 
@@ -138,6 +138,103 @@ body {
 
 .shift-checkbox:checked + .checkmark::after {
     opacity: 1;
+}
+
+/* เพิ่ม CSS สำหรับส่วนแสดงรายชื่อทีม */
+.team-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.team-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.team-card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.team-leader {
+    margin-bottom: 0.5rem;
+}
+
+.team-members {
+    display: grid;
+    gap: 0.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    opacity: 0;
+}
+
+.team-members.show {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 1rem;
+}
+
+.team-members p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.expand-icon {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.team-card.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+/* สีของแต่ละทีม */
+.team-card.red {
+    border-left: 20px solid #dc3545;
+}
+
+.team-card.red:hover {
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.team-card.green {
+    border-left: 20px solid #28a745;
+}
+
+.team-card.green:hover {
+    background-color: rgba(40, 167, 69, 0.05);
+}
+
+.team-card.blue {
+    border-left: 20px solid #0056b3;
+}
+
+.team-card.blue:hover {
+    background-color: rgba(0, 86, 179, 0.05);
+}
+
+.team-card.yellow {
+    border-left: 20px solid #ffc107;
+}
+
+.team-card.yellow:hover {
+    background-color: rgba(255, 193, 7, 0.05);
 }
 
 /* Cyfence Theme Colors */
@@ -321,5 +418,8 @@ body {
     .shift {
         font-size: 0.8rem;
         padding: 0.4rem;
+    }
+    .team-info {
+        grid-template-columns: 1fr;
     }
 }
