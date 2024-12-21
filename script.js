@@ -11,7 +11,7 @@ const thaiMonths = [
 // รูปแบบกะการทำงาน (4 วัน)
 const shiftPattern = [
     [
-        { color: 'red', name: 'ณัษฐพงค์', time: '00:00-08:00' },
+        { color: 'red', name: 'อธิราช', time: '00:00-08:00' },
         { color: 'green', name: 'ปพน', time: '08:00-16:00' },
         { color: 'yellow', name: 'พิสุทธิ์', time: '16:00-00:00' }
     ],
@@ -22,13 +22,13 @@ const shiftPattern = [
     ],
     [
         { color: 'green', name: 'ปพน', time: '00:00-08:00' },
-        { color: 'red', name: 'ณัษฐพงค์', time: '08:00-16:00' },
+        { color: 'red', name: 'อธิราช', time: '08:00-16:00' },
         { color: 'blue', name: 'กฤษฏ์', time: '16:00-00:00' }
     ],
     [
         { color: 'blue', name: 'กฤษฏ์', time: '00:00-08:00' },
         { color: 'yellow', name: 'พิสุทธิ์', time: '08:00-16:00' },
-        { color: 'red', name: 'ณัษฐพงค์', time: '16:00-00:00' }
+        { color: 'red', name: 'อธิราช', time: '16:00-00:00' }
     ]
 ];
 
