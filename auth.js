@@ -1,82 +1,141 @@
-// Firebase Authentication Service
-const auth = firebase.auth();
-const db = firebase.firestore();
+// auth.js
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import { 
+    getAuth, 
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import { 
+    getFirestore, 
+    collection, 
+    addDoc,
+    getDocs,
+    query,
+    where,
+    serverTimestamp 
+} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
-async function checkUserApproval() {
-    const user = auth.currentUser;
-    if (!user) return false;
+const firebaseConfig = {
+    apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+    authDomain: "cyfencedevbyken.firebaseapp.com",
+    projectId: "cyfencedevbyken",
+    storageBucket: "cyfencedevbyken.firebasestorage.app",
+    messagingSenderId: "632813871756",
+    appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+    measurementId: "G-1EJNKSHNQ3"
+};
 
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ฟังก์ชันสมัครสมาชิก
+export async function registerUser(email, password, displayName) {
     try {
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        const userData = userDoc.data();
-        return userData && userData.isApproved === true;
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // บันทึกข้อมูลผู้ใช้เพิ่มเติมใน Firestore
+        await addDoc(collection(db, 'users'), {
+            uid: user.uid,
+            email: email,
+            displayName: displayName,
+            role: 'user',
+            createdAt: serverTimestamp()
+        });
+
+        // บันทึก log
+        await addDoc(collection(db, 'logs'), {
+            action: 'register',
+            userId: user.uid,
+            email: email,
+            timestamp: serverTimestamp()
+        });
+
+        return { success: true };
     } catch (error) {
-        console.error('Error checking user approval:', error);
-        return false;
+        return {
+            success: false,
+            error: error.message
+        };
     }
 }
 
-// เช็คสถานะการล็อกอิน
-function checkAuth() {
-    return new Promise(async (resolve, reject) => {
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                const isApproved = await checkUserApproval();
-                if (isApproved) {
-                    logActivity(user.uid, 'page_access', window.location.pathname);
-                    resolve(true);
-                } else {
-                    auth.signOut();
-                    window.location.href = 'login.html?error=not_approved';
-                    resolve(false);
-                }
-            } else {
-                window.location.href = 'login.html';
-                resolve(false);
-            }
+// ฟังก์ชันเข้าสู่ระบบ
+export async function loginUser(email, password) {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // ตรวจสอบว่าเป็น admin หรือไม่
+        const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid));
+        const userDocs = await getDocs(userQuery);
+        const userData = userDocs.docs[0].data();
+
+        // บันทึก log
+        await addDoc(collection(db, 'logs'), {
+            action: 'login',
+            userId: user.uid,
+            email: email,
+            timestamp: serverTimestamp()
         });
-    });
+
+        return { 
+            success: true,
+            isAdmin: userData.role === 'admin'
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error: error.message
+        };
+    }
 }
 
 // ฟังก์ชันออกจากระบบ
-function logout() {
-    const userId = auth.currentUser.uid;
-    logActivity(userId, 'logout')
-        .then(() => {
-            return auth.signOut();
-        })
-        .then(() => {
-            window.location.href = 'login.html';
-        })
-        .catch((error) => {
-            console.error('Logout error:', error);
-        });
-}
-
-// ฟังก์ชันบันทึก Log
-async function logActivity(userId, action, details = null) {
+export async function logoutUser() {
     try {
-        await db.collection('logs').add({
-            userId: userId,
-            action: action,
-            details: details,
-            timestamp: new Date(),
-            userAgent: navigator.userAgent
-        });
+        const user = auth.currentUser;
+        if (user) {
+            // บันทึก log
+            await addDoc(collection(db, 'logs'), {
+                action: 'logout',
+                userId: user.uid,
+                email: user.email,
+                timestamp: serverTimestamp()
+            });
+        }
+        
+        await signOut(auth);
+        return { success: true };
     } catch (error) {
-        console.error('Error logging activity:', error);
+        return {
+            success: false,
+            error: error.message
+        };
     }
 }
 
-// เพิ่มปุ่มออกจากระบบในหน้า index.html
-document.addEventListener('DOMContentLoaded', async () => {
-    if (await checkAuth()) {
-        // เพิ่มปุ่ม logout ในส่วน header
-        const header = document.querySelector('.header');
-        const logoutBtn = document.createElement('button');
-        logoutBtn.innerHTML = 'ออกจากระบบ';
-        logoutBtn.className = 'logout-btn';
-        logoutBtn.onclick = logout;
-        header.appendChild(logoutBtn);
+// ตรวจสอบสถานะการล็อกอิน
+export function checkAuthState(callback) {
+    return onAuthStateChanged(auth, callback);
+}
+
+// เช็คว่าผู้ใช้เป็น admin หรือไม่
+export async function checkIsAdmin(uid) {
+    try {
+        const userQuery = query(collection(db, 'users'), where('uid', '==', uid));
+        const userDocs = await getDocs(userQuery);
+        if (!userDocs.empty) {
+            const userData = userDocs.docs[0].data();
+            return userData.role === 'admin';
+        }
+        return false;
+    } catch (error) {
+        console.error('Error checking admin status:', error);
+        return false;
     }
-});
+}
