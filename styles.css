@@ -80,6 +80,22 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.logout-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    padding: 8px 16px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background-color: #c82333;
+}
+
 /* Team Info Styling */
 .team-info {
     display: grid;

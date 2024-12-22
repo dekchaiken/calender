@@ -3,142 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyfence - Admin Panel</title>
+    <title>Cyfence - จัดการผู้ใช้งาน</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS styles จากไฟล์เดิม */
+        * {
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            height: 50px;
+        }
+
         .user-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
 
-        .user-table th, .user-table td {
+        .user-table th,
+        .user-table td {
             padding: 12px;
-            border: 1px solid #ddd;
             text-align: left;
+            border-bottom: 1px solid #ddd;
         }
 
         .user-table th {
-            background-color: #f5f5f5;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
+            background-color: #f8f9fa;
+            font-weight: bold;
         }
 
         .approve-btn {
-            background-color: #2ECC71;
+            padding: 6px 12px;
+            background-color: #28a745;
             color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
         .reject-btn {
-            background-color: #E74C3C;
+            padding: 6px 12px;
+            background-color: #dc3545;
             color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.875em;
         }
 
         .status-pending {
-            color: #F39C12;
+            background-color: #ffc107;
+            color: #000;
         }
 
         .status-approved {
-            color: #27AE60;
+            background-color: #28a745;
+            color: #fff;
         }
 
         .status-rejected {
-            color: #C0392B;
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>จัดการผู้ใช้งาน</h1>
-        <div id="userList"></div>
+        <div class="header">
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+            <h1>จัดการผู้ใช้งาน</h1>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+        </div>
+
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>อีเมล</th>
+                    <th>ชื่อที่แสดง</th>
+                    <th>วันที่สมัคร</th>
+                    <th>สถานะ</th>
+                    <th>การจัดการ</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <!-- ข้อมูลผู้ใช้จะถูกเพิ่มที่นี่ด้วย JavaScript -->
+            </tbody>
+        </table>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
-        // ตรวจสอบสิทธิ์ Admin
-        async function checkAdminAccess() {
+        // ตรวจสอบว่าผู้ใช้เป็น admin หรือไม่
+        async function checkAdminAuth() {
             const user = auth.currentUser;
             if (!user) {
                 window.location.href = 'login.html';
                 return;
             }
 
-            const isAdmin = await checkAdminRole(user.uid);
-            if (!isAdmin) {
-                window.location.href = 'index.html';
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            const userData = userDoc.data();
+
+            if (!userData || userData.role !== 'admin') {
+                window.location.href = 'dashboard.html';
                 return;
             }
         }
 
-        // โหลดรายการผู้ใช้
+        // โหลดข้อมูลผู้ใช้ทั้งหมด
         async function loadUsers() {
-            const userStatusSnapshot = await userStatusCollection.get();
-            const userList = document.getElementById('userList');
-            
-            let html = `
-                <table class="user-table">
-                    <thead>
-                        <tr>
-                            <th>อีเมล</th>
-                            <th>ชื่อที่แสดง</th>
-                            <th>วันที่สมัคร</th>
-                            <th>สถานะ</th>
-                            <th>การจัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
+            const snapshot = await db.collection('users').get();
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = '';
 
-            for (const doc of userStatusSnapshot.docs) {
-                const status = doc.data();
-                const user = (await db.collection('users').doc(doc.id).get()).data();
+            snapshot.forEach(doc => {
+                const userData = doc.data();
+                const tr = document.createElement('tr');
+                
+                // แปลงวันที่เป็นรูปแบบที่อ่านง่าย
+                const createdAt = userData.createdAt ? new Date(userData.createdAt.toDate()).toLocaleString('th-TH') : 'ไม่ระบุ';
+                
+                // กำหนดสถานะการแสดงผล
+                const statusClass = userData.isApproved ? 'status-approved' : 'status-pending';
+                const statusText = userData.isApproved ? 'อนุมัติแล้ว' : 'รอการอนุมัติ';
 
-                html += `
-                    <tr>
-                        <td>${user.email}</td>
-                        <td>${user.displayName}</td>
-                        <td>${status.createdAt.toDate().toLocaleDateString('th-TH')}</td>
-                        <td class="status-${status.status}">${getStatusText(status.status)}</td>
-                        <td>
-                            ${status.status === 'pending' ? `
-                                <button onclick="approveUser('${doc.id}')" class="action-btn approve-btn">อนุมัติ</button>
-                                <button onclick="rejectUser('${doc.id}')" class="action-btn reject-btn">ปฏิเสธ</button>
-                            ` : ''}
-                        </td>
-                    </tr>
+                tr.innerHTML = `
+                    <td>${userData.email}</td>
+                    <td>${userData.displayName}</td>
+                    <td>${createdAt}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        ${!userData.isApproved ? `
+                            <button onclick="approveUser('${doc.id}')" class="approve-btn">อนุมัติ</button>
+                            <button onclick="rejectUser('${doc.id}')" class="reject-btn">ปฏิเสธ</button>
+                        ` : ''}
+                    </td>
                 `;
-            }
-
-            html += '</tbody></table>';
-            userList.innerHTML = html;
+                tableBody.appendChild(tr);
+            });
         }
 
-        // ฟังก์ชันแปลงสถานะเป็นข้อความ
-        function getStatusText(status) {
-            switch (status) {
-                case 'pending': return 'รอการอนุมัติ';
-                case 'approved': return 'อนุมัติแล้ว';
-                case 'rejected': return 'ปฏิเสธแล้ว';
-                default: return 'ไม่ทราบสถานะ';
-            }
-        }
-
-        // ฟังก์ชันอนุมัติผู้ใช้
+        // อนุมัติผู้ใช้
         async function approveUser(userId) {
             try {
-                await userStatusCollection.doc(userId).update({
-                    status: 'approved',
-                    approvedAt: new Date(),
-                    approvedBy: auth.currentUser.uid
+                await db.collection('users').doc(userId).update({
+                    isApproved: true
                 });
-                
-                await logActivity(auth.currentUser.uid, 'approve_user', { targetUser: userId });
+                // บันทึก log
+                await logActivity(auth.currentUser.uid, 'approve_user', { approvedUserId: userId });
                 loadUsers();
             } catch (error) {
                 console.error('Error approving user:', error);
@@ -146,23 +199,14 @@
             }
         }
 
-        // ฟังก์ชันปฏิเสธผู้ใช้
+        // ปฏิเสธผู้ใช้
         async function rejectUser(userId) {
-            const reason = prompt('กรุณาระบุเหตุผลในการปฏิเสธ:');
-            if (reason === null) return;
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะปฏิเสธผู้ใช้นี้?')) return;
 
             try {
-                await userStatusCollection.doc(userId).update({
-                    status: 'rejected',
-                    rejectionReason: reason,
-                    approvedAt: new Date(),
-                    approvedBy: auth.currentUser.uid
-                });
-
-                await logActivity(auth.currentUser.uid, 'reject_user', { 
-                    targetUser: userId,
-                    reason: reason
-                });
+                await db.collection('users').doc(userId).delete();
+                // บันทึก log
+                await logActivity(auth.currentUser.uid, 'reject_user', { rejectedUserId: userId });
                 loadUsers();
             } catch (error) {
                 console.error('Error rejecting user:', error);
@@ -170,11 +214,18 @@
             }
         }
 
-        // เริ่มต้นโหลดข้อมูล
+        // เมื่อโหลดหน้าเว็บ
         document.addEventListener('DOMContentLoaded', async () => {
-            await checkAdminAccess();
+            await checkAdminAuth();
             loadUsers();
         });
+
+        // ฟังก์ชัน logout
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            });
+        }
     </script>
 </body>
 </html>
