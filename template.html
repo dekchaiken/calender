@@ -102,10 +102,12 @@
             <select id="customerSelect" onchange="loadUseCases()">
                 <option value="">-- เลือกลูกค้า --</option>
                 <option value="IPST">IPST</option>
-                <option value="B">Customer B</option>
-                <option value="C">Customer C</option>
-                <option value="D">Customer D</option>
-                <option value="E">Customer E</option>
+                <option value="BLA">BLA</option>
+                <option value="Carabao">Carabao</option>
+                <option value="CJ">CJ Express</option>
+                <option value="Driessen">Driessen</option>
+                <option value="KSAM">KSAM</option>
+                <option value="E-VISA">Thia E-Visa</option>
             </select>
 
             <div id="useCaseSelect" style="display: none;">
@@ -192,16 +194,41 @@ HTTP Code: ${data.httpCode}
 3. ทำการตรวจสอบช่องโหว่ของ Software ที่หน่วยงานมีการใช้งานจริง
 4. ควรเปิดใช้งานบริการ Services หรือ Ports ที่จำเป็นเท่านั้น`,
                 fields: ['caseId', 'sourceIp', 'destIp', 'destPort', 'httpCode', 'pathUrl']
-            }
+            },
+            'env': {
+                name: 'Web Mass-scanning for unsecured ENV file',
+                template: (data) => `ดำเนินการเปิดเคส ${data.caseId} ${data.customerName} Rule Web Mass-scanning for unsecured ENV file from Source IP ${data.sourceIp}
+
+##Identification##
+Source IP: ${data.sourceIp}
+Source User: ${data.sourceUser}
+Destination IP: ${data.destIp}
+Device Name: ${data.deviceName}
+Event Subtype: ${data.eventSubtype}
+
+##Threat Information##
+ตรวจพบพฤติกรรม VPN ด้วย Source IP: ${data.sourceIp} มาที่ VPN Gateway IP: ${data.destIp} ปริมาณมากกว่า 10 Event ในระยะเวลา 10 นาที โดยอุปกรณ์ Firewall มีสถานะ VPN Login Fail ซึ่งเป็นสถานะ การพยายามทำ Password Guessing Attack 
+จากการตรวจสอบ IP reputation ของ IP ดังกล่าวทั้งหมด พบรายงานว่าเป็น BAD IP ที่มีประวัติโจมตีที่อื่นมาก่อน 
+(Ref: https://www.abuseipdb.com/check/${data.sourceIp})
+
+##Solution/Workaround##
+1) กำหนดเปิดให้ใช้งาน Geolocation เฉพาะในประเทศไทย หรือประเทศอื่นๆที่จำเป็นต้องใช้งานผ่านระบบดังกล่าวเท่านั้น
+2) Block source IP ดังกล่าว บน Firewall Gateway
+3) Review Policy Firewall เปิดเฉพาะ IP / Port ที่ใช้งานเท่านั้น
+4) ตรวจสอบเครื่อง Target IP address ว่ามีความผิดปกติหรือไม่`,
+                fields: ['caseId', 'sourceIp', 'sourceUser', 'destIp', 'deviceName']
+            },
         };
 
         // Customer use cases mapping
         const customerUseCases = {
             'IPST': ['vpn_guessing', 'php_vulnerability'],
-            'B': ['vpn_guessing'],
-            'C': ['php_vulnerability'],
-            'D': ['vpn_guessing', 'php_vulnerability'],
-            'E': ['vpn_guessing']
+            'BLA': ['vpn_guessing'],
+            'Carabao': ['php_vulnerability'],
+            'KSAM': ['vpn_guessing', 'php_vulnerability', 'env'],
+            'E-VISA': ['vpn_guessing'],
+            'Driessen': ['vpn_guessing', 'php_vulnerability'],
+            'CJ': ['vpn_guessing', 'php_vulnerability']
         };
 
         function loadUseCases() {
