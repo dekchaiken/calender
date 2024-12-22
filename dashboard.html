@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - Shift schedule</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+            <h1>Shift schedule</h1>
+        </div>
+        <div class="team-info">
+            <div class="team-card red" onclick="toggleTeamMembers('red')">
+                <h3>Shift A (Red Team)</h3>
+                <div class="team-leader">
+                    <p>Leader: อธิราช</p>
+                </div>
+                <div class="team-members" id="red-members">
+                    <p>2. กฤตเมธ</p>
+                    <p>3. ศรัณยู</p>
+                    <p>4. ขจรพล</p>
+                    <p>5. ชานุพัทร</p>
+                    <p>6. ศรัณย์</p>
+                    <p>7. - </p>
+                    <p>8. - </p>
+                </div>
+                <div class="expand-icon">▼</div>
+            </div>
+            <div class="team-card green" onclick="toggleTeamMembers('green')">
+                <h3>Shift B (Green Team)</h3>
+                <div class="team-leader">
+                    <p>Leader: ปพน</p>
+                </div>
+                <div class="team-members" id="green-members">
+                    <p>2. ณัฏฐดนัย</p>
+                    <p>3. ธนพงศ์</p>
+                    <p>4. ธนากร</p>
+                    <p>5. D</p>
+                    <p>6. E</p>
+                    <p>7. F</p>
+                    <p>8. G</p>
+                </div>
+                <div class="expand-icon">▼</div>
+            </div>
+            <div class="team-card blue" onclick="toggleTeamMembers('blue')">
+                <h3>Shift C (Blue Team)</h3>
+                <div class="team-leader">
+                    <p>Leader: กฤษฏ์</p>
+                </div>
+                <div class="team-members" id="blue-members">
+                    <p>2. วิศรุต</p>
+                    <p>3. พรภวิษย์</p>
+                    <p>4. มนต์เสกค์</p>
+                    <p>5. D</p>
+                    <p>6. E</p>
+                    <p>7. F</p>
+                    <p>8. G</p>
+                </div>
+                <div class="expand-icon">▼</div>
+            </div>
+            <div class="team-card yellow" onclick="toggleTeamMembers('yellow')">
+                <h3>Shift D (Yellow Team)</h3>
+                <div class="team-leader">
+                    <p>Leader: พิสุทธิ์</p>
+                </div>
+                <div class="team-members" id="yellow-members">
+                    <p>2. วิษาโรจน์</p>
+                    <p>3. เจตนา</p>
+                    <p>4. วุฒิชัย</p>
+                    <p>5. D</p>
+                    <p>6. E</p>
+                    <p>7. F</p>
+                    <p>8. G</p>
+                </div>
+                <div class="expand-icon">▼</div>
+            </div>
+        </div>
+        <div class="controls">
+            <button onclick="changeMonth(-1)" class="nav-btn">← Previous month</button>
+            <div class="date-selectors">
+                <select id="monthSelect"></select>
+                <select id="yearSelect"></select>
+            </div>
+            <button onclick="changeMonth(1)" class="nav-btn">Next month →</button>
+        </div>
+
+        <div class="filters-container">
+            <div class="shift-filters">
+                <label class="shift-filter">
+                    <input type="checkbox" value="red" checked class="shift-checkbox" onchange="updateFilters()">
+                    <span class="checkmark red">Shift A - อธิราช (Red Team)</span>
+                </label>
+                <label class="shift-filter">
+                    <input type="checkbox" value="green" checked class="shift-checkbox" onchange="updateFilters()">
+                    <span class="checkmark green">Shift B - ปพน (Green Team)</span>
+                </label>
+                <label class="shift-filter">
+                    <input type="checkbox" value="blue" checked class="shift-checkbox" onchange="updateFilters()">
+                    <span class="checkmark blue">Shift C - กฤษฏ์ (Blue Team)</span>
+                </label>
+                <label class="shift-filter">
+                    <input type="checkbox" value="yellow" checked class="shift-checkbox" onchange="updateFilters()">
+                    <span class="checkmark yellow">Shift D - พิสุทธิ์ (Yellow Team)</span>
+                </label>
+            </div>
+            <div class="filter-buttons">
+                <button onclick="selectAllShifts(true)" class="filter-btn">Select all</button>
+                <button onclick="selectAllShifts(false)" class="filter-btn">Cancel all</button>
+            </div>
+        </div>
+
+        <div class="export-controls">
+            <div class="date-range">
+                <div>
+                    <label>Start date:</label>
+                    <select id="startMonthSelect" class="month-select"></select>
+                    <select id="startYearSelect" class="year-select"></select>
+                </div>
+                <div>
+                    <label>End date:</label>
+                    <select id="endMonthSelect" class="month-select"></select>
+                    <select id="endYearSelect" class="year-select"></select>
+                </div>
+            </div>
+            <button onclick="exportToPDF()" class="export-btn">
+                <i class="fas fa-file-pdf"></i>
+                Export to PDF
+            </button>
+            <button onclick="window.location.href='template.html'" class="nav-btn"">
+                จัดการ Template
+            </button>
+            
+        </div>
+        
+
+        <div id="calendar-container"></div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

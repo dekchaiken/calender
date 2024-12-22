@@ -2,14 +2,34 @@
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+async function checkUserApproval() {
+    const user = auth.currentUser;
+    if (!user) return false;
+
+    try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        return userData && userData.isApproved === true;
+    } catch (error) {
+        console.error('Error checking user approval:', error);
+        return false;
+    }
+}
+
 // เช็คสถานะการล็อกอิน
 function checkAuth() {
-    return new Promise((resolve, reject) => {
-        auth.onAuthStateChanged((user) => {
+    return new Promise(async (resolve, reject) => {
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // Log the page access
-                logActivity(user.uid, 'page_access', window.location.pathname);
-                resolve(true);
+                const isApproved = await checkUserApproval();
+                if (isApproved) {
+                    logActivity(user.uid, 'page_access', window.location.pathname);
+                    resolve(true);
+                } else {
+                    auth.signOut();
+                    window.location.href = 'login.html?error=not_approved';
+                    resolve(false);
+                }
             } else {
                 window.location.href = 'login.html';
                 resolve(false);

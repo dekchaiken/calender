@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -133,15 +134,22 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
-        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
-        
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
+
         <!-- Login Form -->
         <div id="loginForm">
             <h2>เข้าสู่ระบบ</h2>
@@ -190,7 +198,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    
+
     <!-- Configuration -->
     <script src="firebase-config.js"></script>
 
@@ -198,7 +206,7 @@
         // ตรวจสอบสถานะการล็อกอิน
         auth.onAuthStateChanged(user => {
             if (user) {
-                window.location.href = 'index.html';
+                window.location.href = 'dashboard.html';
             }
         });
 
@@ -206,7 +214,7 @@
         function toggleForm(formType) {
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
-            
+
             if (formType === 'register') {
                 loginForm.style.display = 'none';
                 registerForm.style.display = 'block';
@@ -214,7 +222,7 @@
                 loginForm.style.display = 'block';
                 registerForm.style.display = 'none';
             }
-            
+
             // เคลียร์ข้อความแจ้งเตือน
             showMessage('', '');
         }
@@ -248,7 +256,7 @@
                 showMessage('เข้าสู่ระบบสำเร็จ กำลังนำคุณไปยังหน้าหลัก...', 'success');
                 await logActivity(auth.currentUser.uid, 'login');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'dashboard.html';
                 }, 1000);
             } catch (error) {
                 let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
@@ -279,20 +287,26 @@
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
-                // เพิ่มข้อมูลผู้ใช้ใน Firestore
+                // เพิ่มข้อมูลผู้ใช้ใน Firestore พร้อมสถานะการอนุมัติ
                 await db.collection('users').doc(user.uid).set({
                     email: email,
                     displayName: displayName,
-                    createdAt: new Date()
+                    createdAt: new Date(),
+                    isApproved: false, // เพิ่มสถานะการอนุมัติ
+                    role: 'user'
                 });
 
                 // บันทึก log
                 await logActivity(user.uid, 'register');
 
-                showMessage('สมัครสมาชิกสำเร็จ กำลังนำคุณไปยังหน้าหลัก...', 'success');
+                showMessage('สมัครสมาชิกสำเร็จ กรุณารอการอนุมัติจากผู้ดูแลระบบ', 'success');
+
+                // ทำการ sign out หลังจากลงทะเบียน
+                await auth.signOut();
+
                 setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
+                    window.location.href = 'login.html';
+                }, 3000);
             } catch (error) {
                 let errorMessage = 'เกิดข้อผิดพลาดในการสมัครสมาชิก';
                 if (error.code === 'auth/email-already-in-use') {
@@ -321,7 +335,7 @@
         }
 
         // เพิ่ม Event Listener สำหรับการกด Enter
-        document.addEventListener('keypress', function(e) {
+        document.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 if (document.getElementById('loginForm').style.display !== 'none') {
                     handleLogin();
@@ -332,4 +346,5 @@
         });
     </script>
 </body>
+
 </html>
