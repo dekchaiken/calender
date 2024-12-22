@@ -1,84 +1,20 @@
 // auth.js
+
+// ตั้งค่า Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
-    authDomain: "cyfencedevbyken.firebaseapp.com",
-    projectId: "cyfencedevbyken",
-    storageBucket: "cyfencedevbyken.firebasestorage.app",
-    messagingSenderId: "632813871756",
-    appId: "1:632813871756:web:57d674643f258ddd2e11a9",
-    measurementId: "G-1EJNKSHNQ3"
-  };
+    // นำข้อมูล config จาก Firebase Console มาใส่ตรงนี้
+    apiKey: "YOUR_API_KEY",
+    authDomain: "your-app.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-app.appspot.com",
+    messagingSenderId: "your-sender-id",
+    appId: "your-app-id"
+};
 
 // เริ่มต้นใช้งาน Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.querySelector('.container');
-    if (container) {
-        container.style.display = 'none';
-    }
-    checkAuth();
-});
-
-// ฟังก์ชันตรวจสอบสถานะการล็อกอิน
-function checkAuth() {
-    auth.onAuthStateChanged((user) => {
-        const container = document.querySelector('.container');
-        if (user) {
-            // ถ้าล็อกอินแล้ว
-            sessionStorage.setItem('isAuthenticated', 'true');
-            if (container) {
-                container.style.display = 'block';
-            }
-            const loginForm = document.querySelector('#login-form');
-            if (loginForm) {
-                loginForm.remove();
-            }
-            // เริ่มการทำงานของปฏิทิน
-            if (typeof initializeSelectors === 'function') {
-                initializeSelectors();
-            }
-            if (typeof renderCalendar === 'function') {
-                renderCalendar();
-            }
-        } else {
-            // ถ้ายังไม่ได้ล็อกอิน
-            sessionStorage.removeItem('isAuthenticated');
-            if (container) {
-                container.style.display = 'none';
-            }
-            showLoginForm();
-        }
-    });
-}
-
-// ฟังก์ชันแสดงฟอร์มล็อกอิน
-function showLoginForm() {
-    // ลบฟอร์มเก่าถ้ามี
-    const oldForm = document.querySelector('#login-form');
-    if (oldForm) {
-        oldForm.remove();
-    }
-    
-    const loginForm = document.createElement('div');
-    loginForm.id = 'login-form';
-    loginForm.innerHTML = `
-        <div style="max-width: 300px; margin: 100px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-            <h2 style="text-align: center; margin-bottom: 20px;">เข้าสู่ระบบ</h2>
-            <div style="margin-bottom: 15px;">
-                <input type="email" id="email" placeholder="อีเมล" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            </div>
-            <div style="margin-bottom: 15px;">
-                <input type="password" id="password" placeholder="รหัสผ่าน" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            </div>
-            <button onclick="login()" style="width: 100%; padding: 10px; background: var(--primary); border: none; border-radius: 4px; color: white; cursor: pointer; margin-bottom: 10px;">เข้าสู่ระบบ</button>
-            <button onclick="showRegisterForm()" style="width: 100%; padding: 10px; background: #f0f0f0; border: none; border-radius: 4px; cursor: pointer;">สมัครสมาชิก</button>
-        </div>
-    `;
-    document.body.appendChild(loginForm);
-}
 
 // ฟังก์ชันสำหรับล็อกอิน
 async function login() {
@@ -89,6 +25,8 @@ async function login() {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         // เก็บ log การเข้าสู่ระบบ
         await saveLoginLog(userCredential.user.email);
+        sessionStorage.setItem('isAuthenticated', 'true');
+        location.reload();
     } catch (error) {
         alert('เข้าสู่ระบบไม่สำเร็จ: ' + error.message);
     }
