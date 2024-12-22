@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyfence - เข้าสู่ระบบ</title>
+    <title>Cyfence - ลงทะเบียน</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* ใช้ style เดียวกับหน้า login */
         body {
             font-family: 'Sarabun', sans-serif;
             margin: 0;
@@ -66,10 +67,14 @@
         .links a {
             color: #666;
             text-decoration: none;
-            margin: 0 0.5rem;
         }
         .error-message {
             color: red;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .success-message {
+            color: green;
             margin-top: 1rem;
             text-align: center;
         }
@@ -78,21 +83,28 @@
 <body>
     <div class="container">
         <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
-        <div id="error-message" class="error-message"></div>
-        <form id="loginForm" onsubmit="return handleLogin(event)">
+        <div id="message" class="success-message"></div>
+        <form id="registerForm" onsubmit="return handleRegister(event)">
+            <div class="form-group">
+                <label for="displayName">ชื่อ-นามสกุล</label>
+                <input type="text" id="displayName" required>
+            </div>
             <div class="form-group">
                 <label for="email">อีเมล</label>
                 <input type="email" id="email" required>
             </div>
             <div class="form-group">
                 <label for="password">รหัสผ่าน</label>
-                <input type="password" id="password" required>
+                <input type="password" id="password" required minlength="6">
             </div>
-            <button type="submit">เข้าสู่ระบบ</button>
+            <div class="form-group">
+                <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+                <input type="password" id="confirmPassword" required minlength="6">
+            </div>
+            <button type="submit">ลงทะเบียน</button>
         </form>
         <div class="links">
-            <a href="register.html">ลงทะเบียน</a>
-            <a href="admin-login.html">สำหรับผู้ดูแลระบบ</a>
+            <a href="login.html">กลับไปหน้าเข้าสู่ระบบ</a>
         </div>
     </div>
 </body>

@@ -1,120 +1,133 @@
-// Firebase Authentication Service
-const auth = firebase.auth();
-const db = firebase.firestore();
+// auth.js
+// เพิ่ม Firebase SDK
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { 
+    getAuth, 
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged 
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { 
+    getFirestore,
+    collection,
+    addDoc,
+    setDoc,
+    doc,
+    serverTimestamp 
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-// เช็คสถานะการอนุมัติของผู้ใช้
-async function checkUserApproval() {
-    const user = auth.currentUser;
-    if (!user) return false;
+// กำหนดค่า Firebase (แทนที่ด้วยค่าจริงจาก Firebase Console)
+const firebaseConfig = {
+    apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+    authDomain: "cyfencedevbyken.firebaseapp.com",
+    projectId: "cyfencedevbyken",
+    storageBucket: "cyfencedevbyken.firebasestorage.app",
+    messagingSenderId: "632813871756",
+    appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+    measurementId: "G-1EJNKSHNQ3"
+  };
 
-    try {
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        const userData = userDoc.data();
-        return userData && userData.isApproved === true;
-    } catch (error) {
-        console.error('Error checking user approval:', error);
-        return false;
-    }
-}
+// เริ่มต้น Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// เช็คสถานะการล็อกอินและการอนุมัติ
-async function checkAuth() {
-    return new Promise((resolve, reject) => {
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                try {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    const userData = userDoc.data();
-                    
-                    if (userData && userData.isApproved === true) {
-                        // บันทึก log การเข้าถึงหน้า
-                        await logActivity(user.uid, 'page_access', {
-                            page: window.location.pathname,
-                            timestamp: new Date()
-                        });
-                        resolve(true);
-                    } else {
-                        await auth.signOut();
-                        window.location.href = 'login.html?error=not_approved';
-                        resolve(false);
-                    }
-                } catch (error) {
-                    console.error('Error checking user approval:', error);
-                    window.location.href = 'login.html?error=error_checking';
-                    resolve(false);
-                }
-            } else {
-                window.location.href = 'login.html';
-                resolve(false);
-            }
-        });
-    });
-}
-
-// เช็คสิทธิ์ admin
-async function checkAdminAuth() {
-    const user = auth.currentUser;
-    if (!user) {
-        window.location.href = 'login.html';
-        return false;
-    }
-
-    try {
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        const userData = userDoc.data();
-        
-        if (!userData || userData.role !== 'admin') {
+// ตรวจสอบสถานะการล็อกอิน
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // ผู้ใช้ล็อกอินแล้ว
+        if (window.location.pathname.includes('login.html') || 
+            window.location.pathname.includes('register.html')) {
             window.location.href = 'dashboard.html';
-            return false;
         }
-        return true;
-    } catch (error) {
-        console.error('Error checking admin auth:', error);
-        window.location.href = 'login.html';
-        return false;
-    }
-}
-
-// ฟังก์ชันออกจากระบบ
-async function logout() {
-    try {
-        const userId = auth.currentUser.uid;
-        await logActivity(userId, 'logout', {
-            timestamp: new Date(),
-            browser: navigator.userAgent
-        });
-        await auth.signOut();
-        window.location.href = 'login.html';
-    } catch (error) {
-        console.error('Logout error:', error);
-    }
-}
-
-// ฟังก์ชันบันทึก Log
-async function logActivity(userId, action, details = null) {
-    try {
-        await db.collection('logs').add({
-            userId: userId,
-            action: action,
-            details: details,
-            timestamp: new Date(),
-            userAgent: navigator.userAgent,
-            ipAddress: window.clientIP || 'unknown'
-        });
-    } catch (error) {
-        console.error('Error logging activity:', error);
-    }
-}
-
-// เพิ่ม Event Listener เพื่อตรวจสอบการเข้าถึงหน้าเว็บ
-document.addEventListener('DOMContentLoaded', async () => {
-    if (window.location.pathname !== '/login.html') {
-        await checkAuth();
+    } else {
+        // ยังไม่ได้ล็อกอิน
+        if (window.location.pathname.includes('dashboard.html')|| 
+            window.location.pathname.includes('admin-panel.html')) {
+            window.location.href = 'login.html';
+        }
     }
 });
 
-// ส่งออกฟังก์ชันเพื่อใช้งานในไฟล์อื่น
-window.checkAuth = checkAuth;
-window.checkAdminAuth = checkAdminAuth;
+// ฟังก์ชันล็อกอิน
+async function handleLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        // บันทึกประวัติการล็อกอิน
+        await addDoc(collection(db, 'logs'), {
+            userId: userCredential.user.uid,
+            email: email,
+            action: 'login',
+            timestamp: serverTimestamp()
+        });
+        window.location.href = 'dashboard.html';
+    } catch (error) {
+        document.getElementById('error-message').textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+    }
+}
+
+// ฟังก์ชันลงทะเบียน
+async function handleRegister(event) {
+    event.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const displayName = document.getElementById('displayName').value;
+
+    if (password !== confirmPassword) {
+        document.getElementById('message').textContent = 'รหัสผ่านไม่ตรงกัน';
+        document.getElementById('message').className = 'error-message';
+        return;
+    }
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // สร้างข้อมูลผู้ใช้
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+            displayName: displayName,
+            email: email,
+            role: 'user',
+            createdAt: serverTimestamp()
+        });
+        // บันทึกประวัติการลงทะเบียน
+        await addDoc(collection(db, 'logs'), {
+            userId: userCredential.user.uid,
+            email: email,
+            action: 'register',
+            timestamp: serverTimestamp()
+        });
+        window.location.href = 'dashboard.html';
+    } catch (error) {
+        document.getElementById('message').textContent = 'เกิดข้อผิดพลาดในการลงทะเบียน';
+        document.getElementById('message').className = 'error-message';
+    }
+}
+
+// ฟังก์ชันล็อกเอาท์
+async function logout() {
+    try {
+        const user = auth.currentUser;
+        if (user) {
+            await addDoc(collection(db, 'logs'), {
+                userId: user.uid,
+                email: user.email,
+                action: 'logout',
+                timestamp: serverTimestamp()
+            });
+        }
+        await signOut(auth);
+        window.location.href = 'login.html';
+    } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการออกจากระบบ:', error);
+    }
+}
+
+// ส่งออกฟังก์ชัน
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
 window.logout = logout;
-window.logActivity = logActivity;
