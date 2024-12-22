@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - Template Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            height: 50px;
+            margin-right: 20px;
+        }
+        .selector-container {
+            margin-bottom: 30px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .template-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .template-form input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .preview-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .validation-status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .validation-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .validation-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .action-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #useCaseSelect {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+            <h1>Template Management</h1>
+        </div>
+
+        <div class="selector-container">
+            <h2>เลือกลูกค้า</h2>
+            <select id="customerSelect" onchange="loadUseCases()">
+                <option value="">-- เลือกลูกค้า --</option>
+                <option value="IPST">IPST</option>
+                <option value="BLA">BLA</option>
+                <option value="Carabao">Carabao</option>
+                <option value="CJ">CJ Express</option>
+                <option value="Driessen">Driessen</option>
+                <option value="KSAM">KSAM</option>
+                <option value="E-VISA">Thia E-Visa</option>
+            </select>
+
+            <div id="useCaseSelect" style="display: none;">
+                <h2>เลือก Use Case</h2>
+                <select id="caseSelect" onchange="loadTemplate()">
+                    <option value="">-- เลือก Case --</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="templateForm" class="template-form" style="display: none;">
+            <div class="template-section">
+                <input type="text" id="caseId" placeholder="Case ID(IRXXXXXXXX)">
+                <input type="text" id="sourceIp" placeholder="Source IP">
+                <input type="text" id="destIp" placeholder="Destination IP">
+                <input type="text" id="destPort" placeholder="Destination Port">
+                <input type="text" id="sourceUser" placeholder="Source User">
+                <input type="text" id="deviceName" placeholder="Device Name">
+                <input type="text" id="httpCode" placeholder="HTTP Code">
+                <input type="text" id="pathUrl" placeholder="Path URL">
+                <select id="eventSubtype">
+                    <option value="failure">Failure</option>
+                    <option value="success">Success</option>
+                </select>
+            </div>
+
+            <div class="preview-section">
+                <h3>Preview</h3>
+                <div id="templatePreview"></div>
+            </div>
+            <div class="validation-status" id="validationStatus"></div>
+        </div>
+        <div class="action-buttons">
+            <button class="nav-btn" onclick="window.location.href='index.html'">กลับ</button>
+        </div>
+    </div>
+
+    <script>
+        // Template definitions
+        const templates = {
+            'vpn_guessing': {
+                name: 'VPN Password Guessing Detect to Firewall Hostname',
+                template: (data) => `ดำเนินการเปิดเคส ${data.caseId} ${data.customerName} Rule VPN Password Guessing Detect to Firewall Hostname: ${data.deviceName}
+
+##Identification##
+Source IP: ${data.sourceIp}
+Source User: ${data.sourceUser}
+Destination IP: ${data.destIp}
+Device Name: ${data.deviceName}
+Event Subtype: ${data.eventSubtype}
+
+##Threat Information##
+ตรวจพบพฤติกรรม VPN ด้วย Source IP: ${data.sourceIp} มาที่ VPN Gateway IP: ${data.destIp} ปริมาณมากกว่า 10 Event ในระยะเวลา 10 นาที โดยอุปกรณ์ Firewall มีสถานะ VPN Login Fail ซึ่งเป็นสถานะ การพยายามทำ Password Guessing Attack 
+จากการตรวจสอบ IP reputation ของ IP ดังกล่าวทั้งหมด พบรายงานว่าเป็น BAD IP ที่มีประวัติโจมตีที่อื่นมาก่อน 
+(Ref: https://www.abuseipdb.com/check/${data.sourceIp})
+
+##Solution/Workaround##
+1) กำหนดเปิดให้ใช้งาน Geolocation เฉพาะในประเทศไทย หรือประเทศอื่นๆที่จำเป็นต้องใช้งานผ่านระบบดังกล่าวเท่านั้น
+2) Block source IP ดังกล่าว บน Firewall Gateway
+3) Review Policy Firewall เปิดเฉพาะ IP / Port ที่ใช้งานเท่านั้น
+4) ตรวจสอบเครื่อง Target IP address ว่ามีความผิดปกติหรือไม่`,
+                fields: ['caseId', 'sourceIp', 'sourceUser', 'destIp', 'deviceName']
+            },
+            'php_vulnerability': {
+                name: 'Web PHP Common website vulnerability scans',
+                template: (data) => `ดำเนินการเปิดเคส ${data.caseId} ${data.customerName} Rule Web PHP Common website vulnerability scans from Source IP ${data.sourceIp}
+
+##Identification##
+Source IP: ${data.sourceIp}
+Destination IP: ${data.destIp}
+Destination Port: ${data.destPort}
+Path URL: ${data.pathUrl || '/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php'}
+Event Subtype: ${data.eventSubtype}
+HTTP Code: ${data.httpCode}
+
+##Threat Information##
+1. ตรวจพบไอพีแอดเดรส ${data.sourceIp} มีพฤติกรรมการ Scan เพื่อโจมตี Website ที่มีการใช้งาน PHP โดยอาศัยข้อมูลจากช่องโหว่ CVE-2017-9841
+2. ข้อมูล Access Log ของ Web Server พบว่าหมายเลขไอพีแอดเดรสดังกล่าว พยายาม Request Access หน้า page โดยมีสถานะ Log Error ${data.httpCode}
+3. ข้อมูลจากการตรวจสอบ IP reputation พบรายงานว่าเป็น BAD IP (Ref: https://www.abuseipdb.com/check/${data.sourceIp})
+
+##Solution/Workaround##
+1. ตรวจสอบว่ามีความจำเป็นต้องมีการเชื่อมต่อเพื่อใช้งานกับ Source IP ดังกล่าวหรือไม่
+2. ตรวจสอบเครื่อง Target IP address ว่ามี Vulnerability/Application ที่สัมพันธ์กับการโจมตี
+3. ทำการตรวจสอบช่องโหว่ของ Software ที่หน่วยงานมีการใช้งานจริง
+4. ควรเปิดใช้งานบริการ Services หรือ Ports ที่จำเป็นเท่านั้น`,
+                fields: ['caseId', 'sourceIp', 'destIp', 'destPort', 'httpCode', 'pathUrl']
+            },
+            'env': {
+                name: 'Web Mass-scanning for unsecured ENV file',
+                template: (data) => `ดำเนินการเปิดเคส ${data.caseId} ${data.customerName} Rule Web Mass-scanning for unsecured ENV file from Source IP ${data.sourceIp}
+
+##Identification##
+Source IP: ${data.sourceIp}
+Source User: ${data.sourceUser}
+Destination IP: ${data.destIp}
+Device Name: ${data.deviceName}
+Event Subtype: ${data.eventSubtype}
+
+##Threat Information##
+ตรวจพบพฤติกรรม VPN ด้วย Source IP: ${data.sourceIp} มาที่ VPN Gateway IP: ${data.destIp} ปริมาณมากกว่า 10 Event ในระยะเวลา 10 นาที โดยอุปกรณ์ Firewall มีสถานะ VPN Login Fail ซึ่งเป็นสถานะ การพยายามทำ Password Guessing Attack 
+จากการตรวจสอบ IP reputation ของ IP ดังกล่าวทั้งหมด พบรายงานว่าเป็น BAD IP ที่มีประวัติโจมตีที่อื่นมาก่อน 
+(Ref: https://www.abuseipdb.com/check/${data.sourceIp})
+
+##Solution/Workaround##
+1) กำหนดเปิดให้ใช้งาน Geolocation เฉพาะในประเทศไทย หรือประเทศอื่นๆที่จำเป็นต้องใช้งานผ่านระบบดังกล่าวเท่านั้น
+2) Block source IP ดังกล่าว บน Firewall Gateway
+3) Review Policy Firewall เปิดเฉพาะ IP / Port ที่ใช้งานเท่านั้น
+4) ตรวจสอบเครื่อง Target IP address ว่ามีความผิดปกติหรือไม่`,
+                fields: ['caseId', 'sourceIp', 'sourceUser', 'destIp', 'deviceName']
+            },
+        };
+
+        // Customer use cases mapping
+        const customerUseCases = {
+            'IPST': ['vpn_guessing', 'php_vulnerability'],
+            'BLA': ['vpn_guessing'],
+            'Carabao': ['php_vulnerability'],
+            'KSAM': ['vpn_guessing', 'php_vulnerability', 'env'],
+            'E-VISA': ['vpn_guessing'],
+            'Driessen': ['vpn_guessing', 'php_vulnerability'],
+            'CJ': ['vpn_guessing', 'php_vulnerability']
+        };
+
+        function loadUseCases() {
+            const customerSelect = document.getElementById('customerSelect');
+            const useCaseSelect = document.getElementById('useCaseSelect');
+            const caseSelect = document.getElementById('caseSelect');
+            const selectedCustomer = customerSelect.value;
+
+            if (selectedCustomer) {
+                // Clear previous options
+                caseSelect.innerHTML = '<option value="">-- เลือก Case --</option>';
+                
+                // Add use cases for selected customer
+                const cases = customerUseCases[selectedCustomer] || [];
+                cases.forEach(caseId => {
+                    const option = document.createElement('option');
+                    option.value = caseId;
+                    option.textContent = templates[caseId].name;
+                    caseSelect.appendChild(option);
+                });
+
+                useCaseSelect.style.display = 'block';
+            } else {
+                useCaseSelect.style.display = 'none';
+            }
+            
+            // Hide template form when customer changes
+            document.getElementById('templateForm').style.display = 'none';
+        }
+
+        function loadTemplate() {
+            const selectedCase = document.getElementById('caseSelect').value;
+            const templateForm = document.getElementById('templateForm');
+            
+            if (selectedCase) {
+                templateForm.style.display = 'block';
+                updatePreview();
+            } else {
+                templateForm.style.display = 'none';
+            }
+        }
+
+        function updatePreview() {
+            const selectedCase = document.getElementById('caseSelect').value;
+            const selectedCustomer = document.getElementById('customerSelect').value;
+            
+            if (!selectedCase || !templates[selectedCase]) return;
+
+            const data = {
+                caseId: document.getElementById('caseId').value || 'IRXXXXXXXX',
+                customerName: selectedCustomer,
+                sourceIp: document.getElementById('sourceIp').value || 'XXXXXXXXXXX',
+                sourceUser: document.getElementById('sourceUser').value || 'XXXXX',
+                destIp: document.getElementById('destIp').value || 'XXXXXX',
+                destPort: document.getElementById('destPort').value || 'XXXXXX',
+                deviceName: document.getElementById('deviceName').value || 'XXXXXXX',
+                eventSubtype: document.getElementById('eventSubtype').value,
+                httpCode: document.getElementById('httpCode').value || 'XXXXXXXXXX',
+                pathUrl: document.getElementById('pathUrl').value || '/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php'
+            };
+
+            const template = templates[selectedCase].template(data);
+            document.getElementById('templatePreview').innerText = template;
+            validateFields(selectedCase);
+        }
+
+        function validateFields(selectedCase) {
+            if (!selectedCase || !templates[selectedCase]) return;
+
+            const requiredFields = templates[selectedCase].fields;
+            const missingFields = requiredFields.filter(field => !document.getElementById(field).value);
+            const validationStatus = document.getElementById('validationStatus');
+
+            if (missingFields.length > 0) {
+                validationStatus.className = 'validation-status validation-error';
+                validationStatus.innerText = 'กรุณากรอกข้อมูลให้ครบถ้วน: ' + missingFields.join(', ');
+            } else {
+                validationStatus.className = 'validation-status validation-success';
+                validationStatus.innerText = 'ข้อมูลครบถ้วน';
+            }
+        }
+
+        // Add event listeners to all inputs for real-time preview
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', updatePreview);
+        });
+    </script>
+</body>
+</html>

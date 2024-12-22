@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS styles จากไฟล์เดิม */
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .user-table th, .user-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .user-table th {
+            background-color: #f5f5f5;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .approve-btn {
+            background-color: #2ECC71;
+            color: white;
+        }
+
+        .reject-btn {
+            background-color: #E74C3C;
+            color: white;
+        }
+
+        .status-pending {
+            color: #F39C12;
+        }
+
+        .status-approved {
+            color: #27AE60;
+        }
+
+        .status-rejected {
+            color: #C0392B;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>จัดการผู้ใช้งาน</h1>
+        <div id="userList"></div>
+    </div>
+
+    <script>
+        // ตรวจสอบสิทธิ์ Admin
+        async function checkAdminAccess() {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const isAdmin = await checkAdminRole(user.uid);
+            if (!isAdmin) {
+                window.location.href = 'index.html';
+                return;
+            }
+        }
+
+        // โหลดรายการผู้ใช้
+        async function loadUsers() {
+            const userStatusSnapshot = await userStatusCollection.get();
+            const userList = document.getElementById('userList');
+            
+            let html = `
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>อีเมล</th>
+                            <th>ชื่อที่แสดง</th>
+                            <th>วันที่สมัคร</th>
+                            <th>สถานะ</th>
+                            <th>การจัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (const doc of userStatusSnapshot.docs) {
+                const status = doc.data();
+                const user = (await db.collection('users').doc(doc.id).get()).data();
+
+                html += `
+                    <tr>
+                        <td>${user.email}</td>
+                        <td>${user.displayName}</td>
+                        <td>${status.createdAt.toDate().toLocaleDateString('th-TH')}</td>
+                        <td class="status-${status.status}">${getStatusText(status.status)}</td>
+                        <td>
+                            ${status.status === 'pending' ? `
+                                <button onclick="approveUser('${doc.id}')" class="action-btn approve-btn">อนุมัติ</button>
+                                <button onclick="rejectUser('${doc.id}')" class="action-btn reject-btn">ปฏิเสธ</button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            }
+
+            html += '</tbody></table>';
+            userList.innerHTML = html;
+        }
+
+        // ฟังก์ชันแปลงสถานะเป็นข้อความ
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return 'รอการอนุมัติ';
+                case 'approved': return 'อนุมัติแล้ว';
+                case 'rejected': return 'ปฏิเสธแล้ว';
+                default: return 'ไม่ทราบสถานะ';
+            }
+        }
+
+        // ฟังก์ชันอนุมัติผู้ใช้
+        async function approveUser(userId) {
+            try {
+                await userStatusCollection.doc(userId).update({
+                    status: 'approved',
+                    approvedAt: new Date(),
+                    approvedBy: auth.currentUser.uid
+                });
+                
+                await logActivity(auth.currentUser.uid, 'approve_user', { targetUser: userId });
+                loadUsers();
+            } catch (error) {
+                console.error('Error approving user:', error);
+                alert('เกิดข้อผิดพลาดในการอนุมัติผู้ใช้');
+            }
+        }
+
+        // ฟังก์ชันปฏิเสธผู้ใช้
+        async function rejectUser(userId) {
+            const reason = prompt('กรุณาระบุเหตุผลในการปฏิเสธ:');
+            if (reason === null) return;
+
+            try {
+                await userStatusCollection.doc(userId).update({
+                    status: 'rejected',
+                    rejectionReason: reason,
+                    approvedAt: new Date(),
+                    approvedBy: auth.currentUser.uid
+                });
+
+                await logActivity(auth.currentUser.uid, 'reject_user', { 
+                    targetUser: userId,
+                    reason: reason
+                });
+                loadUsers();
+            } catch (error) {
+                console.error('Error rejecting user:', error);
+                alert('เกิดข้อผิดพลาดในการปฏิเสธผู้ใช้');
+            }
+        }
+
+        // เริ่มต้นโหลดข้อมูล
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAdminAccess();
+            loadUsers();
+        });
+    </script>
+</body>
+</html>
