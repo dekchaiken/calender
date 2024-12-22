@@ -3,161 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyfence - หน้าผู้ดูแลระบบ</title>
+    <title>Cyfence - Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
     <style>
-        .admin-container {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .admin-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .logs-table {
+        /* CSS styles จากไฟล์เดิม */
+        .user-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .logs-table th,
-        .logs-table td {
+        .user-table th, .user-table td {
             padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .logs-table th {
-            background-color: #f8f9fa;
-            font-weight: bold;
-        }
-
-        .filter-controls {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .filter-controls input,
-        .filter-controls select {
-            padding: 8px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            text-align: left;
         }
 
-        .export-btn {
-            background-color: #4A90E2;
-            color: white;
-            padding: 8px 16px;
+        .user-table th {
+            background-color: #f5f5f5;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-right: 5px;
         }
 
-        .export-btn:hover {
-            background-color: #357ABD;
+        .approve-btn {
+            background-color: #2ECC71;
+            color: white;
+        }
+
+        .reject-btn {
+            background-color: #E74C3C;
+            color: white;
+        }
+
+        .status-pending {
+            color: #F39C12;
+        }
+
+        .status-approved {
+            color: #27AE60;
+        }
+
+        .status-rejected {
+            color: #C0392B;
         }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <div class="admin-section">
-            <h2>บันทึกการใช้งานระบบ</h2>
-            
-            <div class="filter-controls">
-                <input type="date" id="startDate" placeholder="วันที่เริ่มต้น">
-                <input type="date" id="endDate" placeholder="วันที่สิ้นสุด">
-                <select id="actionFilter">
-                    <option value="">ทั้งหมด</option>
-                    <option value="login">เข้าสู่ระบบ</option>
-                    <option value="logout">ออกจากระบบ</option>
-                    <option value="register">สมัครสมาชิก</option>
-                </select>
-                <input type="text" id="userFilter" placeholder="ค้นหาผู้ใช้">
-                <button class="export-btn" onclick="exportLogs()">ส่งออก CSV</button>
-            </div>
-
-            <table class="logs-table">
-                <thead>
-                    <tr>
-                        <th>วันที่</th>
-                        <th>การกระทำ</th>
-                        <th>ผู้ใช้</th>
-                        <th>อีเมล</th>
-                    </tr>
-                </thead>
-                <tbody id="logsTableBody">
-                    <!-- ข้อมูลจะถูกเพิ่มด้วย JavaScript -->
-                </tbody>
-            </table>
-        </div>
+    <div class="container">
+        <h1>จัดการผู้ใช้งาน</h1>
+        <div id="userList"></div>
     </div>
 
-    <script type="module">
-        import { 
-            getFirestore, 
-            collection, 
-            query, 
-            orderBy, 
-            onSnapshot,
-            where
-        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-        import { checkAuthState } from './auth.js';
-
-        const db = getFirestore();
-
-        // ตรวจสอบว่าเป็น admin หรือไม่
-        checkAuthState(async (user) => {
+    <script>
+        // ตรวจสอบสิทธิ์ Admin
+        async function checkAdminAccess() {
+            const user = auth.currentUser;
             if (!user) {
                 window.location.href = 'login.html';
                 return;
             }
+
+            const isAdmin = await checkAdminRole(user.uid);
+            if (!isAdmin) {
+                window.location.href = 'index.html';
+                return;
+            }
+        }
+
+        // โหลดรายการผู้ใช้
+        async function loadUsers() {
+            const userStatusSnapshot = await userStatusCollection.get();
+            const userList = document.getElementById('userList');
             
-            // เริ่มดึงข้อมูล logs
-            initializeLogs();
-        });
+            let html = `
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>อีเมล</th>
+                            <th>ชื่อที่แสดง</th>
+                            <th>วันที่สมัคร</th>
+                            <th>สถานะ</th>
+                            <th>การจัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
 
-        function initializeLogs() {
-            const logsRef = collection(db, 'logs');
-            const q = query(logsRef, orderBy('timestamp', 'desc'));
+            for (const doc of userStatusSnapshot.docs) {
+                const status = doc.data();
+                const user = (await db.collection('users').doc(doc.id).get()).data();
 
-            onSnapshot(q, (snapshot) => {
-                const tableBody = document.getElementById('logsTableBody');
-                tableBody.innerHTML = '';
+                html += `
+                    <tr>
+                        <td>${user.email}</td>
+                        <td>${user.displayName}</td>
+                        <td>${status.createdAt.toDate().toLocaleDateString('th-TH')}</td>
+                        <td class="status-${status.status}">${getStatusText(status.status)}</td>
+                        <td>
+                            ${status.status === 'pending' ? `
+                                <button onclick="approveUser('${doc.id}')" class="action-btn approve-btn">อนุมัติ</button>
+                                <button onclick="rejectUser('${doc.id}')" class="action-btn reject-btn">ปฏิเสธ</button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            }
 
-                snapshot.forEach((doc) => {
-                    const log = doc.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${new Date(log.timestamp.toDate()).toLocaleString('th-TH')}</td>
-                        <td>${translateAction(log.action)}</td>
-                        <td>${log.userId}</td>
-                        <td>${log.email}</td>
-                    `;
-                    tableBody.appendChild(row);
+            html += '</tbody></table>';
+            userList.innerHTML = html;
+        }
+
+        // ฟังก์ชันแปลงสถานะเป็นข้อความ
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return 'รอการอนุมัติ';
+                case 'approved': return 'อนุมัติแล้ว';
+                case 'rejected': return 'ปฏิเสธแล้ว';
+                default: return 'ไม่ทราบสถานะ';
+            }
+        }
+
+        // ฟังก์ชันอนุมัติผู้ใช้
+        async function approveUser(userId) {
+            try {
+                await userStatusCollection.doc(userId).update({
+                    status: 'approved',
+                    approvedAt: new Date(),
+                    approvedBy: auth.currentUser.uid
                 });
-            });
+                
+                await logActivity(auth.currentUser.uid, 'approve_user', { targetUser: userId });
+                loadUsers();
+            } catch (error) {
+                console.error('Error approving user:', error);
+                alert('เกิดข้อผิดพลาดในการอนุมัติผู้ใช้');
+            }
         }
 
-        function translateAction(action) {
-            const actions = {
-                'login': 'เข้าสู่ระบบ',
-                'logout': 'ออกจากระบบ',
-                'register': 'สมัครสมาชิก'
-            };
-            return actions[action] || action;
+        // ฟังก์ชันปฏิเสธผู้ใช้
+        async function rejectUser(userId) {
+            const reason = prompt('กรุณาระบุเหตุผลในการปฏิเสธ:');
+            if (reason === null) return;
+
+            try {
+                await userStatusCollection.doc(userId).update({
+                    status: 'rejected',
+                    rejectionReason: reason,
+                    approvedAt: new Date(),
+                    approvedBy: auth.currentUser.uid
+                });
+
+                await logActivity(auth.currentUser.uid, 'reject_user', { 
+                    targetUser: userId,
+                    reason: reason
+                });
+                loadUsers();
+            } catch (error) {
+                console.error('Error rejecting user:', error);
+                alert('เกิดข้อผิดพลาดในการปฏิเสธผู้ใช้');
+            }
         }
 
-        window.exportLogs = function() {
-            // ฟังก์ชันส่งออกข้อมูลเป็น CSV
-            // (เพิ่มโค้ดตรงนี้)
-        };
+        // เริ่มต้นโหลดข้อมูล
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAdminAccess();
+            loadUsers();
+        });
     </script>
 </body>
 </html>

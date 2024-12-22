@@ -141,6 +141,7 @@
 <body>
     <div class="login-container">
         <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+        
         <!-- Login Form -->
         <div id="loginForm">
             <h2>เข้าสู่ระบบ</h2>
@@ -152,7 +153,7 @@
                 <label for="loginPassword">รหัสผ่าน</label>
                 <input type="password" id="loginPassword" required placeholder="รหัสผ่านของคุณ">
             </div>
-            <button onclick="handleLogin()" class="btn-primary">เข้าสู่ระบบ</button>
+            <button onclick="handleLogin()">เข้าสู่ระบบ</button>
             <div class="toggle-form">
                 <a href="#" onclick="toggleForm('register')">ยังไม่มีบัญชี? สมัครสมาชิก</a>
             </div>
@@ -173,7 +174,7 @@
                 <label for="registerDisplayName">ชื่อที่แสดง</label>
                 <input type="text" id="registerDisplayName" required placeholder="ชื่อที่ต้องการแสดง">
             </div>
-            <button onclick="handleRegister()" class="btn-primary">สมัครสมาชิก</button>
+            <button onclick="handleRegister()">สมัครสมาชิก</button>
             <div class="toggle-form">
                 <a href="#" onclick="toggleForm('login')">มีบัญชีแล้ว? เข้าสู่ระบบ</a>
             </div>
@@ -185,48 +186,24 @@
         </div>
     </div>
 
-    <script type="module">
-        import { loginUser, registerUser } from './auth.js';
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Configuration -->
+    <script src="firebase-config.js"></script>
 
-        window.handleLogin = async () => {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            try {
-                const result = await loginUser(email, password);
-                if (result.success) {
-                    if (result.isAdmin) {
-                        window.location.href = 'admin.html';
-                    } else {
-                        window.location.href = 'dashboard.html';
-                    }
-                } else {
-                    showMessage(result.error, 'error');
-                }
-            } catch (error) {
-                showMessage('เกิดข้อผิดพลาดในการเข้าสู่ระบบ', 'error');
+    <script>
+        // ตรวจสอบสถานะการล็อกอิน
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                window.location.href = 'index.html';
             }
-        };
+        });
 
-        window.handleRegister = async () => {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const displayName = document.getElementById('registerDisplayName').value;
-            
-            try {
-                const result = await registerUser(email, password, displayName);
-                if (result.success) {
-                    showMessage('สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ', 'success');
-                    toggleForm('login');
-                } else {
-                    showMessage(result.error, 'error');
-                }
-            } catch (error) {
-                showMessage('เกิดข้อผิดพลาดในการสมัครสมาชิก', 'error');
-            }
-        };
-
-        window.toggleForm = (formType) => {
+        // ฟังก์ชันสลับฟอร์ม
+        function toggleForm(formType) {
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
             
@@ -238,14 +215,121 @@
                 registerForm.style.display = 'none';
             }
             
-            document.getElementById('message').innerHTML = '';
-        };
+            // เคลียร์ข้อความแจ้งเตือน
+            showMessage('', '');
+        }
 
+        // ฟังก์ชันแสดงข้อความ
         function showMessage(message, type) {
             const messageDiv = document.getElementById('message');
             messageDiv.textContent = message;
             messageDiv.className = type;
+            messageDiv.style.display = message ? 'block' : 'none';
         }
+
+        // แสดง/ซ่อน Loading
+        function toggleLoading(show) {
+            document.querySelector('.loading').style.display = show ? 'block' : 'none';
+        }
+
+        // ฟังก์ชันล็อกอิน
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showMessage('กรุณากรอกอีเมลและรหัสผ่าน', 'error');
+                return;
+            }
+
+            toggleLoading(true);
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showMessage('เข้าสู่ระบบสำเร็จ กำลังนำคุณไปยังหน้าหลัก...', 'success');
+                await logActivity(auth.currentUser.uid, 'login');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } catch (error) {
+                let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'ไม่พบบัญชีผู้ใช้นี้';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'รหัสผ่านไม่ถูกต้อง';
+                }
+                showMessage(errorMessage, 'error');
+            }
+            toggleLoading(false);
+        }
+
+        // ฟังก์ชันสมัครสมาชิก
+        async function handleRegister() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const displayName = document.getElementById('registerDisplayName').value;
+
+            if (!email || !password || !displayName) {
+                showMessage('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
+            }
+
+            toggleLoading(true);
+            try {
+                // สร้างบัญชีผู้ใช้
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // เพิ่มข้อมูลผู้ใช้ใน Firestore
+                await db.collection('users').doc(user.uid).set({
+                    email: email,
+                    displayName: displayName,
+                    createdAt: new Date()
+                });
+
+                // บันทึก log
+                await logActivity(user.uid, 'register');
+
+                showMessage('สมัครสมาชิกสำเร็จ กำลังนำคุณไปยังหน้าหลัก...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } catch (error) {
+                let errorMessage = 'เกิดข้อผิดพลาดในการสมัครสมาชิก';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'อีเมลนี้ถูกใช้งานแล้ว';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร';
+                }
+                showMessage(errorMessage, 'error');
+            }
+            toggleLoading(false);
+        }
+
+        // ฟังก์ชันบันทึก Log
+        async function logActivity(userId, action, details = null) {
+            try {
+                await db.collection('logs').add({
+                    userId: userId,
+                    action: action,
+                    details: details,
+                    timestamp: new Date(),
+                    userAgent: navigator.userAgent
+                });
+            } catch (error) {
+                console.error('Error logging activity:', error);
+            }
+        }
+
+        // เพิ่ม Event Listener สำหรับการกด Enter
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('loginForm').style.display !== 'none') {
+                    handleLogin();
+                } else {
+                    handleRegister();
+                }
+            }
+        });
     </script>
 </body>
 </html>
