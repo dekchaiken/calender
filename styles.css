@@ -40,6 +40,18 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
 .logo {
     max-height: 150px;
     margin-bottom: 1rem;
