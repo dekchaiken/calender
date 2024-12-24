@@ -249,7 +249,8 @@
                     </div>
                 </div>
                 <button onclick="exportToPDF()" class="export-btn">
-                    ส่งออกเป็น PDF
+                    <i class="fas fa-file-pdf"></i>
+                    Export to PDF
                 </button>
                 <button onclick="window.location.href='template.html'" class="nav-btn">
                     จัดการ Template
@@ -304,7 +305,9 @@
                     window.location.href = "login.html";
                 });
         }
-
+        const html2pdfScript = document.createElement('script');
+        html2pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        document.head.appendChild(html2pdfScript);
         // เพิ่มฟังก์ชันอื่นๆ ตามที่ต้องการ เช่น
         // - updateCalendarDisplay()
         // - exportToPDF()
