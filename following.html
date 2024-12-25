@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Following Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
     <style>
         :root {
             --primary: #FDB813;
@@ -169,6 +168,36 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
+        // เพิ่มการ map ระหว่างรหัสบริษัทและชื่อเต็ม
+        const companyMappings = {
+            'COM-A': 'บริษัทนายเอ',
+            'COM-B': 'บริษัทนายบี',
+            'COM-C': 'บริษัทนายซี',
+            'COM-D': 'บริษัทนายดี',
+            'COM-E': 'บริษัทนายอี',
+            'COM-F': 'บริษัทนายเอฟ',
+            'COM-G': 'บริษัทนายจี',
+            'COM-H': 'บริษัทนายเอช',
+            'COM-I': 'บริษัทนายไอ',
+            'COM-J': 'บริษัทนายเจ',
+            'COM-K': 'บริษัทนายเค',
+            'COM-L': 'บริษัทนายแอล',
+            'COM-M': 'บริษัทนายเอ็ม',
+            'COM-N': 'บริษัทนายเอ็น',
+            'COM-O': 'บริษัทนายโอ',
+            'COM-P': 'บริษัทนายพี',
+            'COM-Q': 'บริษัทนายคิว',
+            'COM-R': 'บริษัทนายอาร์',
+            'COM-S': 'บริษัทนายเอส',
+            'COM-T': 'บริษัทนายที',
+            'COM-U': 'บริษัทนายยู',
+            'COM-V': 'บริษัทนายวี',
+            'COM-W': 'บริษัทนายดับเบิลยู',
+            'COM-X': 'บริษัทนายเอ็กซ์',
+            'COM-Y': 'บริษัทนายวาย',
+            'COM-Z': 'บริษัทนายแซด'
+        };
+
         const months = [
             'January', 'February', 'March', 'April',
             'May', 'June', 'July', 'August',
@@ -206,6 +235,26 @@
             handleFile(file);
         });
 
+        function getCompanyCode(customerName) {
+            // ค้นหารหัสบริษัทจากชื่อที่ได้จาก Excel
+            for (const [code, name] of Object.entries(companyMappings)) {
+                if (customerName === code || customerName === name) {
+                    return code;
+                }
+            }
+            return customerName; // ถ้าไม่พบ mapping ให้ใช้ชื่อเดิม
+        }
+
+        function getCompanyFullName(customerName) {
+            // ค้นหาชื่อเต็มของบริษัทจากชื่อที่ได้จาก Excel
+            for (const [code, name] of Object.entries(companyMappings)) {
+                if (customerName === code || customerName === name) {
+                    return name;
+                }
+            }
+            return customerName; // ถ้าไม่พบ mapping ให้ใช้ชื่อเดิม
+        }
+
         function handleFile(file) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -215,7 +264,6 @@
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     excelData = XLSX.utils.sheet_to_json(firstSheet);
                     
-                    // Debug: แสดงข้อมูลที่อ่านได้
                     debugDiv.style.display = 'block';
                     debugDiv.innerHTML = `อ่านข้อมูลสำเร็จ: ${excelData.length} รายการ<br>
                                         ตัวอย่างข้อมูลแรก: ${JSON.stringify(excelData[0])}<br>
@@ -235,32 +283,26 @@
         function updateAllTemplates() {
             const date = document.getElementById('followDate').value;
             
-            if (!date || !excelData) {
+            if (!date) {
                 return;
             }
 
             const formattedDate = formatDateToEng(date);
-            
-            // จัดกลุ่มข้อมูลตาม Customer
-            const groupedByCustomer = excelData.reduce((groups, item) => {
-                const customer = item.Customer;
-                if (!groups[customer]) {
-                    groups[customer] = [];
-                }
-                groups[customer].push(item);
-                return groups;
-            }, {});
-
             let allTemplates = '';
 
-            // สร้าง Template สำหรับแต่ละบริษัท
-            Object.entries(groupedByCustomer).forEach(([customer, incidents], index) => {
+            // สร้าง template สำหรับทุกบริษัท
+            Object.entries(companyMappings).forEach(([code, fullName], index) => {
                 if (index > 0) {
                     allTemplates += '\n\n' + '='.repeat(50) + '\n\n';
                 }
 
-                allTemplates += `เรียนทีม ${customer}\n`;
-                allTemplates += `Daily Follow Incident ${formattedDate}\n\n`;
+                // หาข้อมูล incidents สำหรับบริษัทนี้
+                const incidents = excelData ? excelData.filter(item => 
+                    item.Customer === code || item.Customer === fullName
+                ) : [];
+
+                allTemplates += `เรียนทีม ${fullName}\n`;
+                allTemplates += `${code} Follow Incident ${formattedDate}\n\n`;
 
                 if (incidents.length > 0) {
                     allTemplates += `ขอแจ้ง Incident ที่มีสถานะยังคง Pending ครับ\n`;
