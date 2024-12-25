@@ -111,6 +111,38 @@
             top: 20px;
             right: 20px;
         }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .nav-btn:hover {
+            background: #e5a700;
+            transform: translateY(-2px);
+        }
+
+        /* Update the admin button styles to match the new layout */
+        .admin-btn {
+            padding: 8px 16px;
+            background: #FDB813;
+            color: #2D2D2D;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .admin-btn:hover {
+            background: #e5a700;
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 
@@ -130,6 +162,12 @@
                     <div class="user-info">
                         <span class="user-name" id="userDisplayName">Loading...</span>
                     </div>
+                    <button onclick="window.location.href='template.html'" class="export-btn">
+                        จัดการ Template
+                    </button>
+                    <button onclick="window.location.href='following.html'" class="export-btn">
+                        ติดตามงาน
+                    </button>
                     <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
                 </div>
             </div>
@@ -198,7 +236,7 @@
                 <button onclick="changeMonth(-1)" class="nav-btn">
                     ← เดือนก่อนหน้า
                 </button>
-                <div class="date-selectors">
+                <div class="date-range">
                     <select id="monthSelect"></select>
                     <select id="yearSelect"></select>
                 </div>
@@ -252,9 +290,6 @@
                 <button onclick="exportToPDF()" class="export-btn">
                     <i class="fas fa-file-pdf"></i>
                     Export to PDF
-                </button>
-                <button onclick="window.location.href='template.html'" class="nav-btn">
-                    จัดการ Template
                 </button>
             </div>
 
@@ -346,29 +381,6 @@
                             const adminBtn = document.createElement('button');
                             adminBtn.innerHTML = 'หน้า Admin';
                             adminBtn.className = 'admin-btn';
-                            // Copy logout button style but use primary color
-                            adminBtn.style.cssText = `
-                        padding: 8px 16px;
-                        background: #FDB813;
-                        color: #2D2D2D;
-                        border: none;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        transition: all 0.3s;
-                        font-weight: 600;
-                        margin-right: 10px;
-                    `;
-
-                            // Add hover effect with JavaScript
-                            adminBtn.onmouseover = () => {
-                                adminBtn.style.background = '#e5a700';
-                                adminBtn.style.transform = 'translateY(-2px)';
-                            };
-                            adminBtn.onmouseout = () => {
-                                adminBtn.style.background = '#FDB813';
-                                adminBtn.style.transform = 'translateY(0)';
-                            };
-
                             adminBtn.onclick = () => window.location.href = 'admin.html';
 
                             // Insert before the logout button
