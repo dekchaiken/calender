@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyfence - เข้าสู่ระบบ</title>
+    <title>Cyfence - สมัครสมาชิก</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -23,7 +23,7 @@
             background: #f5f5f5;
         }
         
-        .login-container {
+        .register-container {
             background: white;
             padding: 2rem;
             border-radius: 10px;
@@ -46,7 +46,15 @@
             margin-bottom: 2rem;
         }
         
-        .form-group { margin-bottom: 1.5rem; }
+        .form-group { 
+            margin-bottom: 1rem; 
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
         
         input {
             width: 100%;
@@ -62,6 +70,13 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(253,184,19,0.2);
         }
+
+        .error-text {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
         
         button {
             width: 100%;
@@ -74,6 +89,7 @@
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 600;
+            margin-top: 1rem;
         }
         
         button:hover {
@@ -81,108 +97,85 @@
             box-shadow: 0 4px 12px rgba(253,184,19,0.2);
         }
         
-        .info-text {
-            margin-top: 1rem;
-            text-align: center;
-            color: #666;
-        }
-        
         #message {
             margin-top: 1rem;
             padding: 0.75rem;
             border-radius: 4px;
             text-align: center;
+            display: none;
         }
         
         .error { background: #FFE8E8; color: #D63031; }
         .success { background: #E8F5E9; color: #2ECC71; }
-        
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            margin: 1rem auto;
-            display: none;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="register-container">
         <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
-        <div id="loginForm">
-            <h2>เข้าสู่ระบบ</h2>
+        <form id="registerForm" onsubmit="handleRegister(event)">
+            <h2>สมัครสมาชิก</h2>
             <div class="form-group">
-                <input type="email" id="loginEmail" required placeholder="อีเมล">
+                <label for="displayName">ชื่อ-นามสกุล</label>
+                <input type="text" id="displayName" required>
+                <div class="error-text" id="nameError">กรุณากรอกชื่อ-นามสกุล</div>
             </div>
             <div class="form-group">
-                <input type="password" id="loginPassword" required placeholder="รหัสผ่าน">
+                <label for="email">อีเมล</label>
+                <input type="email" id="email" required>
+                <div class="error-text" id="emailError">กรุณากรอกอีเมลให้ถูกต้อง</div>
             </div>
-            <button onclick="handleLogin()">เข้าสู่ระบบ</button>
-            <button onclick="window.location.href='register.html'" style="background-color: #f0f0f0; margin-top: 1rem;">สมัครสมาชิก</button>
-        </div>
-        <div id="message"></div>
-        <div class="spinner"></div>
+            <div class="form-group">
+                <label for="password">รหัสผ่าน</label>
+                <input type="password" id="password" required>
+                <div class="error-text" id="passwordError">รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร</div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+                <input type="password" id="confirmPassword" required>
+                <div class="error-text" id="confirmPasswordError">รหัสผ่านไม่ตรงกัน</div>
+            </div>
+            <button type="submit">สมัครสมาชิก</button>
+            <div id="message"></div>
+        </form>
     </div>
-    
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
+    <script src="firebase-config.js"></script>
     <script>
-        firebase.initializeApp({
-            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
-            authDomain: "cyfencedevbyken.firebaseapp.com",
-            projectId: "cyfencedevbyken",
-            storageBucket: "cyfencedevbyken.appspot.com",
-            messagingSenderId: "632813871756",
-            appId: "1:632813871756:web:57d674643f258ddd2e11a9"
+        async function handleRegister(event) {
+    event.preventDefault();
+    
+    const displayName = document.getElementById('displayName').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        
+        await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+            displayName,
+            email,
+            isApproved: false,
+            role: 'user',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        auth.onAuthStateChanged(user => {
-            if (user) window.location.href = 'dashboard.html';
-        });
-        
-        async function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!email || !password) {
-                showMessage('กรุณากรอกอีเมลและรหัสผ่าน', 'error');
-                return;
-            }
-            
-            document.querySelector('.spinner').style.display = 'block';
-            
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-                showMessage('เข้าสู่ระบบสำเร็จ กำลังนำคุณไปยังหน้าหลัก...', 'success');
-                setTimeout(() => window.location.href = 'dashboard.html', 1500);
-            } catch (error) {
-                showMessage('อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'error');
-            }
-            
-            document.querySelector('.spinner').style.display = 'none';
-        }
-        
+
+        showMessage('การสมัครสมาชิกสำเร็จ กรุณารอการอนุมัติจากผู้ดูแลระบบ', 'success');
+        await firebase.auth().signOut();
+        setTimeout(() => window.location.href = 'login.html', 3000);
+    } catch (error) {
+        showMessage(error.message, 'error');
+    }
+}
+
         function showMessage(text, type) {
             const msg = document.getElementById('message');
             msg.textContent = text;
             msg.className = type;
+            msg.style.display = 'block';
         }
-        
-        document.addEventListener('keypress', e => {
-            if (e.key === 'Enter') handleLogin();
-        });
     </script>
 </body>
 </html>

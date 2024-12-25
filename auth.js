@@ -2,85 +2,52 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 function redirectToLogin(error = '') {
-    const errorParam = error ? `?error=${encodeURIComponent(error)}` : '';
-    window.location.href = `login.html${errorParam}`;
+    if (error) {
+        alert(error);  // เพิ่ม alert เพื่อแสดงข้อความแจ้งเตือน
+    }
+    window.location.href = 'login.html';  // ลบ error parameter ออกจาก URL
 }
 
 async function checkUserApproval() {
     const user = auth.currentUser;
-    if (!user) {
-        alert('No user found');
-        return false;
-    }
+    if (!user) return false;
 
     try {
         const userDoc = await db.collection('users').doc(user.uid).get();
         
-        // ถ้าไม่พบข้อมูลผู้ใช้ ให้สร้างใหม่
         if (!userDoc.exists) {
             await db.collection('users').doc(user.uid).set({
                 email: user.email,
-                displayName: "Ken", // หรือชื่อที่ต้องการ
+                displayName: user.displayName || "",
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                isApproved: true,
-                role: "admin"
+                isApproved: false,
+                role: "user"
             });
-            
-            // ดึงข้อมูลใหม่อีกครั้ง
-            return true;
+            return false;
         }
         
         const userData = userDoc.data();
-        return userData && (userData.isApproved === true || userData.role === 'admin');
+        return userData?.isApproved === true;
     } catch (error) {
-        alert('Error: ' + error.message);
+        console.error('User approval check error:', error);
         return false;
     }
 }
 
 auth.onAuthStateChanged(async (user) => {
-    console.log('Auth state changed:', user);
-
     if (!user) {
-        console.log('No user logged in');
-        redirectToLogin('กรุณาเข้าสู่ระบบ');
-        return;
-    }
-
-    try {
-        console.log('Checking user approval for:', user.uid);
-        const isApproved = await checkUserApproval();
-        console.log('User approval status:', isApproved);
-
-        if (!isApproved) {
-            console.log('User not approved, logging out');
-            await auth.signOut();
-            redirectToLogin('บัญชีของคุณยังไม่ได้รับการอนุมัติ');
-            return;
-        }
-
-        console.log('User approved, showing main content');
-        document.getElementById('loadingScreen').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'block';
-    } catch (error) {
-        console.error('Auth check error:', error);
-        redirectToLogin('เกิดข้อผิดพลาดในการตรวจสอบสถานะ');
-    }
-});
-
-// Initial auth check
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        redirectToLogin('กรุณาเข้าสู่ระบบ');
+        window.location.href = 'login.html';
         return;
     }
 
     try {
         const isApproved = await checkUserApproval();
+        
         if (!isApproved) {
             await auth.signOut();
-            redirectToLogin('บัญชีของคุณยังไม่ได้รับการอนุมัติ');
+            alert('บัญชีของคุณยังไม่ได้รับการอนุมัติ');
+            window.location.href = 'login.html';
             return;
         }
 
@@ -104,7 +71,8 @@ auth.onAuthStateChanged(async (user) => {
         await logActivity(user.uid, 'page_access', window.location.pathname);
     } catch (error) {
         console.error('Auth check error:', error);
-        redirectToLogin('เกิดข้อผิดพลาดในการตรวจสอบสถานะ');
+        alert('เกิดข้อผิดพลาดในการตรวจสอบสถานะ');
+        window.location.href = 'login.html';
     }
 });
 

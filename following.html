@@ -9,33 +9,132 @@
     <style>
         :root {
             --primary: #FDB813;
+            --primary-dark: #e5a700;
             --secondary: #404040;
             --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-
-        * {
-            box-sizing: border-box;
+        
+        * { 
+            box-sizing: border-box; 
             font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
         body {
-            margin: 0;
             min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
             background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            color: var(--secondary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+
+        .logout-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
         }
 
         .header {
-            position: relative;
             display: flex;
             align-items: center;
-            padding: 1rem;
+            padding: 1rem 2rem;
             background: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
         }
 
         .logo {
             height: 40px;
             margin-right: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
         }
 
         .header h1 {
@@ -48,40 +147,48 @@
         .container {
             max-width: 1200px;
             margin: 2rem auto;
-            padding: 0 1rem;
+            padding: 0 2rem;
         }
 
         .card {
             background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            color: var(--secondary);
             margin-bottom: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
+            font-size: 1.3rem;
         }
 
         .form-control {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 2px solid #eee;
+            border-radius: 8px;
             font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 4px;
-            font-weight: bold;
+            border-radius: 8px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -89,97 +196,124 @@
         .btn-primary {
             background: var(--primary);
             color: var(--accent);
+            box-shadow: 0 2px 4px rgba(253, 184, 19, 0.2);
         }
 
         .btn-primary:hover {
-            background: #e5a700;
+            background: var(--primary-dark);
+            transform: translateY(-1px);
         }
 
-        .preview-area {
-            background: #f8f8f8;
-            padding: 1rem;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            min-height: 200px;
-        }
-
-        #dropZone {
-            border: 2px dashed #ddd;
-            padding: 2rem;
-            text-align: center;
-            margin: 1rem 0;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        #dropZone.dragover {
-            background: #f0f0f0;
-            border-color: var(--primary);
-        }
-
-        .nav-btn {
-            padding: 0.5rem 1rem;
-            background: #f0f0f0;
-            color: var(--secondary);
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-        }
-
-        .nav-btn:hover {
-            background: #e0e0e0;
-        }
-
-        /* เพิ่มสไตล์สำหรับส่วนกรองบริษัท */
         .company-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
             margin: 1rem 0;
         }
 
         .company-checkbox {
             display: flex;
             align-items: center;
-            padding: 0.5rem;
-            background: #f0f0f0;
-            border-radius: 4px;
+            padding: 0.75rem;
+            background: #f8f8f8;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .company-checkbox:hover {
-            background: #e0e0e0;
+            background: #f0f0f0;
+            transform: translateY(-1px);
         }
 
         .company-checkbox input {
-            margin-right: 0.5rem;
+            margin-right: 0.75rem;
+            width: 16px;
+            height: 16px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .preview-area {
+            background: #f8f8f8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            min-height: 200px;
+            border: 2px solid #eee;
+            margin-bottom: 1rem;
+        }
+
+        #dropZone {
+            border: 2px dashed #ddd;
+            padding: 3rem;
+            text-align: center;
+            margin: 1rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #dropZone:hover {
+            border-color: var(--primary);
+            background: #fafafa;
+        }
+
+        .nav-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
         }
 
         .filter-controls {
             display: flex;
             gap: 1rem;
-            margin: 1rem 0;
+            margin-bottom: 1rem;
         }
 
-        .search-box {
-            flex: 1;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .company-filters {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-
 <body>
+    <div id="loadingScreen">
+        <div class="spinner"></div>
+        <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
+    </div>
+    <div id="mainContent" style="display: none"></div>
     <div class="header">
         <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
             alt="Cyfence Logo" class="logo">
-        <h1>ติดตามงาน</h1>
-        <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
+        <h1>Following Report</h1>
+        <div class="user-container">
+            <span class="user-name" id="userDisplayName">Loading...</span>
+            <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+        </div>
     </div>
 
     <div class="container">
@@ -205,7 +339,7 @@
             <div class="filter-controls">
                 <input type="text" id="searchCompany" class="search-box" placeholder="ค้นหาชื่อบริษัท...">
                 <button onclick="selectAllCompanies()" class="nav-btn">เลือกทั้งหมด</button>
-                <button onclick="deselectAllCompanies()" class="nav-btn">ยกเลิกทั้งหมด</button>
+                <button onclick="deselectAllCompanies()" class="logout-btn">ยกเลิกทั้งหมด</button>
             </div>
             <div id="companyFilters" class="company-filters">
                 <!-- Company checkboxes will be dynamically added here -->
@@ -407,6 +541,53 @@
                 .catch(err => alert('เกิดข้อผิดพลาดในการคัดลอก: ' + err));
         }
     </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase initialization
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+        });
+    </script>
+    <script>
+        // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
+
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
+                    }
+
+                    // Add admin button if user has admin role
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            }
+        });
+
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
+    </script>
+    <script src="auth.js"></script>
 </body>
 
 </html>

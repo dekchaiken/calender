@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,16 +9,17 @@
     <style>
         :root {
             --primary: #FDB813;
+            --primary-dark: #e5a700;
             --secondary: #404040;
             --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        
-        * { box-sizing: border-box; font-family: 'Sarabun', sans-serif; }
-        
-        body {
+
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Sarabun', sans-serif;
             margin: 0;
-            min-height: 100vh;
-            background: #f5f5f5;
+            padding: 0;
         }
 
         #loadingScreen {
@@ -38,24 +40,32 @@
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
+            margin-bottom: 20px;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
         }
 
         .header {
-            position: relative;
             display: flex;
             align-items: center;
-            padding: 1rem;
+            padding: 1rem 2rem;
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
         }
 
         .logo {
             height: 40px;
             margin-right: 2rem;
+            transition: transform 0.3s ease;
         }
 
         .admin-title {
@@ -65,68 +75,43 @@
             flex-grow: 1;
         }
 
-        .user-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-left: auto;
-            padding: 0.5rem 1rem;
-            background: #f5f5f5;
-            border-radius: 8px;
-        }
-
         .nav-buttons {
             display: flex;
             gap: 1rem;
-            margin-left: 1rem;
         }
 
-        .admin-btn {
-            padding: 0.5rem 1rem;
-            background: var(--primary);
-            color: var(--accent);
+        .btn {
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-            font-weight: 600;
         }
 
-        .admin-btn:hover {
-            background: #e5a700;
-            transform: translateY(-2px);
-        }
-
-        .logout-btn {
-            padding: 0.5rem 1rem;
-            background: #ff4444;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-        }
-
-        .logout-btn:hover {
-            background: #cc0000;
-            transform: translateY(-2px);
-        }
-
-        .back-btn {
+        .nav-btn {
             padding: 0.5rem 1rem;
             background: #f0f0f0;
             color: var(--secondary);
             border: none;
+            padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
         }
 
-        .back-btn:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
         .admin-container {
@@ -140,7 +125,7 @@
             border-radius: 8px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .admin-card h2 {
@@ -154,7 +139,6 @@
         .user-list {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1rem;
         }
 
         .user-list th,
@@ -170,31 +154,114 @@
             color: var(--secondary);
         }
 
-        .user-list tr:hover {
-            background-color: #f5f5f5;
+        .add-user-btn {
+            background: var(--primary);
+            color: var(--accent);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            font-weight: 600;
         }
 
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 999px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            display: inline-block;
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
         }
 
-        .status-approved {
-            background: #e8f5e9;
-            color: #2e7d32;
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
         }
 
-        .status-pending {
-            background: #fff3e0;
-            color: #ef6c00;
+        .modal-content h3 {
+            margin-top: 0;
+            color: var(--secondary);
         }
 
-        .action-buttons {
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-buttons {
             display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .save-btn {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .cancel-btn {
+            background: #f0f0f0;
+            color: var(--secondary);
+        }
+
+        .save-btn,
+        .cancel-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
             gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
         }
 
         .action-btn {
@@ -202,39 +269,29 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s;
             font-size: 0.875rem;
-            font-weight: 500;
+            margin: 0 0.25rem;
         }
 
-        .approve-btn {
+        .edit-btn {
             background: var(--primary);
             color: var(--accent);
         }
 
-        .approve-btn:hover {
-            background: #e5a700;
-        }
-
-        .unapprove-btn {
+        .delete-btn {
             background: #ff4444;
             color: white;
         }
 
-        .unapprove-btn:hover {
-            background: #cc0000;
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
         }
 
-        .role-btn {
-            background: #f0f0f0;
-            color: var(--secondary);
-        }
-
-        .role-btn:hover {
-            background: #e0e0e0;
-        }
     </style>
 </head>
+
 <body>
     <div id="loadingScreen">
         <div class="spinner"></div>
@@ -243,10 +300,12 @@
 
     <div id="mainContent" style="display: none">
         <div class="header">
-            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+                alt="Cyfence Logo" class="logo">
             <h1 class="admin-title">จัดการระบบ</h1>
-            <div class="nav-buttons">
-                <button onclick="window.location.href='dashboard.html'" class="back-btn">กลับหน้าหลัก</button>
+            <div class="user-container">
+                <span class="user-name" id="userDisplayName">Loading...</span>
+                <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
                 <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
             </div>
         </div>
@@ -254,28 +313,94 @@
         <div class="admin-container">
             <div class="admin-card">
                 <h2>จัดการผู้ใช้งาน</h2>
-                <table class="user-list" id="userTable">
+                <button onclick="showAddUserModal()" class="add-user-btn">เพิ่มผู้ใช้งานใหม่</button>
+                <table class="user-list">
                     <thead>
                         <tr>
                             <th>อีเมล</th>
                             <th>ชื่อผู้ใช้</th>
-                            <th>สถานะ</th>
                             <th>บทบาท</th>
+                            <th>สถานะ</th>
                             <th>การดำเนินการ</th>
                         </tr>
                     </thead>
                     <tbody id="userTableBody">
-                        <!-- User rows will be inserted here -->
+                        <!-- ข้อมูลผู้ใช้จะถูกเพิ่มที่นี่ด้วย JavaScript -->
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
+        <div id="userModal" class="modal">
+            <div class="modal-content">
+                <h3 id="modalTitle">เพิ่มผู้ใช้งานใหม่</h3>
+                <form id="userForm" onsubmit="handleUserSubmit(event)">
+                    <div class="form-group">
+                        <label for="email">อีเมล</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="displayName">ชื่อผู้ใช้</label>
+                        <input type="text" id="displayName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">บทบาท</label>
+                        <select id="role" required>
+                            <option value="user">ผู้ใช้งานทั่วไป</option>
+                            <option value="admin">ผู้ดูแลระบบ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">สถานะ</label>
+                        <select id="status" required>
+                            <option value="active">เปิดใช้งาน</option>
+                            <option value="inactive">ปิดใช้งาน</option>
+                        </select>
+                    </div>
+                    <div class="modal-buttons">
+                        <button type="button" class="cancel-btn" onclick="closeModal()">ยกเลิก</button>
+                        <button type="submit" class="save-btn">บันทึก</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="firebase-config.js"></script>
-    <script src="admin.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+        <script src="firebase-config.js"></script>
+        <script src="admin.js"></script>
+        <script>
+            // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
+            firebase.auth().onAuthStateChanged(async (user) => {
+                if (user) {
+                    try {
+                        const userDoc = await firebase.firestore()
+                            .collection('users')
+                            .doc(user.uid)
+                            .get();
+    
+                        const userData = userDoc.data();
+                        const displayElement = document.getElementById('userDisplayName');
+    
+                        if (userData?.displayName) {
+                            displayElement.textContent = userData.displayName;
+                        } else {
+                            displayElement.textContent = user.email;
+                        }
+    
+                        // Add admin button if user has admin role
+                    } catch (error) {
+                        console.error('Error fetching user data:', error);
+                    }
+                }
+            });
+    
+            function logout() {
+                firebase.auth().signOut()
+                    .then(() => window.location.href = 'login.html')
+                    .catch(error => console.error('Logout error:', error));
+            }
+        </script>
 </body>
+
 </html>
