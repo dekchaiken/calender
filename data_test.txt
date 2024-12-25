@@ -1,0 +1,282 @@
+ฉันจะออกแบบโปรแกรมสำหรับติดตามงานชื่อ following.html อ้างอิง css จาก template.html
+โดยก่อนอื่นจะต้องเลือกวันที่ก่อนเพื่อนำมาใส่ใน Template การติดตามงาน
+และจากนัั้นต้องสามารถอัพโหลดไฟล์  Excel ได้ มันจะทำการตรวจจับข้อมูลของไฟล์ Excel 
+ในไฟล์ Excel จะมีหัวข้อที่ต้องนำมาใช้อยู่ดังนี้ Incident ID, Customer, Summary, 
+
+ตัวอย่าง Template ในกรณีที่มี Incident
+------------------------------------------
+เรียนทีม "จะใช้ข้อมูลใน Customer"
+
+"Summary ตัวอักษรคำชุดแรก" Follow Incident "Date ที่เลือก ENG"
+
+ขอแจ้ง Incident ที่มีสถานะยังคง Pending ครับ
+
+1. "Incident ID"    "Summary"
+2. "Incident ID"    "Summary"
+3. "Incident ID"    "Summary"
+4. ในกรณีที่อาจจะมีมากกว่า 3 Incident ID จะต้องเพิ่มเข้ามาเองโดยทำแบบที่บอกไปเหมือนข้อ 1
+
+
+รายละเอียดเพิ่มเติม ส่งให้ทาง E-mail ครับ
+หากดำเนินการแก้ไขแล้ว รบกวนแจ้งปิดเคสด้วยครับ
+
+ตัวอย่าง Template ในกรณีที่ไม่มี Incident
+------------------------------------------
+เรียนทีม "จะใช้ข้อมูลใน Customer"
+
+"Summary ตัวอักษรคำชุดแรก" Follow Incident "Date ที่เลือก ENG"
+- ไม่พบ Incident ที่มีสถานะ pending ครับ
+
+ประมาณนี่ โดยจะยกตัวอย่างมี 5 บริษัท
+COM-A
+COM-B
+COM-C
+COM-D
+COM-E
+
+ลองนำมาใส่ตาม Template ให้มันออกมาแบบที่สั่งไปได้มั้ย
+ช่วยทำให้ที แต่ขอเป็น html นะ อธิบายภาษาไทย
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1. Avius
+2. BLA
+3. Buriram-Bandan
+4. Buriram-Banmaichaipod
+5. Buriram-Buriram
+6. Buriram-Chaloemphrakiat
+7. Buriram-Khaendong
+8. Buriram-Khumuang
+9. Buriram-Krasang
+10. Buriram-Kumuang
+11. Buriram-Lahansai
+12. Buriram-Lamplaimat
+13. Buriram-NongKi
+14. Buriram-Nonsuwan
+15. Buriram-Phutthaisong
+16. Buriram-PrakhonChai
+17. Buriram-Satuek
+18. Buriram-SSJ
+19. Carabao 
+20. Chiangmai-Sansai
+21. Chiangmai-SSJ
+22. Chiangrai-prachanukroh
+23. Chonburi-Banbung = โรงพยาบาลบ้านบึง
+24. Chonburi-BangLamung
+25. Chonburi-BoThong
+26. Chonburi-Kohchan = โรงพยาบาลเกาะจันทร์
+27. Chonburi-KohSichang = โรงพยาบาลเกาะสีชัง
+28. Chonburi-Laemchabang
+29. Chonburi-PhanatNikhom = โรงพยาบาลพนัสนิคม
+30. Chonburi-PhanThong
+31. Chonburi-Sattahip-KM10 = โรงพยาบาลสัตหีบ
+32. Chonburi-Watyan = โรงพยาบาลวัดญาณสังวราราม
+33. CJ
+34. DCSS 
+35. Driessen
+36. E-VISA
+37. ERC
+38. ETax
+39. Falcon
+40. GDCC
+41. GFMIS
+42. IPST
+43. Krabi-Kohlanta = โรงพยาบาลเกาะลันตา
+44. Krabi-Lamthap = โรงพยาบาลลำทับ
+45. KSAM
+46. Loei - Nonghin, Loei-Nonghin = Loei - Nonghin = โรงพยาบาลหนองหิน
+47. Loei - Phukradueng
+48. Loei-Dansai = โรงพยาบาลสมเด็จพระยุพราชด่านซ้าย
+49. Loei-Nahaeo = โรงพยาบาลนาแห้ว
+50. Loei-Phakhao = โรงพยาบาลผาขาว
+51. Loei-Phukradueng = โรงพยาบาลภูกระดึง
+52. Loei-SSJ = 
+53. Loei-Thali = โรงพยาบาลท่าลี่
+54. MRTA
+55. MSIG, Msig = MSIG
+56. MTL
+57. MY
+58. Nakhonsawan-Latyao
+59. Nakhonsawan-Phaisalee
+60. Nakhonsi-Bangkhan
+61. Nakhonsi-ChawangCrownPrince
+62. Nakhonsi-Chulabhorn
+63. Nakhonsi-Huasai
+64. Nakhonsi-Khanom
+65. Nakhonsi-Lansaka
+66. Nakhonsi-Nabon
+67. Nakhonsi-Pakphanang
+68. Nakhonsi-Phipun
+69. Nakhonsi-Phraphrom
+70. Nakhonsi-Porthanklai
+71. Nakhonsi-Promkiri
+72. Nakhonsi-Ronphibun
+73. Nakhonsi-SSJ
+74. Nakhonsi-Thamphannara
+75. Nakhonsi-Thungsong
+76. Nakhonsi-Thungyai
+77. Nakhonsithammarat-Thungsong
+78. Nan-ChiangKlang
+79. Nan-PuaCrownPrince
+80. Nan-SongKhwae, Nan-SongKwae = Nan-SongKhwae
+81. Nan-ThaWangPha
+82. NCI
+83. NSW
+84. NT
+85. Phayao-Phayao
+86. Phuket-Patong
+87. Pitsanulok-Bangkrathum
+88. Pitsanulok-Bangrakam
+89. Pitsanulok-NakhonthaiCrownPrince
+90. Pitsanulok-Noenmaprang
+91. Pitsanulok-PhromPhiram
+92. Pitsanulok-SSJ
+93. Pitsanulok-Wangthong
+94. Pitsanulok-Watbot
+95. Prachinburi-Nadi
+96. Prachuap-Bangsaphan
+97. Prachuap-Huahin
+98. Prachuap-Samroiyot
+99. Prachuap-Thapsakae
+100. Ratchaburi-Banpong
+101. Roi-Et-Phanomphrai
+102. Sakonnakhon-Sawang
+103. Samutprakarn-Bangbo = โรงพยาบาลบางบ่อ
+104. Samutprakarn-Bangchak = 
+105. Samutprakarn-Bangplee
+106. Samutprakarn-Samutprakarn
+107. Samutprakarn-SSJ
+108. Samutsongkhram-Somdet
+109. SKL
+110. Suphanburi-Somdej17
+111. TCRB
+112. Trang Hospital
+113. TVI
+114. 
+
+
+const companyMappings = {
+            'Avius': 'Avius',
+            'BLA': 'บริษัทนายบี',
+            'Buriram-Bandan': 'Buriram-Bandan',
+            'Buriram-Banmaichaipod': 'Buriram-Banmaichaipod',
+            'Buriram-Buriram': 'Buriram-Buriram',
+            'Buriram-Chaloemphrakiat': 'Buriram-Chaloemphrakiat',
+            'Buriram-Khaendong': 'Buriram-Khaendong',
+            'Buriram-Khumuang': 'Buriram-Khumuang',
+            'Buriram-Krasang': 'Buriram-Krasang',
+            'Buriram-Kumuang': 'Buriram-Kumuang',
+            'Buriram-Lahansai': 'Buriram-Lahansai',
+            'Buriram-Lamplaimat': 'Buriram-Lamplaimat',
+            'Buriram-NongKi': 'Buriram-NongKi',
+            'Buriram-Nonsuwan': 'Buriram-Nonsuwan',
+            'Buriram-Phutthaisong': 'Buriram-Phutthaisong',
+            'Buriram-PrakhonChai': 'Buriram-PrakhonChai',
+            'Buriram-Satuek': 'Buriram-Satuek',
+            'Buriram-SSJ': 'Buriram-SSJ',
+            'Chiangrai-prachanukroh': 'Chiangrai-prachanukroh',
+            'Chonburi-Banbung': 'โรงพยาบาลบ้านบึง',
+            'Chonburi-BangLamung': 'Chonburi-BangLamung',
+            'Chonburi-BoThong': 'Chonburi-BoThong',
+            'Chonburi-Kohchan': 'โรงพยาบาลเกาะจันทร์',
+            'Chonburi-KohSichang': 'โรงพยาบาลเกาะสีชัง',
+            'Chonburi-Laemchabang': 'Chonburi-Laemchabang',
+            'Chonburi-PhanatNikhom': 'โรงพยาบาลพนัสนิคม',
+            'Chonburi-PhanThong': 'Chonburi-PhanThong',
+            'Chonburi-Sattahip-KM10': 'โรงพยาบาลสัตหีบ',
+            'Chonburi-Watyan': 'โรงพยาบาลวัดญาณสังวราราม',
+            'CJ': 'CJ',
+            'DCSS': 'DCSS',
+            'Driessen': 'Driessen',
+            'E-VISA': 'E-VISA',
+            'ERC': 'ERC',
+            'ETax': 'ETax',
+            'Falcon': 'Falcon',
+            'GDCC': 'GDCC',
+            'GFMIS': 'GFMIS',
+            'IPST': 'IPST',
+            'Krabi-Kohlanta': 'Krabi-Kohlanta',
+            'Krabi-Lamthap': 'Krabi-Lamthap',
+            'KSAM': 'KSAM',
+            'Loei - Nonghin': 'โรงพยาบาลหนองหิน',        ///Loei-Nonghin
+            'Loei - Phukradueng': 'Loei-Phukradueng',
+            'Loei-Dansai': 'โรงพยาบาลสมเด็จพระยุพราชด่านซ้าย',
+            'Loei-Nahaeo': 'โรงพยาบาลนาแห้ว',
+            'Loei-Phakhao': 'โรงพยาบาลผาขาว',
+            'Loei-Phukradueng': 'โรงพยาบาลภูกระดึง',
+            'Loei-SSJ': 'Loei-SSJ',
+            'Loei-Thali': 'โรงพยาบาลท่าลี่',
+            'MRTA': 'MRTA',
+            'MSIG': 'MSIG',     ///Msig
+            'MTL': 'MTL',
+            'MY': 'MY',
+            'Nakhonsawan-Latyao': 'Nakhonsawan-Latyao',
+            'Nakhonsawan-Phaisalee': 'Nakhonsawan-Phaisalee',
+            'Nakhonsi-Bangkhan': 'Nakhonsi-Bangkhan',
+            'Nakhonsi-ChawangCrownPrince': 'Nakhonsi-ChawangCrownPrince',
+            'Nakhonsi-Chulabhorn': 'Nakhonsi-Chulabhorn',
+            'Nakhonsi-Huasai': 'Nakhonsi-Huasai',
+            'Nakhonsi-Khanom': 'Nakhonsi-Khanom',
+            'Nakhonsi-Lansaka': 'Nakhonsi-Lansaka',
+            'Nakhonsi-Nabon': 'Nakhonsi-Nabon',
+            'Nakhonsi-Pakphanang': 'Nakhonsi-Pakphanang',
+            'Nakhonsi-Phipun': 'Nakhonsi-Phipun',
+            'Nakhonsi-Phraphrom': 'Nakhonsi-Phraphrom',
+            'Nakhonsi-Porthanklaip': 'Nakhonsi-Porthanklaip',
+            'Nakhonsi-Promkiri': 'Nakhonsi-Promkiri',
+            'Nakhonsi-Ronphibun': 'Nakhonsi-Ronphibun',
+            'Nakhonsi-SSJ': 'Nakhonsi-SSJ',
+            'Nakhonsi-Thamphannara': 'Nakhonsi-Thamphannara',
+            'Nakhonsi-Thungsong': 'Nakhonsi-Thungsong',
+            'Nakhonsi-Thungyai': 'Nakhonsi-Thungyai',
+            'Nakhonsithammarat-Thungsong': 'Nakhonsithammarat-Thungsong',
+            'Nan-ChiangKlang': 'Nan-ChiangKlang',
+            'Nan-PuaCrownPrince': 'Nan-PuaCrownPrince',
+            'Nan-SongKhwae': 'Nan-SongKhwae',       ///Nan-SongKwae
+            'Nan-ThaWangPha': 'Nan-ThaWangPha',
+            'NCI': 'NCI',
+            'NSW': 'NSW',
+            'NT': 'NT',
+            'Phayao-Phayao': 'Phayao-Phayao',
+            'Phuket-Patong': 'Phuket-Patong',
+            'Pitsanulok-Bangkrathum': 'Pitsanulok-Bangkrathum',
+            'Pitsanulok-Bangrakam': 'Pitsanulok-Bangrakam',
+            'Pitsanulok-NakhonthaiCrownPrince': 'Pitsanulok-NakhonthaiCrownPrince',
+            'Pitsanulok-Noenmaprang': 'Pitsanulok-Noenmaprang',
+            'Pitsanulok-PhromPhiram': 'Pitsanulok-PhromPhiram',
+            'Pitsanulok-SSJ': 'Pitsanulok-SSJ',
+            'Pitsanulok-Wangthong': 'Puttanulok-Wangthong',
+            'Pitsanulok-Watbot': 'Pitsanulok-Watbot',
+            'Prachinburi-Nadi': 'Prachinburi-Nadi',
+            'Prachuap-Bangsaphan': 'Prachuap-Bangsaphan',
+            'Prachuap-Huahin': 'Prachuap-Huahin',
+            'Prachuap-Samroiyot': 'Prachuap-Samroiyot',
+            'Prachuap-Thapsakae': 'Prachuap-Thapsakae',
+            'Ratchaburi-Banpong': 'Ratchaburi-Banpong',
+            'Roi-Et-Phanomphrai': 'Roi-Et-Phanomphrai',
+            'Sakonnakhon-Sawang': 'Sakonnakhon-Sawang',
+            'Samutprakarn-Bangbo': 'โรงพยาบาลบางบ่อ',
+            'Samutprakarn-Bangchak': 'โรงพยาบาลบางจาก',
+            'Samutprakarn-Bangplee': 'Samutprakarn-Bangplee',
+            'Samutprakarn-Samutprakarn': 'Samutprakarn-Samutprakarn',
+            'Samutprakarn-SSJ': 'Samutprakarn-SSJ',
+            'Samutsongkhram-Somdet': 'Samutsongkhram-Somdet',
+            'SKL': 'SKL',
+            'Suphanburi-Somdej17': 'Suphanburi-Somdej17',
+            'TCRB': 'TCRB',
+            'Trang Hospital': 'Trang Hospital',
+            'TVI': 'TVI',

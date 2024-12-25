@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,9 +12,12 @@
             --secondary: #404040;
             --accent: #2D2D2D;
         }
-        
-        * { box-sizing: border-box; font-family: 'Sarabun', sans-serif; }
-        
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
@@ -26,7 +30,7 @@
             align-items: center;
             padding: 1rem;
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .logo {
@@ -52,7 +56,7 @@
             border-radius: 8px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .form-group {
@@ -128,11 +132,52 @@
         .nav-btn:hover {
             background: #e0e0e0;
         }
+
+        /* เพิ่มสไตล์สำหรับส่วนกรองบริษัท */
+        .company-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .company-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .company-checkbox:hover {
+            background: #e0e0e0;
+        }
+
+        .company-checkbox input {
+            margin-right: 0.5rem;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .search-box {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
 </head>
+
 <body>
     <div class="header">
-        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
         <h1>ติดตามงาน</h1>
         <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
     </div>
@@ -152,50 +197,38 @@
                 ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์
                 <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
             </div>
-            <div id="debug" class="debug-info" style="display: none;">
-                <!-- ส่วนแสดงข้อมูล Debug -->
+            <div id="debug" class="debug-info" style="display: none;"></div>
+        </div>
+
+        <div class="card">
+            <h2>เลือกบริษัทที่ต้องการกรอง</h2>
+            <div class="filter-controls">
+                <input type="text" id="searchCompany" class="search-box" placeholder="ค้นหาชื่อบริษัท...">
+                <button onclick="selectAllCompanies()" class="nav-btn">เลือกทั้งหมด</button>
+                <button onclick="deselectAllCompanies()" class="nav-btn">ยกเลิกทั้งหมด</button>
+            </div>
+            <div id="companyFilters" class="company-filters">
+                <!-- Company checkboxes will be dynamically added here -->
             </div>
         </div>
 
         <div class="card">
-            <h2>Template สำหรับทุกบริษัท</h2>
+            <h2>Template สำหรับบริษัทที่เลือก</h2>
             <div id="allTemplates" class="preview-area">
                 โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...
             </div>
-            <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem;">คัดลอก Template ทั้งหมด</button>
+            <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem;">คัดลอก Template
+                ทั้งหมด</button>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        // เพิ่มการ map ระหว่างรหัสบริษัทและชื่อเต็ม
         const companyMappings = {
-            'COM-A': 'บริษัทนายเอ',
-            'COM-B': 'บริษัทนายบี',
-            'COM-C': 'บริษัทนายซี',
-            'COM-D': 'บริษัทนายดี',
-            'COM-E': 'บริษัทนายอี',
-            'COM-F': 'บริษัทนายเอฟ',
-            'COM-G': 'บริษัทนายจี',
-            'COM-H': 'บริษัทนายเอช',
-            'COM-I': 'บริษัทนายไอ',
-            'COM-J': 'บริษัทนายเจ',
-            'COM-K': 'บริษัทนายเค',
-            'COM-L': 'บริษัทนายแอล',
-            'COM-M': 'บริษัทนายเอ็ม',
-            'COM-N': 'บริษัทนายเอ็น',
-            'COM-O': 'บริษัทนายโอ',
-            'COM-P': 'บริษัทนายพี',
-            'COM-Q': 'บริษัทนายคิว',
-            'COM-R': 'บริษัทนายอาร์',
-            'COM-S': 'บริษัทนายเอส',
-            'COM-T': 'บริษัทนายที',
-            'COM-U': 'บริษัทนายยู',
-            'COM-V': 'บริษัทนายวี',
-            'COM-W': 'บริษัทนายดับเบิลยู',
-            'COM-X': 'บริษัทนายเอ็กซ์',
-            'COM-Y': 'บริษัทนายวาย',
-            'COM-Z': 'บริษัทนายแซด'
+            'บริษัท กรุงเทพประกันชีวิต จำกัด (มหาชน)': 'BLA',
+            'BLA': 'BLA',
+            'บริษัท หลักทรัพย์จัดการกองทุน กรุงศรี จำกัด (บลจ.กรุงศรี)': 'KSAM',
+            'KSAM': 'KSAM'
         };
 
         const months = [
@@ -205,10 +238,68 @@
         ];
 
         let excelData = null;
+        let companies = new Set();
+        let selectedCompanies = new Set();
 
         function formatDateToEng(date) {
             const d = new Date(date);
             return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
+        // ฟังก์ชันสำหรับจัดการการค้นหาบริษัท
+        document.getElementById('searchCompany').addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const checkboxes = document.querySelectorAll('.company-checkbox');
+
+            checkboxes.forEach(checkbox => {
+                const companyName = checkbox.textContent.toLowerCase();
+                checkbox.style.display = companyName.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        function selectAllCompanies() {
+            const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                selectedCompanies.add(checkbox.value);
+            });
+            updateAllTemplates();
+        }
+
+        function deselectAllCompanies() {
+            const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                selectedCompanies.delete(checkbox.value);
+            });
+            updateAllTemplates();
+        }
+
+        function updateCompanyFilters() {
+            const filtersContainer = document.getElementById('companyFilters');
+            filtersContainer.innerHTML = '';
+
+            Array.from(companies).sort().forEach(company => {
+                const label = document.createElement('label');
+                label.className = 'company-checkbox';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = company;
+                checkbox.checked = selectedCompanies.has(company);
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        selectedCompanies.add(this.value);
+                    } else {
+                        selectedCompanies.delete(this.value);
+                    }
+                    updateAllTemplates();
+                });
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(company));
+                filtersContainer.appendChild(label);
+            });
         }
 
         const dropZone = document.getElementById('dropZone');
@@ -236,40 +327,30 @@
         });
 
         function getCompanyCode(customerName) {
-            // ค้นหารหัสบริษัทจากชื่อที่ได้จาก Excel
-            for (const [code, name] of Object.entries(companyMappings)) {
-                if (customerName === code || customerName === name) {
-                    return code;
-                }
-            }
-            return customerName; // ถ้าไม่พบ mapping ให้ใช้ชื่อเดิม
-        }
-
-        function getCompanyFullName(customerName) {
-            // ค้นหาชื่อเต็มของบริษัทจากชื่อที่ได้จาก Excel
-            for (const [code, name] of Object.entries(companyMappings)) {
-                if (customerName === code || customerName === name) {
-                    return name;
-                }
-            }
-            return customerName; // ถ้าไม่พบ mapping ให้ใช้ชื่อเดิม
+            return companyMappings[customerName] || customerName;
         }
 
         function handleFile(file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 try {
                     const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
+                    const workbook = XLSX.read(data, { type: 'array' });
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     excelData = XLSX.utils.sheet_to_json(firstSheet);
-                    
-                    debugDiv.style.display = 'block';
-                    debugDiv.innerHTML = `อ่านข้อมูลสำเร็จ: ${excelData.length} รายการ<br>
-                                        ตัวอย่างข้อมูลแรก: ${JSON.stringify(excelData[0])}<br>
-                                        Columns: ${Object.keys(excelData[0]).join(', ')}`;
-                    
+
+                    // เพิ่มบริษัททั้งหมดจาก companyMappings
+                    companies = new Set([
+                        ...new Set(excelData.map(incident => getCompanyCode(incident.Customer))),
+                        ...new Set(Object.values(companyMappings))
+                    ]);
+                    selectedCompanies = new Set(companies); // เลือกทุกบริษัทเริ่มต้น
+
+                    updateCompanyFilters();
                     updateAllTemplates();
+
+                    debugDiv.style.display = 'block';
+                    debugDiv.innerHTML = `อ่านข้อมูลสำเร็จ: ${excelData.length} รายการ`;
                 } catch (error) {
                     debugDiv.style.display = 'block';
                     debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
@@ -278,31 +359,31 @@
             reader.readAsArrayBuffer(file);
         }
 
+
         document.getElementById('followDate').addEventListener('change', updateAllTemplates);
 
         function updateAllTemplates() {
             const date = document.getElementById('followDate').value;
-            
-            if (!date) {
+
+            if (!date || !excelData) {
                 return;
             }
 
             const formattedDate = formatDateToEng(date);
             let allTemplates = '';
 
-            // สร้าง template สำหรับทุกบริษัท
-            Object.entries(companyMappings).forEach(([code, fullName], index) => {
+            // สร้าง templates สำหรับบริษัทที่เลือกทั้งหมด
+            Array.from(selectedCompanies).sort().forEach((companyCode, index) => {
                 if (index > 0) {
                     allTemplates += '\n\n' + '='.repeat(50) + '\n\n';
                 }
 
-                // หาข้อมูล incidents สำหรับบริษัทนี้
-                const incidents = excelData ? excelData.filter(item => 
-                    item.Customer === code || item.Customer === fullName
-                ) : [];
+                const incidents = excelData.filter(incident =>
+                    getCompanyCode(incident.Customer) === companyCode
+                );
 
-                allTemplates += `เรียนทีม ${fullName}\n`;
-                allTemplates += `${code} Follow Incident ${formattedDate}\n\n`;
+                allTemplates += `เรียนทีม ${companyCode}\n`;
+                allTemplates += `${companyCode} Follow Incident ${formattedDate}\n\n`;
 
                 if (incidents.length > 0) {
                     allTemplates += `ขอแจ้ง Incident ที่มีสถานะยังคง Pending ครับ\n`;
@@ -327,4 +408,5 @@
         }
     </script>
 </body>
+
 </html>
