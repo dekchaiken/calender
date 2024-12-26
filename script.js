@@ -268,6 +268,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 }); 
 
+async function getUserShift(userId) {
+    const today = new Date();
+    const shifts = getShiftsForDay(today);
+    return shifts.find(shift => shift.color === userTeam);
+}
+
+async function checkShiftExchanges() {
+    if (!firebase.auth().currentUser) return;
+    
+    const userId = firebase.auth().currentUser.uid;
+    const exchanges = await firebase.firestore()
+        .collection('shift_exchanges')
+        .where('exchangeWith', '==', userId)
+        .where('status', '==', 'pending')
+        .get();
+    
+    if (!exchanges.empty) {
+        // แสดง notification หรือแจ้งเตือนในหน้า dashboard
+        const notification = document.createElement('div');
+        notification.className = 'notification notification-pending';
+        notification.innerHTML = `
+            คุณมี ${exchanges.size} คำขอแลกเวรที่รอการตอบรับ 
+            <a href="exchange.html">คลิกเพื่อดูรายละเอียด</a>
+        `;
+        
+        const header = document.querySelector('.header');
+        header.parentNode.insertBefore(notification, header.nextSibling);
+    }
+}
+
+
 // แสดงปฏิทิน
 function renderCalendar() {
     const container = document.getElementById('calendar-container');
@@ -382,4 +413,5 @@ async function exportToPDF() {
 document.addEventListener('DOMContentLoaded', () => {
     initializeSelectors();
     renderCalendar();
+    checkShiftExchanges(); // เพิ่มการเรียกใช้ฟังก์ชัน
 });

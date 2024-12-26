@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - Shift Exchange Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            color: var(--secondary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .exchange-history {
+            margin-top: 1rem;
+        }
+
+        .history-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .status-pending {
+            color: #f0ad4e;
+        }
+
+        .status-approved {
+            color: #5cb85c;
+        }
+
+        .status-rejected {
+            color: #d9534f;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
+        <h1>ระบบแลกเปลี่ยนกะงาน</h1>
+        <div class="user-container">
+            <span class="user-name" id="userDisplayName">Loading...</span>
+            <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- ฟอร์มขอแลกเปลี่ยนกะ -->
+        <div class="card">
+            <h2>สร้างคำขอแลกเปลี่ยนกะ</h2>
+            <form id="exchangeForm">
+                <div class="form-group">
+                    <label>วันที่ต้องการแลก:</label>
+                    <input type="date" class="form-control" id="exchangeDate" required>
+                </div>
+                <div class="form-group">
+                    <label>กะงานของคุณ:</label>
+                    <select class="form-control" id="yourShift" required>
+                        <option value="morning">เช้า (08:00-16:00)</option>
+                        <option value="afternoon">บ่าย (16:00-00:00)</option>
+                        <option value="night">ดึก (00:00-08:00)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ผู้ที่ต้องการแลกด้วย:</label>
+                    <select class="form-control" id="exchangeWith" required>
+                        <!-- จะถูกเติมด้วย JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>กะงานที่ต้องการแลก:</label>
+                    <select class="form-control" id="requestedShift" required>
+                        <option value="morning">เช้า (08:00-16:00)</option>
+                        <option value="afternoon">บ่าย (16:00-00:00)</option>
+                        <option value="night">ดึก (00:00-08:00)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>เหตุผล:</label>
+                    <textarea class="form-control" id="reason" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">ส่งคำขอแลกกะ</button>
+            </form>
+        </div>
+
+        <!-- คำขอที่รอการตอบรับ -->
+        <div class="card">
+            <h2>คำขอที่รอการตอบรับ</h2>
+            <div id="pendingRequests">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>วันที่</th>
+                            <th>ผู้ขอแลก</th>
+                            <th>กะที่ขอแลก</th>
+                            <th>เหตุผล</th>
+                            <th>สถานะ</th>
+                            <th>การดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingRequestsBody">
+                        <!-- จะถูกเติมด้วย JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ประวัติการแลกกะ -->
+        <div class="card">
+            <h2>ประวัติการแลกกะ</h2>
+            <div id="exchangeHistory">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>วันที่</th>
+                            <th>แลกกับ</th>
+                            <th>กะเดิม</th>
+                            <th>กะที่แลก</th>
+                            <th>เหตุผล</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <!-- จะถูกเติมด้วย JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase initialization
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+        });
+
+        const db = firebase.firestore();
+        let currentUser = null;
+
+        // เช็คสถานะการล็อกอิน
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                document.getElementById('userDisplayName').textContent = userData?.displayName || user.email;
+                
+                // โหลดข้อมูลผู้ใช้ทั้งหมดสำหรับ dropdown
+                loadUsers();
+                // โหลดคำขอที่รอดำเนินการ
+                loadPendingRequests();
+                // โหลดประวัติการแลกกะ
+                loadExchangeHistory();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // โหลดรายชื่อผู้ใช้สำหรับ dropdown
+        async function loadUsers() {
+            const usersSnapshot = await db.collection('users').get();
+            const select = document.getElementById('exchangeWith');
+            select.innerHTML = '<option value="">เลือกผู้ใช้...</option>';
+            
+            usersSnapshot.forEach(doc => {
+                const userData = doc.data();
+                if (doc.id !== currentUser.uid) { // ไม่แสดงชื่อตัวเอง
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.textContent = userData.displayName || userData.email;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        // ส่งคำขอแลกกะ
+        document.getElementById('exchangeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const exchangeData = {
+                requesterId: currentUser.uid,
+                requesterEmail: currentUser.email,
+                exchangeDate: document.getElementById('exchangeDate').value,
+                yourShift: document.getElementById('yourShift').value,
+                exchangeWithId: document.getElementById('exchangeWith').value,
+                requestedShift: document.getElementById('requestedShift').value,
+                reason: document.getElementById('reason').value,
+                status: 'pending',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('shiftExchanges').add(exchangeData);
+                alert('ส่งคำขอแลกกะเรียบร้อยแล้ว');
+                document.getElementById('exchangeForm').reset();
+                loadPendingRequests();
+                loadExchangeHistory();
+            } catch (error) {
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            }
+        });
+
+        // โหลดคำขอที่รอดำเนินการ
+        async function loadPendingRequests() {
+            const requestsSnapshot = await db.collection('shiftExchanges')
+                .where('status', '==', 'pending')
+                .where('exchangeWithId', '==', currentUser.uid)
+                .get();
+
+            const tbody = document.getElementById('pendingRequestsBody');
+            tbody.innerHTML = '';
+
+            requestsSnapshot.forEach(doc => {
+                const data = doc.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${new Date(data.exchangeDate).toLocaleDateString('th-TH')}</td>
+                    <td>${data.requesterEmail}</td>
+                    <td>${getShiftName(data.requestedShift)}</td>
+                    <td>${data.reason}</td>
+                    <td class="status-pending">รอการตอบรับ</td>
+                    <td>
+                        <button onclick="respondToRequest('${doc.id}', 'approved')" class="btn btn-primary">ยอมรับ</button>
+                        <button onclick="respondToRequest('${doc.id}', 'rejected')" class="btn btn-danger">ปฏิเสธ</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // โหลดประวัติการแลกกะ
+        async function loadExchangeHistory() {
+            const historySnapshot = await db.collection('shiftExchanges')
+                .where('requesterId', '==', currentUser.uid)
+                .orderBy('createdAt', 'desc')
+                .get();
+
+            const tbody = document.getElementById('historyBody');
+            tbody.innerHTML = '';
+
+            historySnapshot.forEach(doc => {
+                const data = doc.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${new Date(data.exchangeDate).toLocaleDateString('th-TH')}</td>
+                    <td>${data.exchangeWithEmail || 'รอการตอบรับ'}</td>
+                    <td>${getShiftName(data.yourShift)}</td>
+                    <td>${getShiftName(data.requestedShift)}</td>
+                    <td>${data.reason}</td>
+                    <td class="status-${data.status}">${getStatusText(data.status)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ตอบรับหรือปฏิเสธคำขอ
+        async function respondToRequest(requestId, response) {
+            try {
+                await db.collection('shiftExchanges').doc(requestId).update({
+                    status: response,
+                    respondedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    exchangeWithEmail: current
