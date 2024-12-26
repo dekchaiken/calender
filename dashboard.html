@@ -2,19 +2,55 @@
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cyfence - Shift schedule</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .header {
-            position: relative;
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            padding: 1rem;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        body {
+            background: #f5f5f5;
         }
 
         .user-container {
@@ -51,49 +87,19 @@
         }
 
         .logout-btn {
-            padding: 0.5rem 1rem;
             background: #ff4444;
             color: white;
             border: none;
+            padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
 
-        .logout-btn:hover {
-            background: #cc0000;
-        }
-
-        #loadingScreen {
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .logout-btn {
-            background: #ff4444;
-            color: white;
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            color: var(--secondary);
             border: none;
             padding: 8px 16px;
             border-radius: 4px;
@@ -112,173 +118,79 @@
             right: 20px;
         }
 
-        .user-container {
+        .header {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-left: auto;
-            padding: 0.5rem 1rem;
-            background: #f5f5f5;
-            border-radius: 8px;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: var(--shadow);
         }
 
-        .nav-btn:hover {
-            background: #e5a700;
-            transform: translateY(-2px);
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+            transition: transform 0.3s ease;
         }
 
-        .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    animation: fadeIn 0.3s ease-in-out;
-}
+        .logo:hover {
+            transform: scale(1.05);
+        }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
 
-.modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 25px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s ease-in-out;
-}
+        .announcements {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
 
-@keyframes slideIn {
-    from {
-        transform: translateY(-30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
+        .announcement-card {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1rem;
+        }
 
-.modal-title {
-    margin: 0 0 20px 0;
-    color: #2D2D2D;
-    font-size: 1.5em;
-    font-weight: 600;
-    padding-right: 25px;
-}
+        .announcement-card:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
 
-.team-time {
-    background-color: #f8f9fa;
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin: 15px 0;
-    font-size: 1.1em;
-    color: #2D2D2D;
-}
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
 
-.team-details {
-    margin-top: 20px;
-}
+        .menu-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
 
-.team-details h4 {
-    color: #2D2D2D;
-    margin: 0 0 15px 0;
-    font-size: 1.2em;
-}
+        .menu-card:hover {
+            transform: translateY(-5px);
+        }
 
-.team-details ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+        .menu-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #FDB813;
+        }
 
-.team-details li {
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
-}
+    
 
-.team-details li:last-child {
-    border-bottom: none;
-}
-
-.close-modal {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    color: #666;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s;
-}
-
-.close-modal:hover {
-    background-color: #f0f0f0;
-    color: #333;
-}
-
-.modal-title {
-    margin: 0;
-    color: #333;
-    font-size: 1.5em;
-}
-
-.team-time {
-    background-color: #f5f5f5;
-    padding: 10px;
-    border-radius: 4px;
-    margin: 10px 0;
-}
-
-.export-header {
-    text-align: center;
-    margin-bottom: 20px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-}
-
-.team-section {
-    margin: 20px 0;
-    padding: 15px;
-    border-radius: 8px;
-}
-
-.nav-btn {
-    padding: 8px 16px;
-    background: #FDB813;
-    color: #2D2D2D;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-weight: 600;
-}
-
-.nav-btn:hover {
-    background: #e5a700;
-    transform: translateY(-2px);
-}
-.team-section.red { background-color: rgba(255, 0, 0, 0.1); }
-.team-section.green { background-color: rgba(0, 255, 0, 0.1); }
-.team-section.blue { background-color: rgba(0, 0, 255, 0.1); }
-.team-section.yellow { background-color: rgba(255, 255, 0, 0.1); }
-
-        /* Update the admin button styles to match the new layout */
         .admin-btn {
             padding: 8px 16px;
             background: #FDB813;
@@ -294,6 +206,12 @@
             background: #e5a700;
             transform: translateY(-2px);
         }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -302,169 +220,56 @@
         <div class="spinner"></div>
         <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
     </div>
-
-    <div id="mainContent" style="display: none">
-        <div class="container">
-            <div class="header">
-                <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
-                    alt="Cyfence Logo" class="logo" />
-                <h1>Shift Schedule</h1>
-                <div class="user-container">
-                    <div class="user-info">
-                        <span class="user-name" id="userDisplayName">Loading...</span>
-                    </div>
-                    <button onclick="window.location.href='template.html'" class="export-btn">
-                        จัดการ Template
-                    </button>
-                    <button onclick="window.location.href='following.html'" class="export-btn">
-                        ติดตามงาน
-                    </button>
-                    <button onclick="window.location.href='exchange.html'" class="nav-btn">
-                        แลกเปลี่ยนเวร
-                    </button>
-                    <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
-                </div>
-            </div>
-
-            <div class="team-info">
-                <!-- Red Team -->
-                <div class="team-card red" onclick="toggleTeamMembers('red')">
-                    <h3>Shift A (Red Team)</h3>
-                    <div class="team-leader">
-                        <p>Leader: อธิราช</p>
-                    </div>
-                    <div class="team-members" id="red-members">
-                        <p>2. กฤตเมธ</p>
-                        <p>3. ศรัณยู</p>
-                        <p>4. ขจรพล</p>
-                        <p>5. ชานุพัทร</p>
-                        <p>6. ศรัณย์</p>
-                    </div>
-                    <div class="expand-icon">▼</div>
-                </div>
-
-                <!-- Green Team -->
-                <div class="team-card green" onclick="toggleTeamMembers('green')">
-                    <h3>Shift B (Green Team)</h3>
-                    <div class="team-leader">
-                        <p>Leader: ปพน</p>
-                    </div>
-                    <div class="team-members" id="green-members">
-                        <p>2. ณัฏฐดนัย</p>
-                        <p>3. ธนพงศ์</p>
-                        <p>4. ธนากร</p>
-                    </div>
-                    <div class="expand-icon">▼</div>
-                </div>
-
-                <!-- Blue Team -->
-                <div class="team-card blue" onclick="toggleTeamMembers('blue')">
-                    <h3>Shift C (Blue Team)</h3>
-                    <div class="team-leader">
-                        <p>Leader: กฤษฏ์</p>
-                    </div>
-                    <div class="team-members" id="blue-members">
-                        <p>2. วิศรุต</p>
-                        <p>3. พรภวิษย์</p>
-                        <p>4. มนต์เสกค์</p>
-                    </div>
-                    <div class="expand-icon">▼</div>
-                </div>
-
-                <!-- Yellow Team -->
-                <div class="team-card yellow" onclick="toggleTeamMembers('yellow')">
-                    <h3>Shift D (Yellow Team)</h3>
-                    <div class="team-leader">
-                        <p>Leader: พิสุทธิ์</p>
-                    </div>
-                    <div class="team-members" id="yellow-members">
-                        <p>2. วิษาโรจน์</p>
-                        <p>3. เจตนา</p>
-                        <p>4. วุฒิชัย</p>
-                    </div>
-                    <div class="expand-icon">▼</div>
-                </div>
-            </div>
-
-            <div class="controls">
-                <button onclick="changeMonth(-1)" class="nav-btn">
-                    ← เดือนก่อนหน้า
-                </button>
-                <div class="date-range">
-                    <select id="monthSelect"></select>
-                    <select id="yearSelect"></select>
-                </div>
-                <button onclick="changeMonth(1)" class="nav-btn">เดือนถัดไป →</button>
-            </div>
-
-            <div class="filters-container">
-                <div class="shift-filters">
-                    <label class="shift-filter">
-                        <input type="checkbox" value="red" checked class="shift-checkbox" onchange="updateFilters()" />
-                        <span class="checkmark red">Shift A - อธิราช</span>
-                    </label>
-                    <label class="shift-filter">
-                        <input type="checkbox" value="green" checked class="shift-checkbox"
-                            onchange="updateFilters()" />
-                        <span class="checkmark green">Shift B - ปพน</span>
-                    </label>
-                    <label class="shift-filter">
-                        <input type="checkbox" value="blue" checked class="shift-checkbox" onchange="updateFilters()" />
-                        <span class="checkmark blue">Shift C - กฤษฏ์</span>
-                    </label>
-                    <label class="shift-filter">
-                        <input type="checkbox" value="yellow" checked class="shift-checkbox"
-                            onchange="updateFilters()" />
-                        <span class="checkmark yellow">Shift D - พิสุทธิ์</span>
-                    </label>
-                </div>
-                <div class="filter-buttons">
-                    <button onclick="selectAllShifts(true)" class="filter-btn">
-                        เลือกทั้งหมด
-                    </button>
-                    <button onclick="selectAllShifts(false)" class="filter-btn">
-                        ยกเลิกทั้งหมด
-                    </button>
-                </div>
-            </div>
-
-            <div class="export-controls">
-                <div class="date-range">
-                    <div>
-                        <label>วันที่เริ่มต้น:</label>
-                        <select id="startMonthSelect" class="month-select"></select>
-                        <select id="startYearSelect" class="year-select"></select>
-                    </div>
-                    <div>
-                        <label>วันที่สิ้นสุด:</label>
-                        <select id="endMonthSelect" class="month-select"></select>
-                        <select id="endYearSelect" class="year-select"></select>
-                    </div>
-                </div>
-                <button onclick="exportToPDF()" class="export-btn">
-                    <i class="fas fa-file-pdf"></i>
-                    Export to PDF
-                </button>
-            </div>
-
-            <div id="calendar-container"></div>
+    <div id="mainContent" style="display: none"></div>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
+        <div class="user-container">
+            <span id="userDisplayName">Loading...</span>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
-        <div id="teamModal" class="modal">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h3 class="modal-title"></h3>
-                <div class="team-time"></div>
-                <div class="team-details"></div>
+    </div>
+
+    <div class="main-content">
+        <div class="announcements">
+            <h2>ประกาศล่าสุด</h2>
+            <div class="announcement-card">
+                <h3>การอัพเดทระบบ</h3>
+                <p>วันที่ 26 ธันวาคม 2024</p>
+                <p>ระบบได้รับการอัพเดทเพื่อเพิ่มประสิทธิภาพการทำงาน</p>
+            </div>
+            <div class="announcement-card">
+                <h3>แจ้งการตรวจสอบระบบ</h3>
+                <p>วันที่ 25 ธันวาคม 2024</p>
+                <p>จะมีการตรวจสอบระบบในวันที่ 27 ธันวาคม 2024</p>
             </div>
         </div>
-        
+
+        <div class="menu-grid">
+            <div class="menu-card" onclick="window.location.href='calendar.html'">
+                <div class="menu-icon">📅</div>
+                <h3>ตารางเวร</h3>
+            </div>
+            <div class="menu-card" onclick="window.location.href='template.html'">
+                <div class="menu-icon">📝</div>
+                <h3>จัดการ Template</h3>
+            </div>
+            <div class="menu-card" onclick="window.location.href='following.html'">
+                <div class="menu-icon">📊</div>
+                <h3>ติดตามงาน</h3>
+            </div>
+            <div class="menu-card" onclick="window.location.href='exchange.html'">
+                <div class="menu-icon">🔄</div>
+                <h3>แลกเปลี่ยนเวร</h3>
+            </div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
     <script>
+        // Firebase initialization
         firebase.initializeApp({
             apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
             authDomain: "cyfencedevbyken.firebaseapp.com",
@@ -473,58 +278,13 @@
             messagingSenderId: "632813871756",
             appId: "1:632813871756:web:57d674643f258ddd2e11a9",
         });
-
-        function toggleTeamMembers(team) {
-            const membersDiv = document.getElementById(`${team}-members`);
-            const teamCard = membersDiv.parentElement;
-            membersDiv.classList.toggle("show");
-            teamCard.classList.toggle("expanded");
-        }
-
-        function selectAllShifts(checked) {
-            document.querySelectorAll(".shift-checkbox").forEach((cb) => {
-                cb.checked = checked;
-            });
-            updateFilters();
-        }
-
-        function updateFilters() {
-            const selectedShifts = Array.from(
-                document.querySelectorAll(".shift-checkbox:checked")
-            ).map((cb) => cb.value);
-            // อัพเดทการแสดงผลตาม selectedShifts
-            updateCalendarDisplay(selectedShifts);
-        }
-
-        function logout() {
-            firebase
-                .auth()
-                .signOut()
-                .then(() => {
-                    window.location.href = "login.html";
-                });
-        }
-        const html2pdfScript = document.createElement('script');
-        html2pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-        document.head.appendChild(html2pdfScript);
-        // เพิ่มฟังก์ชันอื่นๆ ตามที่ต้องการ เช่น
-        // - updateCalendarDisplay()
-        // - exportToPDF()
-        // - changeMonth()
-        // รวมถึงการจัดการปฏิทินและการแสดงผลต่างๆ
     </script>
-    <script src="auth.js"></script>
-    <script src="script.js"></script>
     <script>
         // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
                 try {
-                    const userDoc = await firebase.firestore()
-                        .collection('users')
-                        .doc(user.uid)
-                        .get();
-
+                    const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
                     const userData = userDoc.data();
                     const displayElement = document.getElementById('userDisplayName');
 
@@ -534,19 +294,15 @@
                         displayElement.textContent = user.email;
                     }
 
-                    // Add admin button if user has admin role
                     if (userData?.role === 'admin') {
                         const userContainer = document.querySelector('.user-container');
                         const logoutBtn = document.querySelector('.logout-btn');
 
-                        // Create admin button if it doesn't exist
                         if (!document.querySelector('.admin-btn')) {
                             const adminBtn = document.createElement('button');
                             adminBtn.innerHTML = 'หน้า Admin';
                             adminBtn.className = 'admin-btn';
                             adminBtn.onclick = () => window.location.href = 'admin.html';
-
-                            // Insert before the logout button
                             userContainer.insertBefore(adminBtn, logoutBtn);
                         }
                     }
@@ -556,12 +312,14 @@
             }
         });
 
+
         function logout() {
             firebase.auth().signOut()
                 .then(() => window.location.href = 'login.html')
                 .catch(error => console.error('Logout error:', error));
         }
     </script>
+    <script src="auth.js"></script>
 </body>
 
 </html>

@@ -145,7 +145,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1500px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
@@ -206,7 +206,7 @@
 
         .company-filters {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 1rem;
             margin: 1rem 0;
         }
@@ -356,10 +356,166 @@
             <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem;">คัดลอก Template
                 ทั้งหมด</button>
         </div>
+        <div class="card">
+            <h2>หมายเหตุและวิธีการใช้งาน</h2>
+            <div class="info-content" style="background: #f8f8f8; padding: 1rem; border-radius: 8px;">
+                <h3 style="color: #2D2D2D; margin-bottom: 0.5rem;">การ Export Excel:</h3>
+                <ul style="list-style-type: disc; margin-left: 1.5rem;">
+                    <li>ระบบจะ Export เฉพาะบริษัทที่คุณเลือกในส่วน "เลือกบริษัทที่ต้องการกรอง"</li>
+                    <li>ไฟล์ Excel จะถูกแยกตามบริษัท โดยชื่อไฟล์จะเป็น: [ชื่อบริษัท]_Incidents_[วันที่].xlsx</li>
+                    <li>ข้อมูลจะถูกจัดเรียงตามลำดับ: Incident ID, Summary, Customer และข้อมูลอื่นๆ</li>
+                </ul>
+
+                <h3 style="color: #2D2D2D; margin: 1rem 0 0.5rem;">วิธีการใช้งาน:</h3>
+                <ol style="list-style-type: decimal; margin-left: 1.5rem;">
+                    <li>เลือกวันที่ติดตาม</li>
+                    <li>อัพโหลดไฟล์ Excel ที่ต้องการ</li>
+                    <li>เลือกบริษัทที่ต้องการจากรายการ</li>
+                    <li>กดปุ่ม "Export Excel แยกตามบริษัท" เพื่อดาวน์โหลดไฟล์</li>
+                </ol>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
+        const newStyles = `
+.company-group {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+}
+
+.company-group-content {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.company-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: #FDB813;
+    border-radius: 4px;
+    color: #2D2D2D;
+}
+
+.company-group-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.select-group-btn {
+    background-color: #2D2D2D;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 12px;
+}
+
+.select-group-btn:hover {
+    background-color: #404040;
+    transform: translateY(-1px);
+}
+
+.company-checkbox {
+    display: block;
+    padding: 8px;
+    margin: 2px 0;
+    background: #f8f8f8;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    font-size: 13px;
+}
+    
+.company-checkbox input[type="checkbox"] {
+    margin-right: 8px;
+    width: 14px;
+    height: 14px;
+}
+
+.company-checkbox:hover {
+    background: #f0f0f0;
+}
+
+.company-group-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.company-group-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.company-group-content::-webkit-scrollbar-thumb {
+    background: #FDB813;
+    border-radius: 4px;
+}
+
+.company-group-content::-webkit-scrollbar-thumb:hover {
+    background: #e5a700;
+}
+`;
+
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = newStyles;
+        document.head.appendChild(styleSheet);
+
+        const companyGroups = {
+            'Shift 1': {
+                name: 'Shift 1',
+                companies: ['Avius']
+            },
+            'Shift 2': {
+                name: 'Shift 2',
+                companies: ['BLA']
+            },
+            'Shift 3': {
+                name: 'Shift 3',
+                companies: ['TCRB']
+            },
+            'Shift 4': {
+                name: 'Shift 4',
+                companies: ['SKL']
+            },
+            'Shift 5': {
+                name: 'Shift 5',
+                companies: [
+                    'Buriram-Bandan',
+                    'Buriram-Banmaichaipod',
+                    'Buriram-Buriram',
+                    'Buriram-Chaloemphrakiat',
+                    'Buriram-Khaendong',
+                    'Buriram-Khumuang'
+                ]
+            }
+        };
+
+        const companyTypes = {
+            'Buriram-Bandan': 'hospital',
+            'Buriram-Banmaichaipod': 'hospital',
+            'Buriram-Buriram': 'hospital',
+            'Buriram-Chaloemphrakiat': 'hospital',
+            'Buriram-Khaendong': 'hospital',
+            'Buriram-Khumuang': 'hospital',
+
+            // Add other hospitals here
+            'Avius': 'company',
+            'BLA': 'company',
+            'KSAM': 'company'
+        };
+
         const companyMappings = {
             'บริษัท อาวียุส ยูแอลดี จำกัด': 'Avius',
             'Avius': 'Avius',
@@ -371,12 +527,12 @@
             'Buriram-Banmaichaipod': 'Buriram-Banmaichaipod',
             'โรงพยาบาลบุรีรัมย์ จ.บุรีรัมย์': 'Buriram-Buriram',
             'Buriram-Buriram': 'Buriram-Buriram',
-            'โรงพยาบาลเฉลิมพระเกียรติ จ.บุรีรัมย์': 'Buriram-Chaloemphrakiat',
-            'Buriram-Chaloemphrakiat': 'Buriram-Chaloemphrakiat',
-            'โรงพยาบาลแคนดง จ.บุรีรัมย์': 'Buriram-Khaendong',
-            'Buriram-Khaendong': 'Buriram-Khaendong',
-            'บริษัท หลักทรัพย์จัดการกองทุน กรุงศรี จำกัด (บลจ.กรุงศรี)': 'KSAM',
-            'KSAM': 'KSAM'
+        };
+
+        const companyFullNames = {
+            'Buriram-Bandan': 'เจ้าหน้าที่โรงพยาบาลบ้านด่าน',
+            'Buriram-Khaendong': 'เจ้าหน้าที่โรงพยาบาลแคนดง',
+            // Add other hospital full names here
         };
 
         const months = [
@@ -423,31 +579,123 @@
             updateAllTemplates();
         }
 
+        function generateTemplate(companyCode, formattedDate, incidents) {
+            const isHospital = companyTypes[companyCode] === 'hospital';
+            let template = '';
+
+            if (isHospital) {
+                // Template for hospitals
+                template += `เรียนทีม ${companyFullNames[companyCode]}\n`;
+                template += `${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
+            } else {
+                // Template for regular companies
+                template += `เรียนทีม ${companyCode}\n`;
+                template += `${companyCode} Follow Incident ${formattedDate}\n\n`;
+            }
+
+            if (incidents.length > 0) {
+                template += `ขอแจ้ง Incident ที่มีสถานะยังคง Pending ครับ\n`;
+                incidents.forEach((incident, idx) => {
+                    template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
+                });
+                template += `\nรายละเอียดเพิ่มเติม ส่งให้ทาง E-mail ครับ\n`;
+                template += `หากดำเนินการแก้ไขแล้ว รบกวนแจ้งปิดเคสด้วยครับ`;
+            } else {
+                template += `- ไม่พบ Incident ที่มีสถานะ pending ครับ`;
+            }
+
+            return template;
+        }
+
         function updateCompanyFilters() {
             const filtersContainer = document.getElementById('companyFilters');
             filtersContainer.innerHTML = '';
 
-            Array.from(companies).sort().forEach(company => {
-                const label = document.createElement('label');
-                label.className = 'company-checkbox';
+            Object.entries(companyGroups).forEach(([groupId, group]) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'company-group';
 
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.value = company;
-                checkbox.checked = selectedCompanies.has(company);
-                checkbox.addEventListener('change', function () {
-                    if (this.checked) {
-                        selectedCompanies.add(this.value);
-                    } else {
-                        selectedCompanies.delete(this.value);
+                const header = document.createElement('div');
+                header.className = 'company-group-header';
+
+                const groupTitle = document.createElement('h3');
+                groupTitle.className = 'company-group-title';
+                groupTitle.textContent = group.name;
+                header.appendChild(groupTitle);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.display = 'flex';
+                buttonContainer.style.gap = '8px';
+
+                const selectGroupBtn = document.createElement('button');
+                selectGroupBtn.textContent = 'Select All';
+                selectGroupBtn.className = 'select-group-btn';
+                selectGroupBtn.onclick = () => selectGroupCompanies(group.companies);
+
+                const unselectGroupBtn = document.createElement('button');
+                unselectGroupBtn.textContent = 'Unselect All';
+                unselectGroupBtn.className = 'select-group-btn';
+                unselectGroupBtn.style.backgroundColor = '#404040';
+                unselectGroupBtn.onclick = () => unselectGroupCompanies(group.companies);
+
+                buttonContainer.appendChild(selectGroupBtn);
+                buttonContainer.appendChild(unselectGroupBtn);
+                header.appendChild(buttonContainer);
+
+                groupDiv.appendChild(header);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'company-group-content';
+
+                group.companies.forEach(company => {
+                    if (companies.has(company)) {
+                        const label = document.createElement('label');
+                        label.className = 'company-checkbox';
+
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = company;
+                        checkbox.checked = selectedCompanies.has(company);
+                        checkbox.addEventListener('change', function () {
+                            if (this.checked) {
+                                selectedCompanies.add(this.value);
+                            } else {
+                                selectedCompanies.delete(this.value);
+                            }
+                            updateAllTemplates();
+                        });
+
+                        label.appendChild(checkbox);
+                        label.appendChild(document.createTextNode(company));
+                        contentDiv.appendChild(label);
                     }
-                    updateAllTemplates();
                 });
 
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(company));
-                filtersContainer.appendChild(label);
+                groupDiv.appendChild(contentDiv);
+                filtersContainer.appendChild(groupDiv);
             });
+        }
+
+        function unselectGroupCompanies(groupCompanies) {
+            groupCompanies.forEach(company => {
+                if (companies.has(company)) {
+                    selectedCompanies.delete(company);
+                    const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                    if (checkbox) checkbox.checked = false;
+                }
+            });
+            updateAllTemplates();
+        }
+
+        function selectGroupCompanies(groupCompanies) {
+            groupCompanies.forEach(company => {
+                if (companies.has(company)) {
+                    selectedCompanies.add(company);
+                    const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                    if (checkbox) checkbox.checked = true;
+                }
+            });
+            updateAllTemplates();
         }
 
         const dropZone = document.getElementById('dropZone');
@@ -512,7 +760,6 @@
 
         function updateAllTemplates() {
             const date = document.getElementById('followDate').value;
-
             if (!date || !excelData) {
                 return;
             }
@@ -520,32 +767,27 @@
             const formattedDate = formatDateToEng(date);
             let allTemplates = '';
 
-            // สร้าง templates สำหรับบริษัทที่เลือกทั้งหมด
-            Array.from(selectedCompanies).sort().forEach((companyCode, index) => {
-                if (index > 0) {
-                    allTemplates += '\n\n' + '='.repeat(50) + '\n\n';
-                }
+            // กรองเฉพาะบริษัทที่ถูกเลือกจาก checkbox
+            const selectedCompaniesArray = Array.from(selectedCompanies).sort();
 
-                const incidents = excelData.filter(incident =>
-                    getCompanyCode(incident.Customer) === companyCode
-                );
+            selectedCompaniesArray.forEach((companyCode, index) => {
+                const checkbox = document.querySelector(`input[type="checkbox"][value="${companyCode}"]`);
 
-                allTemplates += `เรียนทีม ${companyCode}\n`;
-                allTemplates += `${companyCode} Follow Incident ${formattedDate}\n\n`;
+                // สร้าง template เฉพาะบริษัทที่ถูกเลือกใน checkbox
+                if (checkbox && checkbox.checked) {
+                    if (index > 0) {
+                        allTemplates += '\n\n' + '='.repeat(50) + '\n\n';
+                    }
 
-                if (incidents.length > 0) {
-                    allTemplates += `ขอแจ้ง Incident ที่มีสถานะยังคง Pending ครับ\n`;
-                    incidents.forEach((incident, idx) => {
-                        allTemplates += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
-                    });
-                    allTemplates += `\nรายละเอียดเพิ่มเติม ส่งให้ทาง E-mail ครับ\n`;
-                    allTemplates += `หากดำเนินการแก้ไขแล้ว รบกวนแจ้งปิดเคสด้วยครับ`;
-                } else {
-                    allTemplates += `- ไม่พบ Incident ที่มีสถานะ pending ครับ`;
+                    const incidents = excelData.filter(incident =>
+                        getCompanyCode(incident.Customer) === companyCode
+                    );
+
+                    allTemplates += generateTemplate(companyCode, formattedDate, incidents);
                 }
             });
 
-            document.getElementById('allTemplates').textContent = allTemplates;
+            document.getElementById('allTemplates').textContent = allTemplates || 'กรุณาเลือกบริษัทที่ต้องการดู Template';
         }
 
         function copyAllTemplates() {
@@ -560,47 +802,47 @@
                 return;
             }
 
-            // สร้าง workbook สำหรับแต่ละบริษัทที่เลือก
-            Array.from(selectedCompanies).forEach(companyCode => {
-                // กรองข้อมูลเฉพาะบริษัทที่เลือก
+            const date = document.getElementById('followDate').value;
+            if (!date) {
+                alert('กรุณาเลือกวันที่ก่อน Export');
+                return;
+            }
+
+            const formattedDate = formatDateToEng(date);
+            const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]:checked');
+
+            if (checkboxes.length === 0) {
+                alert('กรุณาเลือกอย่างน้อย 1 บริษัท');
+                return;
+            }
+
+            checkboxes.forEach(checkbox => {
+                const companyCode = checkbox.value;
                 const companyData = excelData.filter(incident =>
                     getCompanyCode(incident.Customer) === companyCode
                 );
 
-                if (companyData.length === 0) return; // ข้ามถ้าไม่มีข้อมูล
+                if (companyData.length === 0) return;
 
-                // จัดรูปแบบข้อมูลใหม่ตามลำดับที่ต้องการ
-                const formattedData = companyData.map(incident => {
-                    const orderedIncident = {
-                        'Incident ID': incident['Incident ID'],
-                        'Customer': incident['Customer'],
-                        'Summary': incident['Summary'],
-                        // เพิ่มฟิลด์อื่นๆ ที่เหลือตามลำดับเดิม
-                        ...Object.keys(incident)
-                            .filter(key => !['Incident ID', 'Customer', 'Summary'].includes(key))
-                            .reduce((obj, key) => ({
-                                ...obj,
-                                [key]: incident[key]
-                            }), {})
-                    };
-                    return orderedIncident;
-                });
+                const formattedData = companyData.map(incident => ({
+                    'Incident ID': incident['Incident ID'],
+                    'Summary': incident['Summary'],
+                    'Customer': incident['Customer'],
+                    ...Object.keys(incident)
+                        .filter(key => !['Incident ID', 'Customer', 'Summary'].includes(key))
+                        .reduce((obj, key) => ({
+                            ...obj,
+                            [key]: incident[key]
+                        }), {})
+                }));
 
-                // สร้าง workbook ใหม่
                 const wb = XLSX.utils.book_new();
-
-                // แปลงข้อมูลที่จัดเรียงใหม่เป็น worksheet
                 const ws = XLSX.utils.json_to_sheet(formattedData);
-
-                // เพิ่ม worksheet ลงใน workbook
                 XLSX.utils.book_append_sheet(wb, ws, companyCode);
 
-                // สร้างชื่อไฟล์พร้อมวันที่
-                const date = document.getElementById('followDate').value;
-                const formattedDate = date ? formatDateForFileName(date) : formatDateForFileName(new Date());
-                const fileName = `${companyCode}_Incidents_${formattedDate}.xlsx`;
+                // Generate filename based on company type
+                const fileName = `${companyCode} Follow Incident ${formattedDate}.xlsx`;
 
-                // ดาวน์โหลดไฟล์
                 XLSX.writeFile(wb, fileName);
             });
         }

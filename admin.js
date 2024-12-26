@@ -18,13 +18,22 @@ async function handleUserSubmit(event) {
     const status = document.getElementById('status').value;
 
     try {
-        const userRef = db.collection('users').doc();
-        await userRef.set({
+        // ตรวจสอบว่ามีอีเมลนี้ในระบบหรือไม่
+        const userSnapshot = await db.collection('users')
+            .where('email', '==', email)
+            .get();
+
+        if (!userSnapshot.empty) {
+            throw new Error('อีเมลนี้มีในระบบแล้ว');
+        }
+
+        // สร้างข้อมูลใหม่ด้วย ID ที่ไม่ซ้ำกัน
+        await db.collection('users').add({
             email,
             displayName,
             role,
             status,
-            isApproved: false, // เปลี่ยนเป็น false by default
+            isApproved: false,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -34,7 +43,7 @@ async function handleUserSubmit(event) {
         alert('เพิ่มผู้ใช้งานสำเร็จ');
     } catch (error) {
         console.error('Error adding user:', error);
-        alert('เกิดข้อผิดพลาดในการเพิ่มผู้ใช้งาน');
+        alert('เกิดข้อผิดพลาด: ' + error.message);
     }
 }
 
@@ -48,19 +57,31 @@ async function loadUsers() {
         usersSnapshot.forEach(doc => {
             const userData = doc.data();
             const row = document.createElement('tr');
-            // แก้ไขการแสดงผลให้แสดงสถานะ isApproved
+            
+            let statusDisplay = '';
+            let actionButtons = '';
+            
+            // กำหนดการแสดงสถานะ
+            if (userData.isApproved === false) {
+                statusDisplay = '<span class="status-badge status-pending">รอการอนุมัติ</span>';
+                actionButtons = `
+                    <button onclick="approveUser('${doc.id}')" class="action-btn edit-btn">อนุมัติ</button>
+                    <button onclick="deleteUser('${doc.id}')" class="action-btn delete-btn">ลบ</button>
+                `;
+            } else {
+                statusDisplay = '<span class="status-badge status-active">อนุมัติแล้ว</span>';
+                actionButtons = `
+                    <button onclick="editUser('${doc.id}')" class="action-btn edit-btn">แก้ไข</button>
+                    <button onclick="deleteUser('${doc.id}')" class="action-btn delete-btn">ลบ</button>
+                `;
+            }
+
             row.innerHTML = `
                 <td>${userData.email || ''}</td>
                 <td>${userData.displayName || ''}</td>
                 <td>${userData.role || 'user'}</td>
-                <td>${userData.isApproved ? 'อนุมัติแล้ว' : 'รอการอนุมัติ'}</td>
-                <td>
-                    ${!userData.isApproved ? 
-                        `<button onclick="approveUser('${doc.id}')" class="action-btn edit-btn">อนุมัติ</button>` : 
-                        `<button onclick="editUser('${doc.id}')" class="action-btn edit-btn">แก้ไข</button>`
-                    }
-                    <button onclick="deleteUser('${doc.id}')" class="action-btn delete-btn">ลบ</button>
-                </td>
+                <td>${statusDisplay}</td>
+                <td>${actionButtons}</td>
             `;
             userTableBody.appendChild(row);
         });
@@ -74,36 +95,18 @@ async function loadUsers() {
 
 async function approveUser(userId) {
     try {
-        // เช็คว่า document มีอยู่จริงก่อน
         const userRef = db.collection('users').doc(userId);
-        const doc = await userRef.get();
         
-        if (!doc.exists) {
-            throw new Error('ไม่พบข้อมูลผู้ใช้');
-        }
-
-        // ทำการอัพเดทและรอให้เสร็จสมบูรณ์
         await userRef.update({
             isApproved: true,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // เช็คว่าการอัพเดทสำเร็จจริง
-        const updatedDoc = await userRef.get();
-        const updatedData = updatedDoc.data();
-        
-        if (updatedData.isApproved !== true) {
-            throw new Error('การอัพเดทไม่สำเร็จ');
-        }
-
-        // โหลดข้อมูลใหม่เพื่ออัพเดทหน้าจอ
         await loadUsers();
-        
-        console.log('User approved successfully:', userId);
         alert('อนุมัติผู้ใช้งานสำเร็จ');
     } catch (error) {
-        console.error('Error in approveUser:', error);
-        alert(`เกิดข้อผิดพลาดในการอนุมัติผู้ใช้งาน: ${error.message}`);
+        console.error('Error approving user:', error);
+        alert('เกิดข้อผิดพลาดในการอนุมัติผู้ใช้งาน');
     }
 }
 

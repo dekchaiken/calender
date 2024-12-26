@@ -12,6 +12,9 @@
             --primary-dark: #e5a700;
             --secondary: #404040;
             --accent: #2D2D2D;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
@@ -20,6 +23,53 @@
             font-family: 'Sarabun', sans-serif;
             margin: 0;
             padding: 0;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--secondary);
+            font-size: 0.875rem;
         }
 
         #loadingScreen {
@@ -155,10 +205,10 @@
         }
 
         .add-user-btn {
-            background: var(--primary);
-            color: var(--accent);
+            background: #fdb813;
+            color: rgb(0, 0, 0);
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
             margin-bottom: 1rem;

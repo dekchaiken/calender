@@ -46,36 +46,26 @@
             margin-bottom: 2rem;
         }
         
-        .form-group { 
-            margin-bottom: 1rem; 
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--secondary);
-        }
-        
-        input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(253,184,19,0.2);
-        }
-
-        .error-text {
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
+        .modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
         }
         
         button {
@@ -97,84 +87,40 @@
             box-shadow: 0 4px 12px rgba(253,184,19,0.2);
         }
         
-        #message {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            border-radius: 4px;
-            text-align: center;
-            display: none;
+        .back-btn {
+            background-color: #f0f0f0;
         }
-        
-        .error { background: #FFE8E8; color: #D63031; }
-        .success { background: #E8F5E9; color: #2ECC71; }
     </style>
 </head>
 <body>
     <div class="register-container">
         <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
-        <form id="registerForm" onsubmit="handleRegister(event)">
-            <h2>สมัครสมาชิก</h2>
-            <div class="form-group">
-                <label for="displayName">ชื่อ-นามสกุล</label>
-                <input type="text" id="displayName" required>
-                <div class="error-text" id="nameError">กรุณากรอกชื่อ-นามสกุล</div>
-            </div>
-            <div class="form-group">
-                <label for="email">อีเมล</label>
-                <input type="email" id="email" required>
-                <div class="error-text" id="emailError">กรุณากรอกอีเมลให้ถูกต้อง</div>
-            </div>
-            <div class="form-group">
-                <label for="password">รหัสผ่าน</label>
-                <input type="password" id="password" required>
-                <div class="error-text" id="passwordError">รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร</div>
-            </div>
-            <div class="form-group">
-                <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
-                <input type="password" id="confirmPassword" required>
-                <div class="error-text" id="confirmPasswordError">รหัสผ่านไม่ตรงกัน</div>
-            </div>
-            <button type="submit">สมัครสมาชิก</button>
-            <div id="message"></div>
-        </form>
+        <h2>สมัครสมาชิก</h2>
+        <button onclick="showContactAdmin()">สมัครสมาชิก</button>
+        <button onclick="window.location.href='login.html'" class="back-btn">กลับไปหน้าเข้าสู่ระบบ</button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="firebase-config.js"></script>
+    <div class="modal" id="adminContactModal">
+        <div class="modal-content">
+            <h3>กรุณาติดต่อผู้ดูแลระบบ</h3>
+            <p>เพื่อขอสิทธิ์การเข้าใช้งานระบบ กรุณาติดต่อผู้ดูแลระบบโดยตรง</p>
+            <button onclick="closeModal()">ตกลง</button>
+        </div>
+    </div>
+
     <script>
-        async function handleRegister(event) {
-    event.preventDefault();
-    
-    const displayName = document.getElementById('displayName').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    try {
-        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        
-        await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
-            displayName,
-            email,
-            isApproved: false,
-            role: 'user',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        function showContactAdmin() {
+            document.getElementById('adminContactModal').style.display = 'flex';
+        }
 
-        showMessage('การสมัครสมาชิกสำเร็จ กรุณารอการอนุมัติจากผู้ดูแลระบบ', 'success');
-        await firebase.auth().signOut();
-        setTimeout(() => window.location.href = 'login.html', 3000);
-    } catch (error) {
-        showMessage(error.message, 'error');
-    }
-}
+        function closeModal() {
+            document.getElementById('adminContactModal').style.display = 'none';
+        }
 
-        function showMessage(text, type) {
-            const msg = document.getElementById('message');
-            msg.textContent = text;
-            msg.className = type;
-            msg.style.display = 'block';
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('adminContactModal')) {
+                closeModal();
+            }
         }
     </script>
 </body>

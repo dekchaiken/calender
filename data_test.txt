@@ -37,9 +37,24 @@ COM-E
 ลองนำมาใส่ตาม Template ให้มันออกมาแบบที่สั่งไปได้มั้ย
 ช่วยทำให้ที แต่ขอเป็น html นะ อธิบายภาษาไทย
 
-
-
-
+const companyMappings = {
+            'บริษัท อาวียุส ยูแอลดี จำกัด': 'Avius',
+            'Avius': 'Avius',
+            'บริษัท กรุงเทพประกันชีวิต จำกัด (มหาชน)': 'BLA',
+            'BLA': 'BLA',
+            'โรงพยาบาลบ้านด่าน จ.บุรีรัมย์': 'Buriram-Bandan',
+            'Buriram-Bandan': 'Buriram-Bandan',
+            'โรงพยาบาลบ้านใหม่ไชยพจน์ จ.บุรีรัมย์': 'Buriram-Banmaichaipod',
+            'Buriram-Banmaichaipod': 'Buriram-Banmaichaipod',
+            'โรงพยาบาลบุรีรัมย์ จ.บุรีรัมย์': 'Buriram-Buriram',
+            'Buriram-Buriram': 'Buriram-Buriram',
+            'โรงพยาบาลเฉลิมพระเกียรติ จ.บุรีรัมย์': 'Buriram-Chaloemphrakiat',
+            'Buriram-Chaloemphrakiat': 'Buriram-Chaloemphrakiat',
+            'โรงพยาบาลแคนดง จ.บุรีรัมย์': 'Buriram-Khaendong',
+            'Buriram-Khaendong': 'Buriram-Khaendong',
+            'บริษัท หลักทรัพย์จัดการกองทุน กรุงศรี จำกัด (บลจ.กรุงศรี)': 'KSAM',
+            'KSAM': 'KSAM'
+        };
 
 
 
@@ -62,7 +77,7 @@ COM-E
 7. Buriram-Khaendong
 8. Buriram-Khumuang
 9. Buriram-Krasang
-10. Buriram-Kumuang
+10. Buriram-Kumuang  ------
 11. Buriram-Lahansai
 12. Buriram-Lamplaimat
 13. Buriram-NongKi
@@ -70,7 +85,7 @@ COM-E
 15. Buriram-Phutthaisong
 16. Buriram-PrakhonChai
 17. Buriram-Satuek
-18. Buriram-SSJ
+18. Buriram-SSJ   ///// สำนักงาน
 19. Carabao 
 20. Chiangmai-Sansai
 21. Chiangmai-SSJ
@@ -103,7 +118,7 @@ COM-E
 48. Loei-Dansai = โรงพยาบาลสมเด็จพระยุพราชด่านซ้าย
 49. Loei-Nahaeo = โรงพยาบาลนาแห้ว
 50. Loei-Phakhao = โรงพยาบาลผาขาว
-51. Loei-Phukradueng = โรงพยาบาลภูกระดึง
+51. 
 52. Loei-SSJ = 
 53. Loei-Thali = โรงพยาบาลท่าลี่
 54. MRTA
@@ -129,7 +144,7 @@ COM-E
 74. Nakhonsi-Thamphannara
 75. Nakhonsi-Thungsong
 76. Nakhonsi-Thungyai
-77. Nakhonsithammarat-Thungsong
+77. 
 78. Nan-ChiangKlang
 79. Nan-PuaCrownPrince
 80. Nan-SongKhwae, Nan-SongKwae = Nan-SongKhwae
