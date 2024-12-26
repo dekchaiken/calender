@@ -14,9 +14,9 @@
             --accent: #2D2D2D;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        
-        * { 
-            box-sizing: border-box; 
+
+        * {
+            box-sizing: border-box;
             font-family: 'Sarabun', sans-serif;
             margin: 0;
             padding: 0;
@@ -48,7 +48,7 @@
                 transform: rotate(360deg);
             }
         }
-        
+
         body {
             min-height: 100vh;
             background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
@@ -288,17 +288,18 @@
             .container {
                 padding: 0 1rem;
             }
-            
+
             .card {
                 padding: 1.5rem;
             }
-            
+
             .company-filters {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
     <div id="loadingScreen">
         <div class="spinner"></div>
@@ -340,6 +341,7 @@
                 <input type="text" id="searchCompany" class="search-box" placeholder="ค้นหาชื่อบริษัท...">
                 <button onclick="selectAllCompanies()" class="nav-btn">เลือกทั้งหมด</button>
                 <button onclick="deselectAllCompanies()" class="logout-btn">ยกเลิกทั้งหมด</button>
+                <button onclick="exportExcelByCompany()" class="btn btn-primary">Export Excel แยกตามบริษัท</button>
             </div>
             <div id="companyFilters" class="company-filters">
                 <!-- Company checkboxes will be dynamically added here -->
@@ -539,6 +541,65 @@
             navigator.clipboard.writeText(templates)
                 .then(() => alert('คัดลอก Template ทั้งหมดสำเร็จ'))
                 .catch(err => alert('เกิดข้อผิดพลาดในการคัดลอก: ' + err));
+        }
+        function exportExcelByCompany() {
+            if (!excelData || selectedCompanies.size === 0) {
+                alert('กรุณาอัพโหลดไฟล์ Excel และเลือกบริษัทก่อน');
+                return;
+            }
+
+            // สร้าง workbook สำหรับแต่ละบริษัทที่เลือก
+            Array.from(selectedCompanies).forEach(companyCode => {
+                // กรองข้อมูลเฉพาะบริษัทที่เลือก
+                const companyData = excelData.filter(incident =>
+                    getCompanyCode(incident.Customer) === companyCode
+                );
+
+                if (companyData.length === 0) return; // ข้ามถ้าไม่มีข้อมูล
+
+                // จัดรูปแบบข้อมูลใหม่ตามลำดับที่ต้องการ
+                const formattedData = companyData.map(incident => {
+                    const orderedIncident = {
+                        'Incident ID': incident['Incident ID'],
+                        'Customer': incident['Customer'],
+                        'Summary': incident['Summary'],
+                        // เพิ่มฟิลด์อื่นๆ ที่เหลือตามลำดับเดิม
+                        ...Object.keys(incident)
+                            .filter(key => !['Incident ID', 'Customer', 'Summary'].includes(key))
+                            .reduce((obj, key) => ({
+                                ...obj,
+                                [key]: incident[key]
+                            }), {})
+                    };
+                    return orderedIncident;
+                });
+
+                // สร้าง workbook ใหม่
+                const wb = XLSX.utils.book_new();
+
+                // แปลงข้อมูลที่จัดเรียงใหม่เป็น worksheet
+                const ws = XLSX.utils.json_to_sheet(formattedData);
+
+                // เพิ่ม worksheet ลงใน workbook
+                XLSX.utils.book_append_sheet(wb, ws, companyCode);
+
+                // สร้างชื่อไฟล์พร้อมวันที่
+                const date = document.getElementById('followDate').value;
+                const formattedDate = date ? formatDateForFileName(date) : formatDateForFileName(new Date());
+                const fileName = `${companyCode}_Incidents_${formattedDate}.xlsx`;
+
+                // ดาวน์โหลดไฟล์
+                XLSX.writeFile(wb, fileName);
+            });
+        }
+
+        // ฟังก์ชันช่วยจัดรูปแบบวันที่สำหรับชื่อไฟล์
+        function formatDateForFileName(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}${month}${day}`;
         }
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
