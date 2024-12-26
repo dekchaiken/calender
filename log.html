@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - Logs Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .nav-btn, .logout-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn {
+            background: #f0f0f0;
+            color: var(--secondary);
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .logs-table th, .logs-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logs-table th {
+            background: #f8f8f8;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .export-btn {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .clear-btn {
+            background: #f0f0f0;
+            color: var(--secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .status-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loadingScreen" style="position: fixed; inset: 0; background: rgba(255, 255, 255, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000;">
+        <div class="spinner"></div>
+        <div id="loadingMessage">กำลังตรวจสอบสิทธิ์...</div>
+    </div>
+    <div id="mainContent" style="display: none"></div>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+        <h1 class="admin-title">บันทึกการใช้งานระบบ</h1>
+        <div class="user-container">
+            <span class="user-name" id="userDisplayName">Loading...</span>
+            <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้า Admin</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="actionFilter">ประเภทการกระทำ</label>
+                    <select id="actionFilter">
+                        <option value="">ทั้งหมด</option>
+                        <option value="login">เข้าสู่ระบบ</option>
+                        <option value="login_failed">เข้าสู่ระบบไม่สำเร็จ</option>
+                        <option value="register">สมัครสมาชิก</option>
+                        <option value="page_access">เข้าใช้งานหน้าต่างๆ</option>
+                        <option value="unauthorized_access">พยายามเข้าถึงส่วนที่ไม่มีสิทธิ์</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="dateStart">วันที่เริ่มต้น</label>
+                    <input type="date" id="dateStart">
+                </div>
+                <div class="filter-group">
+                    <label for="dateEnd">วันที่สิ้นสุด</label>
+                    <input type="date" id="dateEnd">
+                </div>
+                <div class="filter-group">
+                    <label for="userFilter">ผู้ใช้งาน</label>
+                    <input type="text" id="userFilter" placeholder="ค้นหาตาม email...">
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button onclick="applyFilters()" class="action-btn export-btn">ค้นหา</button>
+                <button onclick="clearFilters()" class="action-btn clear-btn">ล้างตัวกรอง</button>
+                <button onclick="exportToCSV()" class="action-btn export-btn">ส่งออก CSV</button>
+            </div>
+
+            <table class="logs-table">
+                <thead>
+                    <tr>
+                        <th>เวลา</th>
+                        <th>ผู้ใช้งาน</th>
+                        <th>การกระทำ</th>
+                        <th>รายละเอียด</th>
+                        <th>User Agent</th>
+                        <th>สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody id="logsTableBody">
+                    <!-- Logs will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // Add admin check at the beginning
+        firebase.auth().onAuthStateChanged(async (user) => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const mainContent = document.getElementById('mainContent');
+            const loadingMessage = document.getElementById('loadingMessage');
+
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const userDoc = await firebase.firestore()
+                    .collection('users')
+                    .doc(user.uid)
+                    .get();
+
+                const userData = userDoc.data();
+                
+                // Check if user is admin
+                if (!userData || userData.role !== 'admin') {
+                    loadingMessage.textContent = 'ไม่มีสิทธิ์เข้าถึงหน้านี้';
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                    return;
+                }
+
+                // Update display name
+                const displayElement = document.getElementById('userDisplayName');
+                if (userData?.displayName) {
+                    displayElement.textContent = userData.displayName;
+                } else {
+                    displayElement.textContent = user.email;
+                }
+
+                // Show main content
+                loadingScreen.style.display = 'none';
+                mainContent.style.display = 'block';
+
+                // Initial load of logs
+                fetchLogs();
+
+            } catch (error) {
+                console.error('Error checking user permissions:', error);
+                loadingMessage.textContent = 'เกิดข้อผิดพลาดในการตรวจสอบสิทธิ์';
+            }
+        });
+
+        // ... (rest of the existing log page scripts remain the same) ...
+    </script>
+    <script>
+        let currentLogs = [];
+
+        async function fetchLogs() {
+            const db = firebase.firestore();
+            const actionFilter = document.getElementById('actionFilter').value;
+            const dateStart = document.getElementById('dateStart').value;
+            const dateEnd = document.getElementById('dateEnd').value;
+            const userFilter = document.getElementById('userFilter').value.toLowerCase();
+
+            let query = db.collection('logs').orderBy('timestamp', 'desc');
+
+            if (dateStart) {
+                query = query.where('timestamp', '>=', new Date(dateStart));
+            }
+            if (dateEnd) {
+                query = query.where('timestamp', '<=', new Date(dateEnd + 'T23:59:59'));
+            }
+
+            const snapshot = await query.get();
+            currentLogs = [];
+
+            snapshot.forEach(doc => {
+                const log = doc.data();
+                if ((!actionFilter || log.action === actionFilter) &&
+                    (!userFilter || log.userId.toLowerCase().includes(userFilter))) {
+                    currentLogs.push({
+                        ...log,
+                        id: doc.id
+                    });
+                }
+            });
+
+            displayLogs();
+        }
+
+        function displayLogs() {
+            const tbody = document.getElementById('logsTableBody');
+            tbody.innerHTML = '';
+
+            currentLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                const timestamp = log.timestamp?.toDate() || new Date();
+                
+                tr.innerHTML = `
+                    <td>${timestamp.toLocaleString('th-TH')}</td>
+                    <td>${log.userId || '-'}</td>
+                    <td>${getActionDisplay(log.action)}</td>
+                    <td>${log.details || '-'}</td>
+                    <td>${log.userAgent || '-'}</td>
+                    <td>${getStatusBadge(log.action)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getActionDisplay(action) {
+            const actionMap = {
+                'login': 'เข้าสู่ระบบ',
+                'login_failed': 'เข้าสู่ระบบไม่สำเร็จ',
+                'register': 'สมัครสมาชิก',
+                'page_access': 'เข้าใช้งานหน้า',
+                'unauthorized_access': 'พยายามเข้าถึงส่วนที่ไม่มีสิทธิ์',
+                'logout': 'ออกจากระบบ'
+            };
+            return actionMap[action] || action;
+        }
+
+        function getStatusBadge(action) {
+            let className, text;
+            switch(action) {
+                case 'login':
+                case 'register':
+                    className = 'status-success';
+                    text = 'สำเร็จ';
+                    break;
+                case 'login_failed':
+                case 'unauthorized_access':
+                    className = 'status-error';
+                    text = 'ไม่สำเร็จ';
+                    break;
+                default:
+                    className = 'status-warning';
+                    text = 'ปกติ';
+            }
+            return `<span class="status-badge ${className}">${text}</span>`;
+        }
+
+        function exportToCSV() {
+            if (currentLogs.length === 0) {
+                alert('ไม่พบข้อมูลสำหรับส่งออก');
+                return;
+            }
+
+            const headers = ['วันที่-เวลา', 'ผู้ใช้งาน', 'การกระทำ', 'รายละเอียด', 'User Agent'];
+            const csvRows = [headers];
+
+            currentLogs.forEach(log => {
+                const timestamp = log.timestamp?.toDate() || new Date();
+                csvRows.push([
+                    timestamp.toLocaleString('th-TH'),
+                    log.userId || '-',
+                    getActionDisplay(log.action),
+                    log.details || '-',
+                    log.userAgent || '-'
+                ]);
+            });
+
+            const csvContent = csvRows.map(row => row.join(',')).join('\n');
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `system_logs_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        function applyFilters() {
+            fetchLogs();
+        }
+
+        function clearFilters() {
+            document.getElementById('actionFilter').value = '';
+            document.getElementById('dateStart').value = '';
+            document.getElementById('dateEnd').value = '';
+            document.getElementById('userFilter').value = '';
+            fetchLogs();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLogs();
+        });
+
+        // User display name update
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
+
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+                    
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            }
+        });
+
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
+    </script>
+</body>
+</html>
