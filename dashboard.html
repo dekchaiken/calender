@@ -127,6 +127,142 @@
             transform: translateY(-2px);
         }
 
+        .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-title {
+    margin: 0 0 20px 0;
+    color: #2D2D2D;
+    font-size: 1.5em;
+    font-weight: 600;
+    padding-right: 25px;
+}
+
+.team-time {
+    background-color: #f8f9fa;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-size: 1.1em;
+    color: #2D2D2D;
+}
+
+.team-details {
+    margin-top: 20px;
+}
+
+.team-details h4 {
+    color: #2D2D2D;
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+}
+
+.team-details ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.team-details li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.team-details li:last-child {
+    border-bottom: none;
+}
+
+.close-modal {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: #666;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-modal:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.modal-title {
+    margin: 0;
+    color: #333;
+    font-size: 1.5em;
+}
+
+.team-time {
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.export-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.team-section {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.team-section.red { background-color: rgba(255, 0, 0, 0.1); }
+.team-section.green { background-color: rgba(0, 255, 0, 0.1); }
+.team-section.blue { background-color: rgba(0, 0, 255, 0.1); }
+.team-section.yellow { background-color: rgba(255, 255, 0, 0.1); }
+
         /* Update the admin button styles to match the new layout */
         .admin-btn {
             padding: 8px 16px;
@@ -295,6 +431,15 @@
 
             <div id="calendar-container"></div>
         </div>
+        <div id="teamModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3 class="modal-title"></h3>
+                <div class="team-time"></div>
+                <div class="team-details"></div>
+            </div>
+        </div>
+        
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>

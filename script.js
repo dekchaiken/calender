@@ -2,6 +2,48 @@
 let currentDate = new Date();
 let activeFilters = ['red', 'green', 'blue', 'yellow'];
 
+// ข้อมูลทีมต่างๆ (ใส่ไว้ด้านบนของไฟล์ script.js)
+const teamData = {
+    red: {
+        name: 'Shift A (Red Team)',
+        leader: 'อธิราช',
+        members: [
+            'กฤตเมธ',
+            'ศรัณยู',
+            'ขจรพล',
+            'ชานุพัทร',
+            'ศรัณย์'
+        ]
+    },
+    green: {
+        name: 'Shift B (Green Team)',
+        leader: 'ปพน',
+        members: [
+            'ณัฏฐดนัย',
+            'ธนพงศ์',
+            'ธนากร'
+        ]
+    },
+    blue: {
+        name: 'Shift C (Blue Team)',
+        leader: 'กฤษฏ์',
+        members: [
+            'วิศรุต',
+            'พรภวิษย์',
+            'มนต์เสกค์'
+        ]
+    },
+    yellow: {
+        name: 'Shift D (Yellow Team)',
+        leader: 'พิสุทธิ์',
+        members: [
+            'วิษาโรจน์',
+            'เจตนา',
+            'วุฒิชัย'
+        ]
+    }
+};
+
 // ข้อมูลเดือนภาษาไทย
 const thaiMonths = [
     'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
@@ -168,6 +210,11 @@ function createCalendarMonth(year, month) {
             const shiftDiv = document.createElement('div');
             shiftDiv.className = `shift shift-${shift.color}`;
             shiftDiv.textContent = `${shift.time} ${shift.name}`;
+            shiftDiv.style.cursor = 'pointer';
+            shiftDiv.onclick = (e) => {
+                e.stopPropagation();
+                showShiftDetails(shift, shift.time);
+            };
             dayElement.appendChild(shiftDiv);
         });
 
@@ -200,20 +247,59 @@ function toggleTeamMembers(teamColor) {
 
 // Add this to your existing document.addEventListener('DOMContentLoaded', ...)
 document.addEventListener('DOMContentLoaded', () => {
-    // Your existing code...
-    
     // Initially hide all team members
     const allTeamMembers = document.querySelectorAll('.team-members');
     allTeamMembers.forEach(members => {
         members.classList.remove('show');
     });
-});
+    const closeModal = document.querySelector('.close-modal');
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            const modal = document.getElementById('teamModal');
+            modal.style.display = 'none';
+        });
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('teamModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+}); 
 
 // แสดงปฏิทิน
 function renderCalendar() {
     const container = document.getElementById('calendar-container');
     container.innerHTML = '';
     container.appendChild(createCalendarMonth(currentDate.getFullYear(), currentDate.getMonth()));
+}
+
+function showShiftDetails(shift, time) {
+    const modal = document.getElementById('teamModal');
+    const teamInfo = teamData[shift.color];
+    
+    modal.querySelector('.modal-title').textContent = teamInfo.name;
+    modal.querySelector('.team-time').innerHTML = `<strong>เวลาทำงาน:</strong> ${time}`;
+    
+    const detailsHTML = `
+        <h4>รายละเอียดทีม</h4>
+        <ul>
+            <li><strong>หัวหน้าทีม:</strong> ${teamInfo.leader}</li>
+            <li><strong>สมาชิกทีม:</strong></li>
+            ${teamInfo.members.map(member => `<li>- ${member}</li>`).join('')}
+        </ul>
+    `;
+    
+    modal.querySelector('.team-details').innerHTML = detailsHTML;
+    modal.style.display = 'block';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('teamModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
 }
 
 // ฟังก์ชันเปลี่ยนเดือน
@@ -240,6 +326,27 @@ async function exportToPDF() {
     const pdfContainer = document.createElement('div');
     pdfContainer.className = 'pdf-container';
 
+    const teamDetailsSection = document.createElement('div');
+    teamDetailsSection.innerHTML = `
+        <div class="export-header">
+            <h2>ตารางเวรการปฏิบัติงาน</h2>
+            <p>ประจำเดือน ${thaiMonths[startMonth]} - ${thaiMonths[endMonth]} ${startYear + 543}</p>
+        </div>
+        
+        ${Object.entries(teamData).map(([color, team]) => `
+            <div class="team-section ${color}">
+                <h3>${team.name}</h3>
+                <p><strong>หัวหน้าทีม:</strong> ${team.leader}</p>
+                <p><strong>สมาชิกทีม:</strong></p>
+                <ul>
+                    ${team.members.map(member => `<li>${member}</li>`).join('')}
+                </ul>
+            </div>
+        `).join('')}
+    `;
+    
+    pdfContainer.appendChild(teamDetailsSection);
+
     let currentYear = startYear;
     let currentMonth = startMonth;
 
@@ -257,14 +364,13 @@ async function exportToPDF() {
     // กำหนดค่าการส่งออก PDF
     const opt = {
         margin: 10,
-        filename: `ตารางเวร_${thaiMonths[startMonth]}_${startYear + 543}_${thaiMonths[endMonth]}_${endYear + 543}.pdf`,
+        filename: `ตารางเวร_${thaiMonths[startMonth]}_${startYear + 543}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     try {
-        // สร้างและดาวน์โหลด PDF
         await html2pdf().set(opt).from(pdfContainer).save();
     } catch (error) {
         console.error('เกิดข้อผิดพลาดในการสร้าง PDF:', error);
