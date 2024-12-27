@@ -143,13 +143,14 @@
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 2rem;
+            overflow-x: hidden;
+            /* ป้องกันการเลื่อนแนวนอน */
         }
 
         .announcements {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            overflow-x: hidden;
+            /* ป้องกันการเลื่อนแนวนอน */
         }
 
         .announcement-card {
@@ -177,6 +178,11 @@
             cursor: pointer;
             transition: transform 0.2s;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%; /* Ensure the card takes the full height of its container */
         }
 
         .menu-card:hover {
@@ -189,7 +195,168 @@
             color: #FDB813;
         }
 
-    
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90vh;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* เพิ่ม style สำหรับส่วนโพสต์ */
+        .create-post-btn {
+            background: var(--primary);
+            color: var(--accent);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .create-post-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .post-card {
+            width: 100%;
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1rem;
+            word-wrap: break-word;
+            /* ตัดคำเมื่อยาวเกินไป */
+            overflow-wrap: break-word;
+        }
+
+        .post-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .post-content {
+            width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            /* ช่วยตัดคำในภาษาไทย */
+            hyphens: auto;
+        }
+
+        .post-text {
+            white-space: pre-wrap;
+            /* รักษารูปแบบการขึ้นบรรทัดใหม่ */
+            width: 100%;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .post-content p {
+            margin-bottom: 1rem;
+            /* ระยะห่างระหว่างย่อหน้า */
+        }
+
+        .post-content.expanded {
+            max-height: none;
+            /* ไม่จำกัดความสูง */
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #0066cc;
+            cursor: pointer;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            text-decoration: underline;
+        }
+
+        .announcements {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            max-height: 740px;
+            /* จำกัดความสูงของกล่องประกาศ */
+            overflow-y: auto;
+            /* เพิ่ม scroll bar เมื่อเนื้อหาเกิน */
+        }
+
+        .view-all-btn {
+            background: var(--secondary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 1rem;
+            transition: all 0.3s;
+        }
+
+        .view-all-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .delete-post-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .delete-post-btn:hover {
+            background: #cc0000;
+        }
+
 
         .admin-btn {
             padding: 8px 16px;
@@ -205,6 +372,12 @@
         .admin-btn:hover {
             background: #e5a700;
             transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
@@ -233,38 +406,59 @@
 
     <div class="main-content">
         <div class="announcements">
-            <h2>ประกาศล่าสุด 📢 </h2>
-            <div class="announcement-card">
-                <h3>การอัพเดททดสอบระบบ</h3>
-                <p>วันที่ 27 ธันวาคม 2024</p>
-                <p>- อัพเดตระบบสำหรับติดตามงาน</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center;">
+                    <h2>ประกาศล่าสุด 📢</h2>
+                    <button onclick="window.location.href='all-posts.html'" class="view-all-btn">
+                        ดูทั้งหมด
+                    </button>
+                </div>
+                <button onclick="window.location.href='create-post.html'" class="create-post-btn">
+                    สร้างประกาศใหม่
+                </button>
             </div>
-            <div class="announcement-card">
-                <h3>ปิดปรับปรุง</h3>
-                <p>วันที่ 25 ธันวาคม 2024</p>
-                <p>จะเปิดให้ทดสอบระบบในวันที่ 27 ธันวาคม 2024</p>
+            <div id="posts-container">
+                <!-- โพสต์จะถูกเพิ่มที่นี่ด้วย JavaScript -->
             </div>
         </div>
 
         <div class="menu-grid">
             <div class="menu-card" onclick="window.location.href='calendar.html'">
                 <div class="menu-icon">📅</div>
-                <h3>ตารางเวร</h3>
+                <h2>ตารางเวร</h2>
             </div>
             <div class="menu-card" onclick="window.location.href='template.html'">
                 <div class="menu-icon">📝</div>
-                <h3>จัดการ Template</h3>
+                <h2>จัดการ Template</h2>
             </div>
             <div class="menu-card" onclick="window.location.href='following.html'">
                 <div class="menu-icon">📊</div>
-                <h3>ติดตามงาน</h3>
+                <h2>ติดตามงาน</h2>
             </div>
             <div class="menu-card" onclick="window.location.href='exchange.html'">
                 <div class="menu-icon">🔄</div>
-                <h3>แลกเปลี่ยนเวร</h3>
+                <h2>แลกเปลี่ยนเวร</h2>
             </div>
         </div>
     </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <footer style="text-align: center; padding: 1rem; background: #f0f0f0; color: #666; font-size: 0.9rem;">
+        Dashboard เวอร์ชัน 1.0.0 | © 2024 Cyfence | จัดทำโดยทีมพัฒนา NT
+    </footer>
+    <footer style="text-align: center; padding: 1rem; background: #f0f0f0; color: #666; font-size: 0.9rem;">
+        <a href="contact.html" style="margin-right: 1rem;">ติดต่อเรา</a>
+        <a href="about.html" style="margin-right: 1rem;">เกี่ยวกับเรา</a>
+        <a href="faq.html">คำถามที่พบบ่อย</a>
+    </footer>
+    <footer style="text-align: center; padding: 1rem; background: #f0f0f0; color: #666; font-size: 0.9rem;">
+        หมายเหตุ: ข้อมูลทั้งหมดในระบบนี้ได้รับการปกป้องด้วยมาตรการรักษาความปลอดภัยขั้นสูงสุด
+    </footer>
+            
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -280,7 +474,111 @@
             appId: "1:632813871756:web:57d674643f258ddd2e11a9",
         });
     </script>
+
     <script>
+        // เพิ่มฟังก์ชันสำหรับแสดงโพสต์
+        async function loadPosts() {
+            const postsContainer = document.getElementById('posts-container');
+            const currentUser = firebase.auth().currentUser;
+
+            try {
+                const querySnapshot = await firebase.firestore()
+                    .collection('posts')
+                    .orderBy('createdAt', 'desc')
+                    .limit(6)
+                    .get();
+
+                postsContainer.innerHTML = '';
+
+                querySnapshot.forEach(doc => {
+                    const post = doc.data();
+                    const postDate = post.createdAt ? new Date(post.createdAt.seconds * 1000) : new Date();
+                    const isAuthor = currentUser && post.authorId === currentUser.uid;
+
+                    // สร้าง HTML สำหรับรูปภาพ
+                    const imageHtml = post.image
+                        ? `
+                        <div class="post-image">
+                            <img src="${post.image}" 
+                                 alt="รูปภาพประกอบ" 
+                                 style="max-width: 300px; margin: 0.5rem; cursor: pointer;"
+                                 onclick="openImageModal('${post.image}')"
+                            >
+                        </div>
+                    `
+                        : '';
+
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post-card';
+                    postElement.innerHTML = `
+                    <div class="post-header">
+                        <h3 class="post-title">${post.title}</h3>
+                        <div class="post-actions">
+                            ${isAuthor ? `
+                                <button onclick="deletePost('${doc.id}')" class="delete-post-btn">
+                                    ลบ
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="post-meta">
+                        โพสต์โดย: ${post.authorName} | 
+                        วันที่: ${postDate.toLocaleDateString('th-TH')}
+                    </div>
+                    <div class="post-content">
+                        <p class="post-text">${post.content}</p>
+                        ${imageHtml}
+                    </div>
+                `;
+
+                    postsContainer.appendChild(postElement);
+                });
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                postsContainer.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดประกาศ</p>';
+            }
+        }
+
+        // ฟังก์ชันเปิด Modal แสดงรูปภาพ
+        function openImageModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = "block";
+            modalImg.src = imageUrl;
+        }
+
+        // ปิด Modal เมื่อคลิกที่เครื่องหมาย X
+        document.querySelector('.close').onclick = function () {
+            document.getElementById('imageModal').style.display = "none";
+        }
+
+        // ปิด Modal เมื่อคลิกนอกรูปภาพ
+        window.onclick = function (event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // ฟังก์ชันลบโพสต์
+        async function deletePost(postId) {
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะลบประกาศนี้?')) return;
+
+            try {
+                await firebase.firestore().collection('posts').doc(postId).delete();
+                alert('ลบประกาศสำเร็จ');
+                loadPosts();
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('เกิดข้อผิดพลาดในการลบประกาศ');
+            }
+        }
+        //โหลดโพสต์เมื่อเปิดหน้า
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                loadPosts();
+            }
+        });
         // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {

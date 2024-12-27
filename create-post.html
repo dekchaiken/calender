@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สร้างประกาศใหม่ - Cyfence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #f5f5f5;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+        }
+
+        .main-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        /* เพิ่ม style สำหรับส่วนรูปภาพ */
+        .image-preview {
+            max-width: 300px;
+            margin-top: 1rem;
+        }
+
+        .image-upload {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Style สำหรับ Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90vh;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .warning-text {
+            color: #ff4444;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: var(--secondary);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #ff4444;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+        <h1>สร้างประกาศใหม่</h1>
+    </div>
+
+    <div class="main-content">
+        <form id="postForm">
+            <div class="form-group">
+                <label for="title">หัวข้อประกาศ</label>
+                <input type="text" id="title" required>
+            </div>
+            <div class="form-group">
+                <label for="content">เนื้อหา</label>
+                <textarea id="content" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="image">รูปภาพ (ไม่จำเป็น, สูงสุด 1 รูป)</label>
+                <input type="file" id="image" accept="image/*">
+                <div class="warning-text">* รูปภาพควรมีขนาดไม่เกิน 1MB เพื่อประสิทธิภาพที่ดี</div>
+                <div id="imagePreviewContainer"></div>
+            </div>
+            <div class="btn-container">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='dashboard.html'">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary">โพสต์ประกาศ</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase initialization
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+        });
+
+        // ตรวจสอบการล็อกอิน
+        firebase.auth().onAuthStateChanged(user => {
+            if (!user) {
+                window.location.href = 'login.html';
+            }
+        });
+
+        let selectedImage = null;
+        const imageInput = document.getElementById('image');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+
+        
+
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                if (file.size > 1024 * 1024) { // 1MB
+                    reject('รูปภาพมีขนาดใหญ่เกินไป กรุณาเลือกรูปภาพที่มีขนาดไม่เกิน 1MB');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // แสดงตัวอย่างรูปภาพที่เลือก
+        imageInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const base64Image = await getBase64(file);
+                selectedImage = base64Image;
+                
+                previewContainer.innerHTML = `
+                    <img src="${base64Image}" class="image-preview">
+                `;
+            } catch (error) {
+                alert(error);
+                imageInput.value = '';
+                previewContainer.innerHTML = '';
+                selectedImage = null;
+            }
+        });
+
+        // จัดการการส่งฟอร์ม
+        document.getElementById('postForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const user = firebase.auth().currentUser;
+
+            try {
+                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+
+                // สร้างโพสต์พร้อมรูปภาพ (ถ้ามี)
+                const postData = {
+                    title,
+                    content,
+                    authorId: user.uid,
+                    authorName: userData.displayName || user.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (selectedImage) {
+                    postData.image = selectedImage;
+                }
+
+                await firebase.firestore().collection('posts').add(postData);
+
+                alert('โพสต์ประกาศสำเร็จ');
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Error creating post:', error);
+                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            }
+        });
+    </script>
+</body>
+</html>
