@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,58 +17,11 @@
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
-        * { 
-            box-sizing: border-box; 
+        * {
+            box-sizing: border-box;
             font-family: 'Sarabun', sans-serif;
             margin: 0;
             padding: 0;
-        }
-
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-active {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status-inactive {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .user-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--secondary);
-            font-size: 0.875rem;
         }
 
         #loadingScreen {
@@ -97,188 +49,6 @@
             to {
                 transform: rotate(360deg);
             }
-        }
-
-        body {
-            min-height: 100vh;
-            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            padding: 1rem 2rem;
-            background: white;
-            box-shadow: var(--shadow);
-        }
-
-        .logo {
-            height: 40px;
-            margin-right: 2rem;
-            transition: transform 0.3s ease;
-        }
-
-        .admin-title {
-            font-size: 1.5rem;
-            color: var(--secondary);
-            margin: 0;
-            flex-grow: 1;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .nav-btn {
-            padding: 0.5rem 1rem;
-            background: #f0f0f0;
-            color: var(--secondary);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .nav-btn:hover {
-            background: #e0e0e0;
-            transform: translateY(-1px);
-        }
-
-        .logout-btn {
-            background: #ff4444;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .admin-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .admin-card {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .admin-card h2 {
-            color: var(--secondary);
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 0.5rem;
-        }
-
-        .user-list {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .user-list th,
-        .user-list td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .user-list th {
-            background: #f8f8f8;
-            font-weight: 600;
-            color: var(--secondary);
-        }
-
-        .add-user-btn {
-            background: #fdb813;
-            color: rgb(0, 0, 0);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .modal-content h3 {
-            margin-top: 0;
-            color: var(--secondary);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--secondary);
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 1.5rem;
-        }
-
-        .save-btn {
-            background: var(--primary);
-            color: var(--accent);
-        }
-
-        .cancel-btn {
-            background: #f0f0f0;
-            color: var(--secondary);
-        }
-
-        .save-btn,
-        .cancel-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
         }
 
         .user-container {
@@ -314,23 +84,38 @@
             color: #333;
         }
 
-        .action-btn {
-            padding: 0.4rem 0.8rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            margin: 0 0.25rem;
+        body {
+            background: #f5f5f5;
+            min-height: 100vh;
         }
 
-        .edit-btn {
-            background: var(--primary);
-            color: var(--accent);
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .delete-btn {
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .logout-btn {
             background: #ff4444;
             color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
         .container {
@@ -339,6 +124,43 @@
             padding: 0 2rem;
         }
 
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .menu-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .menu-title {
+            font-size: 1.25rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 
@@ -347,75 +169,47 @@
         <div class="spinner"></div>
         <div id="loadingMessage">กำลังตรวจสอบสิทธิ์...</div>
     </div>
-
-    <div id="mainContent" style="display: none">
+    <div id="mainContent" style="display: none"></div>
         <div class="header">
-            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
-                alt="Cyfence Logo" class="logo">
-            <h1 class="admin-title">จัดการระบบ</h1>
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+            <h1 class="admin-title">ระบบจัดการ</h1>
             <div class="user-container">
-                <span class="user-name" id="userDisplayName">Loading...</span>
-                <button onclick="window.location.href='log.html'" class="nav-btn">ดูบันทึกการใช้งาน</button>
-                <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
+                <span class="user-info" id="userDisplayName">Loading...</span>
                 <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
             </div>
         </div>
 
-        <div class="admin-container">
-            <div class="admin-card">
-                <h2>จัดการผู้ใช้งาน</h2>
-                <button onclick="showAddUserModal()" class="add-user-btn">เพิ่มผู้ใช้งานใหม่</button>
-                <table class="user-list">
-                    <thead>
-                        <tr>
-                            <th>อีเมล</th>
-                            <th>ชื่อผู้ใช้</th>
-                            <th>บทบาท</th>
-                            <th>สถานะ</th>
-                            <th>การดำเนินการ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="userTableBody">
-                        <!-- ข้อมูลผู้ใช้จะถูกเพิ่มที่นี่ด้วย JavaScript -->
-                    </tbody>
-                </table>
+    <div class="container">
+        <div class="menu-grid">
+            <div class="menu-card" onclick="window.location.href='admin-users.html'">
+                <div class="menu-icon">👥</div>
+                <h2 class="menu-title">จัดการผู้ใช้งาน</h2>
+                <p class="menu-description">เพิ่ม ลบ แก้ไขข้อมูลผู้ใช้งาน</p>
             </div>
-        </div>
-        <div id="userModal" class="modal">
-            <div class="modal-content">
-                <h3 id="modalTitle">เพิ่มผู้ใช้งานใหม่</h3>
-                <form id="userForm" onsubmit="handleUserSubmit(event)">
-                    <div class="form-group">
-                        <label for="email">อีเมล</label>
-                        <input type="email" id="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="displayName">ชื่อผู้ใช้</label>
-                        <input type="text" id="displayName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="role">บทบาท</label>
-                        <select id="role" required>
-                            <option value="user">ผู้ใช้งานทั่วไป</option>
-                            <option value="admin">ผู้ดูแลระบบ</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="status">สถานะ</label>
-                        <select id="status" required>
-                            <option value="active">เปิดใช้งาน</option>
-                            <option value="inactive">ปิดใช้งาน</option>
-                        </select>
-                    </div>
-                    <div class="modal-buttons">
-                        <button type="button" class="cancel-btn" onclick="closeModal()">ยกเลิก</button>
-                        <button type="submit" class="save-btn">บันทึก</button>
-                    </div>
-                </form>
-            </div>
-        </div>
 
-        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+            <div class="menu-card" onclick="window.location.href='admin-posts.html'">
+                <div class="menu-icon">📢</div>
+                <h2 class="menu-title">จัดการประกาศ</h2>
+                <p class="menu-description">ดูและจัดการประกาศทั้งหมด</p>
+            </div>
+
+            <div class="menu-card" onclick="window.location.href='admin-logs.html'">
+                <div class="menu-icon">📋</div>
+                <h2 class="menu-title">บันทึกการใช้งาน</h2>
+                <p class="menu-description">ตรวจสอบประวัติการใช้งานระบบ</p>
+            </div>
+
+            <div class="menu-card" onclick="window.location.href='dashboard.html'">
+                <div class="menu-icon">🏠</div>
+                <h2 class="menu-title">กลับหน้าหลัก</h2>
+                <p class="menu-description">ไปยังหน้าแดชบอร์ดหลัก</p>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
         <script src="firebase-config.js"></script>
@@ -453,5 +247,4 @@
             }
         </script>
 </body>
-
 </html>

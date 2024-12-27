@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - บันทึกการใช้งาน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        body {
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .logs-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        select, input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .log-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-info {
+            flex-grow: 1;
+        }
+
+        .log-action {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .log-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .back-btn {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-success { background: #e8f5e9; color: #2e7d32; }
+        .badge-warning { background: #fff3e0; color: #ef6c00; }
+        .badge-danger { background: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+        <h1>บันทึกการใช้งาน</h1>
+        <div class="user-container"></div>
+            <span class="user-name" id="userDisplayName">Loading...</span>
+            <button onclick="window.location.href='admin.html'" class="back-btn">กลับหน้าแอดมิน</button>
+        </div>
+
+    <div class="container">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label>ประเภท:</label>
+                <select id="actionFilter" onchange="filterLogs()">
+                    <option value="">ทั้งหมด</option>
+                    <option value="login">เข้าสู่ระบบ</option>
+                    <option value="login_failed">เข้าสู่ระบบไม่สำเร็จ</option>
+                    <option value="create_post">สร้างประกาศ</option>
+                    <option value="edit_post">แก้ไขประกาศ</option>
+                    <option value="delete_post">ลบประกาศ</option>
+                    <option value="create_user">สร้างผู้ใช้</option>
+                    <option value="edit_user">แก้ไขผู้ใช้</option>
+                    <option value="delete_user">ลบผู้ใช้</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>วันที่:</label>
+                <input type="date" id="dateFilter" onchange="filterLogs()">
+            </div>
+            <div class="filter-group">
+                <label>ค้นหา:</label>
+                <input type="text" id="searchFilter" oninput="filterLogs()" placeholder="ค้นหาผู้ใช้...">
+            </div>
+        </div>
+
+        <div class="logs-container" id="logsContainer">
+            <!-- Logs will be loaded here -->
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase initialization
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9"
+        });
+
+        let allLogs = [];
+        const db = firebase.firestore();
+
+        // แปลงประเภทการกระทำเป็นภาษาไทย
+        function getActionText(action) {
+            const actions = {
+                'login': 'เข้าสู่ระบบ',
+                'login_failed': 'เข้าสู่ระบบไม่สำเร็จ',
+                'create_post': 'สร้างประกาศใหม่',
+                'edit_post': 'แก้ไขประกาศ',
+                'delete_post': 'ลบประกาศ',
+                'create_user': 'สร้างผู้ใช้ใหม่',
+                'edit_user': 'แก้ไขข้อมูลผู้ใช้',
+                'delete_user': 'ลบผู้ใช้'
+            };
+            return actions[action] || action;
+        }
+
+        // แปลงประเภทการกระทำเป็น badge class
+        function getActionBadgeClass(action) {
+            const classes = {
+                'login': 'badge-success',
+                'login_failed': 'badge-danger',
+                'create_post': 'badge-success',
+                'edit_post': 'badge-warning',
+                'delete_post': 'badge-danger',
+                'create_user': 'badge-success',
+                'edit_user': 'badge-warning',
+                'delete_user': 'badge-danger'
+            };
+            return classes[action] || 'badge-secondary';
+        }
+
+        async function loadLogs() {
+            try {
+                const snapshot = await db.collection('logs')
+                    .orderBy('timestamp', 'desc')
+                    .limit(100)
+                    .get();
+
+                allLogs = await Promise.all(snapshot.docs.map(async doc => {
+                    const logData = doc.data();
+                    let userData = { email: 'ไม่ระบุ' };
+
+                    if (logData.userId) {
+                        const userDoc = await db.collection('users').doc(logData.userId).get();
+                        if (userDoc.exists) {
+                            userData = userDoc.data();
+                        }
+                    }
+
+                    return {
+                        id: doc.id,
+                        ...logData,
+                        userData
+                    };
+                }));
+
+                displayLogs(allLogs);
+            } catch (error) {
+                console.error('Error loading logs:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+
+        function displayLogs(logs) {
+            const container = document.getElementById('logsContainer');
+            container.innerHTML = logs.map(log => `
+                <div class="log-item">
+                    <div class="log-info">
+                        <div class="log-action">
+                            <span class="badge ${getActionBadgeClass(log.action)}">
+                                ${getActionText(log.action)}
+                            </span>
+                        </div>
+                        <div class="log-details">
+                            ผู้ใช้: ${log.userData.displayName || log.userData.email}<br>
+                            เวลา: ${log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString() : 'ไม่ระบุ'}
+                            ${log.details ? `<br>รายละเอียด: ${log.details}` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterLogs() {
+            const actionFilter = document.getElementById('actionFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+            let filtered = allLogs;
+
+            if (actionFilter) {
+                filtered = filtered.filter(log => log.action === actionFilter);
+            }
+
+            if (dateFilter) {
+                const filterDate = new Date(dateFilter);
+                filterDate.setHours(0, 0, 0, 0);
+                filtered = filtered.filter(log => {
+                    const logDate = new Date(log.timestamp.seconds * 1000);
+                    logDate.setHours(0, 0, 0, 0);
+                    return logDate.getTime() === filterDate.getTime();
+                });
+            }
+
+            if (searchFilter) {
+                filtered = filtered.filter(log => 
+                    (log.userData.displayName || '').toLowerCase().includes(searchFilter) ||
+                    (log.userData.email || '').toLowerCase().includes(searchFilter) ||
+                    (log.details || '').toLowerCase().includes(searchFilter)
+                );
+            }
+
+            displayLogs(filtered);
+        }
+
+        // Check authentication and load logs
+        firebase.auth().onAuthStateChanged(async user => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                // Check if user is admin
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                
+                if (userData?.role === 'admin') {
+                    // allow access
+                }
+                
+                loadLogs();
+            }
+        });
+    </script>
+</body>
+</html>

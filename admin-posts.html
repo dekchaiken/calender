@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - จัดการประกาศ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        body {
+            background: var(--gray-100);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .posts-list {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .post-item {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .post-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .post-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+            word-break: break-word;
+        }
+
+        .post-meta {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-content {
+            color: var(--gray-700);
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-bottom: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            background: var(--gray-50);
+            border-radius: 4px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--gray-800);
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .filter-container {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(253,184,19,0.2);
+        }
+
+        .back-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--gray-200);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: auto;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: var(--gray-300);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            margin: 3rem auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        textarea.search-input {
+            resize: vertical;
+            min-height: 200px;
+            font-family: inherit;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .posts-list {
+                padding: 1rem;
+            }
+
+            .post-header {
+                flex-direction: column;
+            }
+
+            .post-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .header {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .logo {
+                margin-right: 1rem;
+            }
+
+            .back-btn {
+                margin-left: 0;
+                margin-top: 1rem;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+        <h1>จัดการประกาศ</h1>
+        <button onclick="window.location.href='admin.html'" class="back-btn">กลับหน้าแอดมิน</button>
+    </div>
+
+    <div class="container">
+        <div class="filter-container">
+            <input type="text" class="search-input" placeholder="ค้นหาประกาศ..." oninput="filterPosts(this.value)">
+        </div>
+
+        <div class="posts-list" id="postsList">
+            <!-- Posts will be loaded here -->
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem">แก้ไขประกาศ</h2>
+            <div class="form-group">
+                <label>หัวข้อ</label>
+                <input type="text" id="editTitle" class="search-input">
+            </div>
+            <div class="form-group">
+                <label>เนื้อหา</label>
+                <textarea id="editContent" class="search-input"></textarea>
+            </div>
+            <div class="post-actions">
+                <button onclick="closeEditModal()" class="btn btn-warning">ยกเลิก</button>
+                <button onclick="saveEdit()" class="btn btn-primary" style="background: var(--primary)">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Your existing Firebase configuration and JavaScript code remains the same
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9"
+        });
+
+        let currentPosts = [];
+        let editingPostId = null;
+
+        async function loadPosts() {
+            try {
+                const snapshot = await firebase.firestore().collection('posts')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                currentPosts = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                displayPosts(currentPosts);
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+
+        function displayPosts(posts) {
+            const postsList = document.getElementById('postsList');
+            postsList.innerHTML = posts.map(post => `
+                <div class="post-item">
+                    <div class="post-header">
+                        <div>
+                            <div class="post-title">${post.title}</div>
+                            <div class="post-meta">
+                                โดย: ${post.authorName || 'ไม่ระบุ'}
+                                <br>
+                                เมื่อ: ${post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleString('th-TH') : 'ไม่ระบุ'}
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button onclick="editPost('${post.id}')" class="btn btn-warning">แก้ไข</button>
+                            <button onclick="deletePost('${post.id}')" class="btn btn-danger">ลบ</button>
+                        </div>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterPosts(searchTerm) {
+            const filtered = currentPosts.filter(post => 
+                post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                post.content.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            displayPosts(filtered);
+        }
+
+        function editPost(postId) {
+            const post = currentPosts.find(p => p.id === postId);
+            if (post) {
+                editingPostId = postId;
+                document.getElementById('editTitle').value = post.title;
+                document.getElementById('editContent').value = post.content;
+                document.getElementById('editModal').style.display = 'block';
+            }
+        }
+
+        async function saveEdit() {
+            if (!editingPostId) return;
+
+            const newTitle = document.getElementById('editTitle').value;
+            const newContent = document.getElementById('editContent').value;
+
+            try {
+                await firebase.firestore().collection('posts').doc(editingPostId).update({
+                    title: newTitle,
+                    content: newContent,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                await firebase.firestore().collection('logs').add({
+                    action: 'edit_post',
+                    postId: editingPostId,
+                    userId: firebase.auth().currentUser.uid,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                closeEditModal();
+                loadPosts();
+                alert('แก้ไขประกาศสำเร็จ');
+            } catch (error) {
+                console.error('Error updating post:', error);
+                alert('เกิดข้อผิดพลาดในการแก้ไขประกาศ');
+            }
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('คุณต้องการลบประกาศนี้ใช่หรือไม่?')) return;
+
+            try {
+                await firebase.firestore().collection('posts').doc(postId).delete();
+
+                await firebase.firestore().collection('logs').add({
+                    action: 'delete_post',
+                    postId: postId,
+                    userId: firebase.auth().currentUser.uid,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                loadPosts();
+                alert('ลบประกาศสำเร็จ');
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('เกิดข้อผิดพลาดในการลบประกาศ');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            editingPostId = null;
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeEditModal();
+            }
+        }
+
+        // Check authentication and load posts
+        firebase.auth().onAuthStateChanged(user => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                loadPosts();
+            }
+        });
+    </script>
+
+    <!-- Add sweet alert for better notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Enhanced notifications
+        function showAlert(title, icon = 'success') {
+            Swal.fire({
+                title: title,
+                icon: icon,
+                confirmButtonText: 'ตกลง',
+                confirmButtonColor: '#FDB813'
+            });
+        }
+
+        // Enhanced success notification
+        function showSuccess(message) {
+            showAlert(message, 'success');
+        }
+
+        // Enhanced error notification
+        function showError(message) {
+            showAlert(message, 'error');
+        }
+
+        // Enhanced delete confirmation
+        async function deletePost(postId) {
+            const result = await Swal.fire({
+                title: 'ยืนยันการลบ',
+                text: 'คุณต้องการลบประกาศนี้ใช่หรือไม่?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'ลบ',
+                cancelButtonText: 'ยกเลิก'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    await firebase.firestore().collection('posts').doc(postId).delete();
+                    await firebase.firestore().collection('logs').add({
+                        action: 'delete_post',
+                        postId: postId,
+                        userId: firebase.auth().currentUser.uid,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    loadPosts();
+                    showSuccess('ลบประกาศสำเร็จ');
+                } catch (error) {
+                    console.error('Error deleting post:', error);
+                    showError('เกิดข้อผิดพลาดในการลบประกาศ');
+                }
+            }
+        }
+
+        // Enhanced save functionality
+        async function saveEdit() {
+            if (!editingPostId) return;
+
+            const newTitle = document.getElementById('editTitle').value.trim();
+            const newContent = document.getElementById('editContent').value.trim();
+
+            if (!newTitle || !newContent) {
+                showError('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+
+            try {
+                await firebase.firestore().collection('posts').doc(editingPostId).update({
+                    title: newTitle,
+                    content: newContent,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                await firebase.firestore().collection('logs').add({
+                    action: 'edit_post',
+                    postId: editingPostId,
+                    userId: firebase.auth().currentUser.uid,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                closeEditModal();
+                loadPosts();
+                showSuccess('แก้ไขประกาศสำเร็จ');
+            } catch (error) {
+                console.error('Error updating post:', error);
+                showError('เกิดข้อผิดพลาดในการแก้ไขประกาศ');
+            }
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && document.getElementById('editModal').style.display === 'block') {
+                closeEditModal();
+            }
+        });
+
+        // Add loading state
+        function showLoading() {
+            Swal.fire({
+                title: 'กำลังโหลด...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        }
+
+        // Modify loadPosts to show loading state
+        async function loadPosts() {
+            showLoading();
+            try {
+                const snapshot = await firebase.firestore().collection('posts')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                currentPosts = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                displayPosts(currentPosts);
+                Swal.close();
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                showError('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+
+        // Add character count for content
+        document.getElementById('editContent').addEventListener('input', function() {
+            const maxLength = 1000;
+            const currentLength = this.value.length;
+            const remainingChars = maxLength - currentLength;
+            
+            // Add character counter if it doesn't exist
+            let counter = document.getElementById('charCounter');
+            if (!counter) {
+                counter = document.createElement('div');
+                counter.id = 'charCounter';
+                counter.style.cssText = 'text-align: right; color: var(--gray-600); font-size: 0.9rem; margin-top: 0.5rem;';
+                this.parentNode.appendChild(counter);
+            }
+            
+            counter.textContent = `${currentLength}/${maxLength} ตัวอักษร`;
+            counter.style.color = remainingChars < 0 ? 'var(--danger)' : 'var(--gray-600)';
+        });
+    </script>
+</body>
+</html>

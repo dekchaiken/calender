@@ -238,6 +238,8 @@ async function checkAdminAccess() {
                     return;
                 }
 
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
                 resolve(true);
             } catch (error) {
                 console.error('Error checking admin access:', error);
@@ -248,13 +250,15 @@ async function checkAdminAccess() {
     });
 }
 
+document.addEventListener('DOMContentLoaded', checkAdminAccess);
+
 // แก้ไข event listener
 document.addEventListener('DOMContentLoaded', async () => {
     const hasAccess = await checkAdminAccess();
     if (hasAccess) {
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('mainContent').style.display = 'block';
-        await loadUsers();
+        // ลบ await loadUsers(); ออก
     }
 });
 
