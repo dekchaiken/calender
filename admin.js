@@ -18,17 +18,15 @@ async function handleUserSubmit(event) {
     const status = document.getElementById('status').value;
 
     try {
-        // ตรวจสอบว่ามีอีเมลนี้ในระบบหรือไม่
-        const userSnapshot = await db.collection('users')
-            .where('email', '==', email)
-            .get();
-
-        if (!userSnapshot.empty) {
-            throw new Error('อีเมลนี้มีในระบบแล้ว');
-        }
-
-        // สร้างข้อมูลใหม่ด้วย ID ที่ไม่ซ้ำกัน
-        await db.collection('users').add({
+        // Create user in Authentication
+        const userCredential = await auth.createUserWithEmailAndPassword(email, Math.random().toString(36));
+        const userId = userCredential.user.uid;
+        
+        // Send password reset email
+        await auth.sendPasswordResetEmail(email);
+        
+        // Create user document in Firestore
+        await db.collection('users').doc(userId).set({
             email,
             displayName,
             role,
@@ -40,9 +38,17 @@ async function handleUserSubmit(event) {
 
         closeModal();
         await loadUsers();
-        alert('เพิ่มผู้ใช้งานสำเร็จ');
+        alert('เพิ่มผู้ใช้งานสำเร็จ และส่งอีเมลตั้งรหัสผ่านแล้ว');
     } catch (error) {
         console.error('Error adding user:', error);
+        
+        if (error.code === 'permission-denied') {
+            alert('ไม่มีสิทธิ์ในการเพิ่มผู้ใช้ กรุณาล็อกอินใหม่');
+            await auth.signOut();
+            window.location.href = 'login.html';
+            return;
+        }
+        
         alert('เกิดข้อผิดพลาด: ' + error.message);
     }
 }
