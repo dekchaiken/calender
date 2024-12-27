@@ -147,11 +147,6 @@
             /* ป้องกันการเลื่อนแนวนอน */
         }
 
-        .announcements {
-            width: 100%;
-            overflow-x: hidden;
-            /* ป้องกันการเลื่อนแนวนอน */
-        }
 
         .announcement-card {
             padding: 1rem;
@@ -299,15 +294,37 @@
         }
 
         .announcements {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            max-height: 740px;
-            /* จำกัดความสูงของกล่องประกาศ */
-            overflow-y: auto;
-            /* เพิ่ม scroll bar เมื่อเนื้อหาเกิน */
-        }
+    background: white;
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    max-height: 740px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.announcements-header {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid #eee;
+    z-index: 10;
+    border-radius: 12px 12px 0 0;
+    background-clip: padding-box;
+}
+
+.posts-scroll-container {
+    overflow-y: auto;
+    padding: 0 1.5rem 1.5rem;
+    flex-grow: 1;
+    margin-top: 0.5rem;
+}
+
+.post-card:first-child {
+    margin-top: 0;
+}
 
         .view-all-btn {
             background: var(--secondary);
@@ -406,19 +423,21 @@
 
     <div class="main-content">
         <div class="announcements">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <div style="display: flex; align-items: center;">
-                    <h2>ประกาศล่าสุด 📢</h2>
-                    <button onclick="window.location.href='all-posts.html'" class="view-all-btn">
-                        ดูทั้งหมด
+            <div class="announcements-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center;">
+                        <h1>ประกาศล่าสุด 📢</h1>
+                        <button onclick="window.location.href='all-posts.html'" class="view-all-btn">
+                            ดูทั้งหมด
+                        </button>
+                    </div>
+                    <button onclick="window.location.href='create-post.html'" class="create-post-btn">
+                        สร้างประกาศใหม่
                     </button>
                 </div>
-                <button onclick="window.location.href='create-post.html'" class="create-post-btn">
-                    สร้างประกาศใหม่
-                </button>
             </div>
-            <div id="posts-container">
-                <!-- โพสต์จะถูกเพิ่มที่นี่ด้วย JavaScript -->
+            <div class="posts-scroll-container" id="posts-container">
+                <!-- Posts will be added here by JavaScript -->
             </div>
         </div>
 
