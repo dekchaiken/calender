@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - ระบบจัดการข้อมูลลูกค้า</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Noto Sans Thai', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .customer-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .customer-item {
+            background: #f8f8f8;
+            padding: 1rem;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .customer-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .btn-danger {
+            background: #ff4444;
+            color: white;
+        }
+
+        .shift-group {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .shift-title {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
+        <h1>Customer Management</h1>
+        <div class="user-container">
+                <span class="user-info" id="userDisplayName">Loading...</span>
+                <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
+                <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+            </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('customers')">จัดการลูกค้า</button>
+            <button class="tab" onclick="showTab('shifts')">จัดการ Shifts</button>
+            <button class="tab" onclick="showTab('mappings')">จัดการ Mappings</button>
+        </div>
+
+        <div id="customers" class="tab-content">
+            <div class="card">
+                <h2 style="margin-bottom: 1.5rem; color: #2D2D2D;">เพิ่มลูกค้าใหม่</h2>
+                <div class="form-group">
+                    <label style="font-weight: 600; margin-bottom: 0.5rem;">ชื่อลูกค้า (ชื่อย่อ)</label>
+                    <input type="text" class="form-control" id="customerName" placeholder="เช่น BLA"
+                        style="padding: 0.75rem; border: 2px solid #eee; transition: border-color 0.3s ease;">
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 600; margin-bottom: 0.5rem;">ชื่อสำหรับ Mapping (ชื่อเต็ม)</label>
+                    <input type="text" class="form-control" id="customerMapping"
+                        placeholder="เช่น บริษัท กรุงเทพประกันชีวิต จำกัด (มหาชน)"
+                        style="padding: 0.75rem; border: 2px solid #eee; transition: border-color 0.3s ease;">
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 600; margin-bottom: 0.5rem;">ประเภท</label>
+                    <select class="form-control" id="customerType"
+                        style="padding: 0.75rem; border: 2px solid #eee; transition: border-color 0.3s ease;">
+                        <option value="company">บริษัท</option>
+                        <option value="hospital">โรงพยาบาล</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 600; margin-bottom: 0.5rem;">Shift</label>
+                    <select class="form-control" id="customerShift"
+                        style="padding: 0.75rem; border: 2px solid #eee; transition: border-color 0.3s ease;">
+                        <option value="Shift 1">Shift 1</option>
+                        <option value="Shift 2">Shift 2</option>
+                        <option value="Shift 3">Shift 3</option>
+                        <option value="Shift 4">Shift 4</option>
+                        <option value="Shift 5">Shift 5</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="addCustomer()"
+                    style="margin-top: 1rem; padding: 0.75rem 2rem; font-weight: 600;">เพิ่มลูกค้า</button>
+            </div>
+
+            <div class="card">
+                <h2>รายชื่อลูกค้าทั้งหมด</h2>
+                <input type="text" class="search-box" placeholder="ค้นหาลูกค้า..." oninput="searchCustomers()">
+                <div class="customer-list" id="customerList">
+                    <!-- รายการลูกค้าจะถูกเพิ่มที่นี่ด้วย JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div id="shifts" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>จัดการ Shifts</h2>
+                <div class="shift-group" id="shiftsList">
+                    <!-- รายการ Shifts จะถูกเพิ่มที่นี่ด้วย JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div id="mappings" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>จัดการ Mappings</h2>
+                <div class="form-group">
+                    <label>ชื่อที่แสดงในระบบ</label>
+                    <input type="text" class="form-control" id="mappingDisplay">
+                </div>
+                <div class="form-group">
+                    <label>ชื่อที่ใช้แทน</label>
+                    <input type="text" class="form-control" id="mappingReplace">
+                </div>
+                <button class="btn btn-primary" onclick="addMapping()">เพิ่ม Mapping</button>
+            </div>
+            <div class="card">
+                <h2>รายชื่อ Mappings ทั้งหมด</h2>
+                <div id="mappingList">
+                    <!-- ข้อมูล Mapping จะถูกเพิ่มที่นี่ด้วย JavaScript -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase initialization (ใช้ config เดิมจากไฟล์ following.html)
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+        });
+
+        let companyTypes = {};
+        let companyGroups = {};
+
+
+
+        async function loadCustomerData() {
+            try {
+                const db = firebase.firestore();
+
+                // Load companyTypes
+                const typesDoc = await db.collection('customerManagement')
+                    .doc('companyTypes')
+                    .get();
+                if (typesDoc.exists) {
+                    companyTypes = typesDoc.data();
+                } else {
+                    companyTypes = {};
+                }
+
+                // Load companyGroups
+                const groupsDoc = await db.collection('customerManagement')
+                    .doc('companyGroups')
+                    .get();
+                if (groupsDoc.exists && groupsDoc.data().shifts) {
+                    companyGroups = groupsDoc.data().shifts;
+                } else {
+                    companyGroups = {
+                        'Shift 1': [],
+                        'Shift 2': [],
+                        'Shift 3': [],
+                        'Shift 4': [],
+                        'Shift 5': []
+                    };
+                }
+
+                refreshCustomerList();
+            } catch (error) {
+                console.error('Error loading customer data:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+
+        async function saveCustomerData(type, data) {
+            try {
+                const db = firebase.firestore();
+                await db.collection('customerManagement')
+                    .doc(type)
+                    .set(data);
+                alert('บันทึกข้อมูลสำเร็จ');
+            } catch (error) {
+                console.error('Error saving data:', error);
+                alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            }
+        }
+
+        async function loadShiftData() {
+            const shiftsList = document.getElementById('shiftsList');
+            shiftsList.innerHTML = '';
+
+            try {
+                const db = firebase.firestore();
+                const groupsDoc = await db.collection('customerManagement').doc('companyGroups').get();
+                const shifts = groupsDoc.exists ? groupsDoc.data().shifts : {};
+
+                // สร้าง UI สำหรับแต่ละ Shift
+                Object.entries(shifts).forEach(([shiftName, companies]) => {
+                    const shiftDiv = document.createElement('div');
+                    shiftDiv.className = 'shift-group';
+                    shiftDiv.style.marginBottom = '1rem';
+                    shiftDiv.style.padding = '1rem';
+                    shiftDiv.style.backgroundColor = '#f8f8f8';
+                    shiftDiv.style.borderRadius = '8px';
+
+                    const companyCount = companies ? companies.length : 0;
+
+                    shiftDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0;">${shiftName}</h3>
+                    <span class="badge" style="background: #FDB813; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                        ${companyCount} บริษัท
+                    </span>
+                </div>
+                <div class="company-list" style="margin-top: 0.5rem;">
+                    ${companies ? companies.map(company => `
+                        <div style="background: white; padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 4px;">
+                            ${company}
+                        </div>
+                    `).join('') : 'ไม่มีบริษัทในกะนี้'}
+                </div>
+            `;
+
+                    shiftsList.appendChild(shiftDiv);
+                });
+            } catch (error) {
+                console.error('Error loading shift data:', error);
+                shiftsList.innerHTML = '<p style="color: red;">เกิดข้อผิดพลาดในการโหลดข้อมูล Shifts</p>';
+            }
+        }
+
+        async function addShift(name) {
+            const db = firebase.firestore();
+            const shiftRef = db.collection('customerManagement').doc('shifts');
+            const shiftDoc = await shiftRef.get();
+            let shifts = shiftDoc.exists ? shiftDoc.data() : {};
+            shifts[name] = []; // เพิ่ม shift ใหม่
+            await shiftRef.set(shifts);
+            alert('เพิ่ม Shift สำเร็จ');
+        }
+
+
+
+
+        // ฟังก์ชันแสดง/ซ่อน tab
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            document.getElementById(tabName).style.display = 'block';
+
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (tabName === 'shifts') {
+                loadShiftData();
+            } else if (tabName === 'mappings') {
+                loadMappingData();
+            }
+        }
+
+
+        // ฟังก์ชันเพิ่มลูกค้าใหม่
+        async function addCustomer() {
+            try {
+                const shortName = document.getElementById('customerName').value.trim();
+                const fullName = document.getElementById('customerMapping').value.trim();
+                const type = document.getElementById('customerType').value;
+                const shift = document.getElementById('customerShift').value;
+
+                if (!shortName || !fullName || !type || !shift) {
+                    alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                    return;
+                }
+
+                // เพิ่มข้อมูลทั้งหมดในครั้งเดียว
+                const db = firebase.firestore();
+                const batch = db.batch();
+
+                // Update companyTypes
+                const typeRef = db.collection('customerManagement').doc('companyTypes');
+                const updatedTypes = {
+                    ...companyTypes,
+                    [shortName]: type
+                };
+                batch.set(typeRef, updatedTypes);
+
+                // Update companyGroups
+                const groupRef = db.collection('customerManagement').doc('companyGroups');
+                const updatedGroups = { ...companyGroups };
+                if (!updatedGroups[shift]) {
+                    updatedGroups[shift] = [];
+                }
+                if (!updatedGroups[shift].includes(shortName)) {
+                    updatedGroups[shift].push(shortName);
+                }
+                batch.set(groupRef, { shifts: updatedGroups });
+
+                // Update mappings (สลับ key-value จากเดิม)
+                const mappingRef = db.collection('customerManagement').doc('companyMappings');
+                const mappings = (await mappingRef.get()).data() || {};
+                mappings[fullName] = shortName;  // เปลี่ยนจาก shortName: fullName เป็น fullName: shortName
+                batch.set(mappingRef, mappings);
+
+                // Commit การเปลี่ยนแปลงทั้งหมดพร้อมกัน
+                await batch.commit();
+
+                // Update local data
+                companyTypes = updatedTypes;
+                companyGroups = updatedGroups;
+
+                // Clear input fields
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerMapping').value = '';
+
+                refreshCustomerList();
+                alert('เพิ่มลูกค้าสำเร็จ');
+
+            } catch (error) {
+                console.error('Error adding customer:', error);
+                alert('เกิดข้อผิดพลาดในการเพิ่มลูกค้า');
+            }
+        }
+
+        // ฟังก์ชันค้นหาลูกค้า
+        function searchCustomers() {
+            const searchText = document.querySelector('.search-box').value.toLowerCase();
+            // TODO: ค้นหาและกรองรายการลูกค้า
+        }
+
+        // ฟังก์ชัน refresh รายการลูกค้า
+        function refreshCustomerList() {
+            const customerList = document.getElementById('customerList');
+            customerList.innerHTML = '';
+
+            // สร้าง container หลัก
+            const mainContainer = document.createElement('div');
+            mainContainer.style.width = '100%';
+
+            // เรียง shifts ตามลำดับ
+            const sortedShifts = Object.keys(companyGroups).sort();
+
+            sortedShifts.forEach(shift => {
+                const companies = companyGroups[shift];
+                if (companies && companies.length > 0) {
+                    // สร้าง shift section
+                    const shiftSection = document.createElement('div');
+                    shiftSection.className = 'shift-section';
+                    shiftSection.style.marginBottom = '2rem';
+
+                    // สร้าง shift header
+                    const shiftHeader = document.createElement('div');
+                    shiftHeader.className = 'shift-header';
+                    shiftHeader.style.padding = '1rem';
+                    shiftHeader.style.backgroundColor = '#f0f0f0';
+                    shiftHeader.style.borderRadius = '8px';
+                    shiftHeader.style.marginBottom = '1rem';
+                    shiftHeader.style.fontWeight = 'bold';
+                    shiftHeader.style.fontSize = '1.1rem';
+                    shiftHeader.innerHTML = shift;
+
+                    // สร้าง grid container สำหรับบริษัท
+                    const companiesGrid = document.createElement('div');
+                    companiesGrid.style.display = 'grid';
+                    companiesGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+                    companiesGrid.style.gap = '1rem';
+
+                    // เรียงบริษัทตามตัวอักษร
+                    const sortedCompanies = companies.sort((a, b) => a.localeCompare(b));
+
+                    sortedCompanies.forEach(company => {
+                        const companyCard = document.createElement('div');
+                        companyCard.className = 'customer-item';
+                        companyCard.style.backgroundColor = '#ffffff';
+                        companyCard.style.border = '1px solid #e0e0e0';
+                        companyCard.style.borderRadius = '8px';
+                        companyCard.style.padding = '1rem';
+                        companyCard.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+
+                        companyCard.innerHTML = `
+                    <div style="margin-bottom: 1rem;">
+                        <div style="font-size: 1.1rem; font-weight: bold; margin-bottom: 0.5rem;">${company}</div>
+                        <div style="color: #666;">ประเภท: ${companyTypes[company] || 'ไม่ระบุ'}</div>
+                    </div>
+                    <div class="customer-actions" style="display: flex; gap: 0.5rem;">
+                        <button onclick="editCustomer('${company}')" class="btn btn-primary">แก้ไข</button>
+                        <button onclick="deleteCustomer('${company}', '${shift}')" class="btn btn-danger">ลบ</button>
+                    </div>
+                `;
+
+                        companiesGrid.appendChild(companyCard);
+                    });
+
+                    shiftSection.appendChild(shiftHeader);
+                    shiftSection.appendChild(companiesGrid);
+                    mainContainer.appendChild(shiftSection);
+                }
+            });
+
+            customerList.appendChild(mainContainer);
+        }
+
+        async function deleteCustomer(companyName, shift) {
+            if (!confirm(`ต้องการลบ ${companyName} ใช่หรือไม่?`)) {
+                return;
+            }
+
+            try {
+                // ลบจาก companyTypes
+                const updatedTypes = { ...companyTypes };
+                delete updatedTypes[companyName];
+                await saveCustomerData('companyTypes', updatedTypes);
+                companyTypes = updatedTypes;
+
+                // ลบจาก companyGroups
+                const updatedGroups = { ...companyGroups };
+                if (updatedGroups[shift]) {
+                    updatedGroups[shift] = updatedGroups[shift].filter(company => company !== companyName);
+                }
+                await saveCustomerData('companyGroups', { shifts: updatedGroups });
+                companyGroups = updatedGroups;
+
+                refreshCustomerList();
+                alert('ลบลูกค้าสำเร็จ');
+            } catch (error) {
+                console.error('Error deleting customer:', error);
+                alert('เกิดข้อผิดพลาดในการลบลูกค้า');
+            }
+        }
+        // ฟังก์ชันเพิ่ม mapping
+        async function addMapping() {
+            const displayName = document.getElementById('mappingDisplay').value.trim();
+            const replaceName = document.getElementById('mappingReplace').value.trim();
+
+            if (!displayName || !replaceName) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+
+            try {
+                const db = firebase.firestore();
+                const mappingRef = db.collection('customerManagement').doc('companyMappings');
+                const mappings = (await mappingRef.get()).data() || {};
+
+                mappings[displayName] = replaceName;
+                await mappingRef.set(mappings);
+
+                // Clear input fields
+                document.getElementById('mappingDisplay').value = '';
+                document.getElementById('mappingReplace').value = '';
+
+                // Reload mapping data
+                await loadMappingData();
+
+                alert('เพิ่ม Mapping สำเร็จ');
+            } catch (error) {
+                console.error('Error adding mapping:', error);
+                alert('เกิดข้อผิดพลาดในการเพิ่ม Mapping');
+            }
+        }
+
+        async function loadMappingData() {
+            try {
+                const db = firebase.firestore();
+                const mappingDoc = await db.collection('customerManagement').doc('companyMappings').get();
+                const mappings = mappingDoc.exists ? mappingDoc.data() : {};
+
+                const mappingList = document.getElementById('mappingList');
+                mappingList.innerHTML = '';
+
+                // สร้าง table container with improved styling
+                const tableContainer = document.createElement('div');
+                tableContainer.style.overflowX = 'auto';
+                tableContainer.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                tableContainer.style.borderRadius = '8px';
+
+                // สร้างตาราง
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.style.backgroundColor = 'white';
+
+                // สร้าง header ด้วย styling ที่ดีขึ้น
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr style="background-color: #f8f9fa;">
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; color: #495057; font-weight: 600;">
+                            ชื่อที่แสดงในระบบ
+                        </th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; color: #495057; font-weight: 600;">
+                            ชื่อที่ใช้แทน
+                        </th>
+                        <th style="padding: 1rem; text-align: center; border-bottom: 2px solid #dee2e6; color: #495057; font-weight: 600;">
+                            การจัดการ
+                        </th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+
+                // สร้าง body ด้วย styling ที่ดีขึ้น
+                const tbody = document.createElement('tbody');
+                Object.entries(mappings).sort((a, b) => a[0].localeCompare(b[0])).forEach(([displayName, replaceName]) => {
+                    const tr = document.createElement('tr');
+                    tr.style.transition = 'background-color 0.3s ease';
+                    tr.onmouseenter = () => tr.style.backgroundColor = '#f8f9fa';
+                    tr.onmouseleave = () => tr.style.backgroundColor = 'white';
+                    tr.innerHTML = `
+                        <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${displayName}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${replaceName}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #dee2e6; text-align: center;">
+                            <button onclick="editMapping('${displayName}', '${replaceName}')" 
+                                    class="btn btn-primary" 
+                                    style="margin-right: 0.5rem; padding: 0.5rem 1rem;">แก้ไข</button>
+                            <button onclick="deleteMapping('${displayName}')" 
+                                    class="btn btn-danger" 
+                                    style="padding: 0.5rem 1rem;">ลบ</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+
+                tableContainer.appendChild(table);
+                mappingList.appendChild(tableContainer);
+
+            } catch (error) {
+                console.error('Error loading mappings:', error);
+                mappingList.innerHTML = '<p style="color: red;">เกิดข้อผิดพลาดในการโหลดข้อมูล Mapping</p>';
+            }
+        }
+
+        async function editMapping(displayName, replaceName) {
+            const newDisplayName = prompt('กรอกชื่อที่แสดงในระบบใหม่:', displayName);
+            const newReplaceName = prompt('กรอกชื่อที่ใช้แทนใหม่:', replaceName);
+
+            if (newDisplayName && newReplaceName) {
+                try {
+                    const db = firebase.firestore();
+                    const mappingRef = db.collection('customerManagement').doc('companyMappings');
+                    const mappings = (await mappingRef.get()).data() || {};
+
+                    // ลบค่าเดิมและเพิ่มค่าที่แก้ไขใหม่
+                    delete mappings[displayName];
+                    mappings[newDisplayName] = newReplaceName;
+
+                    await mappingRef.set(mappings);
+                    alert('แก้ไข Mapping สำเร็จ');
+                    loadMappingData(); // โหลดข้อมูลใหม่
+                } catch (error) {
+                    console.error('Error editing mapping:', error);
+                    alert('เกิดข้อผิดพลาดในการแก้ไข Mapping');
+                }
+            }
+        }
+
+        async function deleteMapping(displayName) {
+            if (confirm(`ต้องการลบ Mapping ของ ${displayName} ใช่หรือไม่?`)) {
+                try {
+                    const db = firebase.firestore();
+                    const mappingRef = db.collection('customerManagement').doc('companyMappings');
+                    const mappings = (await mappingRef.get()).data() || {};
+
+                    delete mappings[displayName];
+                    await mappingRef.set(mappings);
+                    alert('ลบ Mapping สำเร็จ');
+                    loadMappingData(); // โหลดข้อมูลใหม่
+                } catch (error) {
+                    console.error('Error deleting mapping:', error);
+                    alert('เกิดข้อผิดพลาดในการลบ Mapping');
+                }
+            }
+        }
+
+
+        // ฟังก์ชัน logout
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
+
+        // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                await loadCustomerData();  // Load data when user is authenticated
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
+
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            firebase.auth().onAuthStateChanged(async (user) => {
+                if (user) {
+                    await loadCustomerData();
+                    try {
+                        const userDoc = await firebase.firestore()
+                            .collection('users')
+                            .doc(user.uid)
+                            .get();
+
+                        const userData = userDoc.data();
+                        const displayElement = document.getElementById('userDisplayName');
+
+                        if (userData?.displayName) {
+                            displayElement.textContent = userData.displayName;
+                        } else {
+                            displayElement.textContent = user.email;
+                        }
+                    } catch (error) {
+                        console.error('Error fetching user data:', error);
+                    }
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

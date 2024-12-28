@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Following Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #FDB813;
@@ -17,7 +17,7 @@
 
         * {
             box-sizing: border-box;
-            font-family: 'Sarabun', sans-serif;
+            font-family: 'Noto Sans Thai', sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -472,485 +472,7 @@
         styleSheet.textContent = newStyles;
         document.head.appendChild(styleSheet);
 
-        const companyGroups = {
-            'Shift 1': {
-                name: 'Shift 1',
-                companies: [
-                    'MSIG',
-                    'TCRB',
-                    'TVI',
-                    'Falcon',
-
-                ]
-            },
-            'Shift 2': {
-                name: 'Shift 2',
-                companies: [
-                    'MRTA',
-                    'SKL',
-                    //กระทรวงการคลัง
-                    //กกพ.
-                    //สสวท.
-                    
-                ]
-            },
-            'Shift 3': {
-                name: 'Shift 3',
-                companies: [
-                    'KSAM',
-                    'Carabao',
-                    'CJ',
-                    'NCI',
-                    'BLA',
-                    'Drissen',
-                    'Avius',
-                    'E-VISA',
-                    'CCDC',
-                ]
-            },
-            'Shift 4': {
-                name: 'Shift 4',
-                companies: [
-                    'ETax',
-                    'NSW',
-                    'GDCC',
-                ]
-            },
-            'Shift 5': {
-                name: 'Shift 5',
-                companies: [
-                    'Buriram-Bandan',
-                    'Buriram-Banmaichaipod',
-                    'Buriram-Buriram',
-                    'Buriram-Chaloemphrakiat',
-                    'Buriram-Khaendong',
-                    'Buriram-Khumuang',
-                    'Buriram-Krasang',
-                    'Buriram-Lahansai',
-                    'Buriram-Lamplaimat',
-                    'Buriram-NongKi',
-                    'Buriram-Nonsuwan',
-                    'Buriram-Phutthaisong',
-                    'Buriram-PrakhonChai',
-                    'Buriram-Satuek',
-                    'Buriram-SSJ',
-                    'Chiangrai-Prachanukroh',
-                    'Chonburi-Banbung',
-                    'Chonburi-BangLamung',
-                    'Chonburi-BoThong',
-                    'Chonburi-Kohchan',
-                    'Chonburi-KohSichang',
-                    'Chonburi-Laemchabang',
-                    'Chonburi-PhanatNikhom',
-                    'Chonburi-PhanThong',
-                    'Chonburi-SattahipKM10',
-                    'Chonburi-Watyan',
-                    'Chiangmai-Sansai',
-                    'Chiangmai-SSJ',
-                    'Krabi-Kohlanta',
-                    'Krabi-Lamthap',
-                    'Loei-Nonghin',
-                    'Loei-Phukradueng',
-                    'Loei-Dansai',
-                    'Loei-Nahaeo',
-                    'Loei-Phakhao',
-                    'Loei-SSJ',
-                    'Loei-Thali',
-                    'Nakhonsawan-Latyao',
-                    'Nakhonsawan-Phaisali',
-                    'Nakhonsi-Bangkhan',
-                    'Nakhonsi-ChawangCrownPrince',
-                    'Nakhonsi-Chulabhorn',
-                    'Nakhonsi-Huasai',
-                    'Nakhonsi-Khanom',
-                    'Nakhonsi-Lansaka',
-                    'Nakhonsi-Nabon',
-                    'Nakhonsi-Pakphanang',
-                    'Nakhonsi-Phipun',
-                    'Nakhonsi-Phraphrom',
-                    'Nakhonsi-Porthanklai',
-                    'Nakhonsi-Promkiri',
-                    'Nakhonsi-Ronphibun',
-                    'Nakhonsi-SSJ',
-                    'Nakhonsi-Thamphannara',
-                    'Nakhonsi-Thungsong',
-                    'Nakhonsi-Thungyai',
-                    'Nan-ChiangKlang',
-                    'Nan-PuaCrownPrince',
-                    'Nan-SongKhwae',
-                    'Nan-ThaWangPha',
-                    'Phayao-Phayao',
-                    'Phuket-Patong',
-                    'Pitsanulok-Bangkrathum',
-                    'Pitsanulok-Bangrakam',
-                    'Pitsanulok-NakhonthaiCrownPrince',
-                    'Pitsanulok-Noenmaprang',
-                    'Pitsanulok-PhromPhiram',
-                    'Pitsanulok-SSJ',
-                    'Pitsanulok-Wangthong',
-                    'Pitsanulok-WatBot',
-                    'Prachinburi-Nadi',
-                    'Prachuap-Bangsaphan',
-                    'Prachuap-Huahin',
-                    'Prachuap-Samroiyot',
-                    'Prachuap-Thapsakae',
-                    'Ratchaburi-Banpong',
-                    'Roi-Et-Phanomphrai',
-                    'Sakonnakhon-Sawang',
-                    'Samutprakarn-Bangbo',
-                    'Samutprakarn-Bangchak',
-                    'Samutprakarn-Bangplee',
-                    'Samutprakarn-Samutprakarn',
-                    'Samutprakarn-SSJ',
-                    'Samutsongkhram-Somdet',
-                    'Suphanburi-Somdej17',
-                    'Trang Hospital',
-                ]
-            }
-        };
-
-        const companyTypes = {
-            'Avius': 'company',
-            'BLA': 'company',
-            'Buriram-Bandan': 'hospital',
-            'Buriram-Banmaichaipod': 'hospital',
-            'Buriram-Buriram': 'hospital',
-            'Buriram-Chaloemphrakiat': 'hospital',
-            'Buriram-Khaendong': 'hospital',
-            'Buriram-Khumuang': 'hospital',
-            'Buriram-Krasang': 'hospital',
-            'Buriram-Lahansai': 'hospital',
-            'Buriram-Lamplaimat': 'hospital',
-            'Buriram-NongKi': 'hospital',
-            'Buriram-Nonsuwan': 'hospital',
-            'Buriram-Phutthaisong': 'hospital',
-            'Buriram-PrakhonChai': 'hospital',
-            'Buriram-Satuek': 'hospital',
-            ///'Buriram-SSJ': 'hospital',
-            'Carabao': 'company',
-            'Chiangmai-Sansai': 'hospital',
-            ///'Chiangmai-SSJ': 'hospital',
-            'Chiangrai-Prachanukroh': 'hospital',
-            'Chonburi-Banbung': 'hospital',
-            'Chonburi-BangLamung': 'hospital',
-            'Chonburi-BoThong': 'hospital',
-            'Chonburi-Kohchan': 'hospital',
-            'Chonburi-KohSichang': 'hospital',
-            'Chonburi-Laemchabang': 'hospital',
-            'Chonburi-PhanatNikhom': 'hospital',
-            'Chonburi-PhanThong': 'hospital',
-            'Chonburi-SattahipKM10': 'hospital',
-            'Chonburi-Watyan': 'hospital',
-            'CJ': 'company',
-            'NT-DCSS': 'company',  ///ไม่แน่ใจ DCSS รอเช็ค
-            'Driessen': 'company',
-            'E-VISA': 'company',
-            'ERC': 'company',
-            'ETax': 'company',
-            'Falcon': 'company',
-            'GDCC': 'company',
-            'GFMIS': 'company',
-            'IPST': 'company',
-            'Krabi-KohLanta': 'hospital',
-            'Krabi-Lamthap': 'hospital',
-            'KSAM': 'company',
-            'Loei-Nonghin': 'hospital',
-            'Loei-Phukradueng': 'hospital',
-            'Loei-Dansai': 'hospital',
-            'Loei-Nahaeo': 'hospital',
-            'Loei-Phakhao': 'hospital',
-            ///'Loei-SSJ': 'hospital',
-            'Loei-Thali': 'hospital',
-            'MRTA': 'company',
-            'MSIG': 'company',
-            'MTL': 'company',
-            'MY': 'company',
-            'Nakhonsawan-Latyao': 'hospital',
-            'Nakhonsawan-Phaisali': 'hospital',
-            'Nakhonsi-Bangkhan': 'hospital',
-            'Nakhonsi-ChawangCrownPrince': 'hospital',
-            'Nakhonsi-Chulabhorn': 'hospital',
-            'Nakhonsi-Huasai': 'hospital',
-            'Nakhonsi-Khanom': 'hospital',
-            'Nakhonsi-Lansaka': 'hospital',
-            'Nakhonsi-Nabon': 'hospital',
-            'Nakhonsi-Pakphanang': 'hospital',
-            'Nakhonsi-Phipun': 'hospital',
-            'Nakhonsi-Phraphrom': 'hospital',
-            'Nakhonsi-Porthanklai': 'hospital',
-            'Nakhonsi-Promkiri': 'hospital',
-            'Nakhonsi-Ronphibun': 'hospital',
-            ///'Nakhonsi-SSJ': 'hospital',
-            'Nakhonsi-Thamphannara': 'hospital',
-            'Nakhonsi-Thungsong': 'hospital',
-            'Nakhonsi-Thungyai': 'hospital',
-            'Nan-ChiangKlang': 'hospital',
-            'Nan-PuaCrownPrince': 'hospital',
-            'Nan-SongKhwae': 'hospital',
-            'Nan-ThaWangPha': 'hospital',
-            'NCI': 'company',
-            'NSW': 'company',
-            'NT': 'company',
-            'Phayao-Phayao': 'hospital',
-            'Phuket-Patong': 'hospital',
-            'Pitsanulok-Bangkrathum': 'hospital',
-            'Pitsanulok-Bangrakam': 'hospital',
-            'Pitsanulok-NakhonthaiCrownPrince': 'hospital',
-            'Pitsanulok-Noenmaprang': 'hospital',
-            'Pitsanulok-PhromPhiram': 'hospital',
-            ///'Pitsanulok-SSJ': 'hospital',
-            'Pitsanulok-Wangthong': 'hospital',
-            'Pitsanulok-WatBot': 'hospital',
-            'Prachinburi-Nadi': 'hospital',
-            'Prachuap-Bangsaphan': 'hospital',
-            'Prachuap-Huahin': 'hospital',
-            'Prachuap-Samroiyot': 'hospital',
-            'Prachuap-Thapsakae': 'hospital',
-            'Ratchaburi-Banpong': 'hospital',
-            'Roi-Et-Phanomphrai': 'hospital',
-            'Sakonnakhon-Sawang': 'hospital',
-            'Samutprakarn-Bangbo': 'hospital',
-            'Samutprakarn-Bangchak': 'hospital',
-            'Samutprakarn-Bangplee': 'hospital',
-            'Samutprakarn-Samutprakarn': 'hospital',
-            ///'Samutprakarn-SSJ': 'hospital',
-            'Samutsongkhram-Somdet': 'hospital',
-            'SKL': 'company',
-            'Suphanburi-Somdej17': 'hospital',
-            'TCRB': 'company',
-            'Trang Hospital': 'hospital',
-            'TVI': 'company',
-        };
-
-        const companyMappings = {
-            'บริษัท อาวียุส ยูแอลดี จำกัด': 'Avius',
-            'Avius': 'Avius',
-            'บริษัท กรุงเทพประกันชีวิต จำกัด (มหาชน)': 'BLA',
-            'BLA': 'BLA',
-            'โรงพยาบาลบ้านด่าน จ.บุรีรัมย์': 'Buriram-Bandan',
-            'Buriram-Bandan': 'Buriram-Bandan',
-            'โรงพยาบาลบ้านใหม่ไชยพจน์ จ.บุรีรัมย์': 'Buriram-Banmaichaipod',
-            'Buriram-Banmaichaipod': 'Buriram-Banmaichaipod',
-            'โรงพยาบาลบุรีรัมย์ จ.บุรีรัมย์': 'Buriram-Buriram',
-            'Buriram-Buriram': 'Buriram-Buriram',
-            'โรงพยาบาลเฉลิมพระเกียรติ จ.บุรีรัมย์': 'Buriram-Chaloemphrakiat',
-            'Buriram-Chaloemphrakiat': 'Buriram-Chaloemphrakiat',
-            'โรงพยาบาลแคนดง จ.บุรีรัมย์': 'Buriram-Khaendong',
-            'Buriram-Khaendong': 'Buriram-Khaendong',
-            'โรงพยาบาลคูเมือง จ.บุรีรัมย์': 'Buriram-Khumuang',
-            'Buriram-Khumuang': 'Buriram-Khumuang',
-            'โรงพยาบาลกระสัง จ.บุรีรัมย์': 'Buriram-Krasang',
-            'Buriram-Krasang': 'Buriram-Krasang',
-            'โรงพยาบาลละหานทราย จ.บุรีรัมย์': 'Buriram-Lahansai',
-            'Buriram-Lahansai': 'Buriram-Lahansai',
-            'โรงพยาบาลลำปลายมาศ จ.บุรีรัมย์': 'Buriram-Lamplaimat',
-            'Buriram-Lamplaimat': 'Buriram-Lamplaimat',
-            'โรงพยาบาลหนองกี่ จ.บุรีรัมย์': 'Buriram-NongKi',
-            'Buriram-NongKi': 'Buriram-NongKi',
-            'โรงพยาบาลโนนสุวรรณ จ.บุรีรัมย์': 'Buriram-Nonsuwan',
-            'Buriram-Nonsuwan': 'Buriram-Nonsuwan',
-            'โรงพยาบาลพุทไธสง จ.บุรีรัมย์': 'Buriram-Phutthaisong',
-            'Buriram-Phutthaisong': 'Buriram-Phutthaisong',
-            'โรงพยาบาลประโคนชัย จ.บุรีรัมย์': 'Buriram-PrakhonChai',
-            'Buriram-PrakhonChai': 'Buriram-PrakhonChai',
-            'โรงพยาบาลสตึก จ.บุรีรัมย์': 'Buriram-Satuek',
-            'Buriram-Satuek': 'Buriram-Satuek',
-            'สำนักงานสาธารณสุขจังหวัดบุรีรัมย์': 'Buriram-SSJ',
-            'Buriram-SSJ': 'Buriram-SSJ',
-            'บริษัท คาราบาวตะวันแดง จำกัด': 'Carabao',
-            'Carabao': 'Carabao',
-            'โรงพยาบาลสันทราย จ.เชียงใหม่': 'Chiangmai-Sansai',
-            'Chiangmai-Sansai': 'Chiangmai-Sansai',
-            'สำนักงานสาธารณสุขจังหวัดเชียงใหม่': 'Chiangmai-SSJ',
-            'Chiangmai-SSJ': 'Chiangmai-SSJ',
-            'โรงพยาบาลเชียงรายประชานุเคราะห์ จ.เชียงราย': 'Chiangrai-Prachanukroh',
-            'Chiangrai-Prachanukroh': 'Chiangrai-Prachanukroh',
-            'โรงพยาบาลบ้านบึง จ.ชลบุรี': 'Chonburi-Banbung',
-            'Chonburi-Banbung': 'Chonburi-Banbung',
-            'โรงพยาบาลบางละมุง จ.ชลบุรี': 'Chonburi-BangLamung',
-            'Chonburi-BangLamung': 'Chonburi-BangLamung',
-            'โรงพยาบาลบ่อทอง จ.ชลบุรี': 'Chonburi-BoThong',
-            'Chonburi-BoThong': 'Chonburi-BoThong',
-            'โรงพยาบาลเกาะจันทร์ จ.ชลบุรี': 'Chonburi-Kohchan',
-            'Chonburi-Kohchan': 'Chonburi-Kohchan',
-            'โรงพยาบาลเกาะสีชัง จ.ชลบุรี': 'Chonburi-KohSichang',
-            'Chonburi-KohSichang': 'Chonburi-KohSichang',
-            'โรงพยาบาลแหลมฉบัง จ.ชลบุรี': 'Chonburi-Laemchabang',
-            'Chonburi-Laemchabang': 'Chonburi-Laemchabang',
-            'โรงพยาบาลพนัสนิคม จ.ชลบุรี': 'Chonburi-PhanatNikhom',
-            'Chonburi-PhanatNikhom': 'Chonburi-PhanatNikhom',
-            'โรงพยาบาลพานทอง จ.ชลบุรี': 'Chonburi-PhanThong',
-            'Chonburi-PhanThong': 'Chonburi-PhanThong',
-            'โรงพยาบาลสัตหีบ กม.10 จ.ชลบุรี': 'Chonburi-SattahipKM10',
-            'Chonburi-SattahipKM10': 'Chonburi-SattahipKM10',
-            'โรงพยาบาลวัดญาณสังวราราม จ.ชลบุรี': 'Chonburi-Watyan',
-            'Chonburi-Watyan': 'Chonburi-Watyan',
-            'บริษัท ซี.เจ. เอ็กซ์เพรส กรุ๊ป จำกัด': 'CJ',
-            'CJ': 'CJ',
-            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน) - DCSS': 'NT-DCSS',
-            'NT-DCSS': 'NT-DCSS',
-            'บริษัท ดริสเซ่น เคเทอร์ริ่ง อีควิปเม้นท์ จำกัด': 'Driessen',
-            'Driessen': 'Driessen',
-            'กรมการกงสุล - Thai E-VISA': 'E-VISA',
-            'E-VISA': 'E-VISA',
-            'สำนักงานคณะกรรมการกำกับกิจการพลังงาน (สำนักงาน กกพ.)': 'ERC',
-            'ERC': 'ERC',
-            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน) - ETAX': 'ETax',
-            'ETax': 'ETax',
-            'บริษัท ฟอลคอนประกันภัย จำกัด (มหาชน)': 'Falcon',
-            'Falcon': 'Falcon',
-            'โครงการพัฒนาระบบคลาวด์กลางภาครัฐ': 'โครงการพัฒนาระบบคลาวด์กลางภาครัฐ',
-            'GDCC': 'GDCC',
-            'ระบบบริหารการเงินการคลังภาครัฐแบบอิเล็กทรอนิกส์ กระทรวงการคลัง': 'GFMIS',
-            'GFMIS': 'GFMIS',
-            'สถาบันส่งเสริมการสอนวิทยาศาสตร์และเทคโนโลยี (สสวท.)': 'IPST',
-            'IPST': 'IPST',
-            'โรงพยาบาลเกาะลันตา จ.กระบี่': 'Krabi-Kohlanta',
-            'Krabi-Kohlanta': 'Krabi-Kohlanta',
-            'โรงพยาบาลลำทับ จ.กระบี่': 'Krabi-Lamthap',
-            'Krabi-Lamthap': 'Krabi-Lamthap',
-            'บริษัท หลักทรัพย์จัดการกองทุน กรุงศรี จำกัด (บลจ.กรุงศรี)': 'KSAM',
-            'KSAM': 'KSAM',
-            'โรงพยาบาลหนองหิน จ.เลย': 'Loei-Nonghin',
-            'Loei-Nonghin': 'Loei-Nonghin',
-            'โรงพยาบาลภูกระดึง จ.เลย': 'Loei-Phukradueng',
-            'Loei-Phukradueng': 'Loei-Phukradueng',
-            'โรงพยาบาลสมเด็จพระยุพราชด่านซ้าย จ.เลย': 'Loei-Dansai',
-            'Loei-Dansai': 'Loei-Dansai',
-            'โรงพยาบาลนาแห้ว จ.เลย': 'Loei-Nahaeo',
-            'Loei-Nahaeo': 'Loei-Nahaeo',
-            'โรงพยาบาลผาขาว จ.เลย': 'Loei-Phakhao',
-            'Loei-Phakhao': 'Loei-Phakhao',
-            'สำนักงานสาธารณสุขจังหวัดเลย': 'Loei-SSJ',
-            'Loei-SSJ': 'Loei-SSJ',
-            'โรงพยาบาลท่าลี่ จ.เลย': 'Loei-Thali',
-            'Loei-Thali': 'Loei-Thali',
-            'การรถไฟฟ้าขนส่งมวลชนแห่งประเทศไทย': 'MRTA',
-            'MRTA': 'MRTA',
-            'บริษัท เอ็ม เอส ไอ จี ประกันภัย (ประเทศไทย) จำกัด (มหาชน)': 'MSIG',
-            'MSIG': 'MSIG',
-            'บริษัท มูราตะ อิเล็กทรอนิกส์ (ประเทศไทย) จำกัด': 'MTL',
-            'MTL': 'MTL',
-            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน) - MY': 'MY',
-            'MY': 'MY',
-            'โรงพยาบาลลาดยาว จ.นครสวรรค์': 'Nakhonsawan-Latyao',
-            'Nakhonsawan-Latyao': 'Nakhonsawan-Latyao',
-            'โรงพยาบาลไพศาลี จ.นครสวรรค์': 'Nakhonsawan-Phaisalee',
-            'Nakhonsawan-Phaisalee': 'Nakhonsawan-Phaisalee',
-            'โรงพยาบาลบางขัน จ.นครศรีธรรมราช': 'Nakhonsi-Bangkhan',
-            'Nakhonsi-Bangkhan': 'Nakhonsi-Bangkhan',
-            'โรงพยาบาลสมเด็จพระยุพราชฉวาง จ.นครศรีธรรมราช': 'Nakhonsi-ChawangCrownPrince',
-            'Nakhonsi-ChawangCrownPrince': 'Nakhonsi-ChawangCrownPrince',
-            'โรงพยาบาลจุฬาภรณ์ จ.นครศรีธรรมราช': 'Nakhonsi-Chulabhorn',
-            'Nakhonsi-Chulabhorn': 'Nakhonsi-Chulabhorn',
-            'โรงพยาบาลหัวไทร จ.นครศรีธรรมราช': 'Nakhonsi-Huasai',
-            'Nakhonsi-Huasai': 'Nakhonsi-Huasai',
-            'โรงพยาบาลขนอม จ.นครศรีธรรมราช': 'Nakhonsi-Khanom',
-            'Nakhonsi-Khanom': 'Nakhonsi-Khanom',
-            'โรงพยาบาลลานสกา จ.นครศรีธรรมราช': 'Nakhonsi-Lansaka',
-            'Nakhonsi-Lansaka': 'Nakhonsi-Lansaka',
-            'โรงพยาบาลนาบอน จ.นครศรีธรรมราช': 'Nakhonsi-Nabon',
-            'Nakhonsi-Nabon': 'Nakhonsi-Nabon',
-            'โรงพยาบาลปากพนัง จ.นครศรีธรรมราช': 'Nakhonsi-Pakphanang',
-            'Nakhonsi-Pakphanang': 'Nakhonsi-Pakphanang',
-            'โรงพยาบาลพิปูน จ.นครศรีธรรมราช': 'Nakhonsi-Phipun',
-            'Nakhonsi-Phipun': 'Nakhonsi-Phipun',
-            'โรงพยาบาลพระพรหม จ.นครศรีธรรมราช': 'Nakhonsi-Phraphrom',
-            'Nakhonsi-Phraphrom': 'Nakhonsi-Phraphrom',
-            'โรงพยาบาลพ่อท่านคล้ายวาจาสิทธิ์ จ.นครศรีธรรมราช': 'Nakhonsi-Porthanklai',
-            'Nakhonsi-Porthanklai': 'Nakhonsi-Porthanklai',
-            'โรงพยาบาลพรหมคีรี จ.นครศรีธรรมราช': 'Nakhonsi-Promkiri',
-            'Nakhonsi-Promkiri': 'Nakhonsi-Promkiri',
-            'โรงพยาบาลร่อนพิบูลย์ จ.นครศรีธรรมราช': 'Nakhonsi-Ronphibun',
-            'Nakhonsi-Ronphibun': 'Nakhonsi-Ronphibun',
-            'สำนักงานสาธารณสุขจังหวัดนครศรีธรรมราช': 'Nakhonsi-SSJ',
-            'Nakhonsi-SSJ': 'Nakhonsi-SSJ',
-            'โรงพยาบาลถ้ำพรรณรา จ.นครศรีธรรมราช': 'Nakhonsi-Thamphannara',
-            'Nakhonsi-Thamphannara': 'Nakhonsi-Thamphannara',
-            'โรงพยาบาลทุ่งสง จ.นครศรีธรรมราช': 'Nakhonsi-Thungsong',
-            'Nakhonsi-Thungsong': 'Nakhonsi-Thungsong',
-            'โรงพยาบาลทุ่งใหญ่ จ.นครศรีธรรมราช': 'Nakhonsi-Thungyai',
-            'Nakhonsi-Thungyai': 'Nakhonsi-Thungyai',
-            'โรงพยาบาลเชียงกลาง จ.น่าน': 'Nan-ChiangKlang',
-            'Nan-ChiangKlang': 'Nan-ChiangKlang',
-            'โรงพยาบาลสมเด็จพระยุพราชปัว จ.น่าน': 'Nan-PuaCrownPrince',
-            'Nan-PuaCrownPrince': 'Nan-PuaCrownPrince',
-            'โรงพยาบาลสองแคว จ.น่าน': 'Nan-SongKhwae',
-            'Nan-SongKhwae': 'Nan-SongKhwae',
-            'โรงพยาบาลท่าวังผา จ.น่าน': 'Nan-ThaWangPha',
-            'Nan-ThaWangPha': 'Nan-ThaWangPha',
-            'สถาบันมะเร็งแห่งชาติ': 'NCI',
-            'NCI': 'NCI',
-            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน) - NSW': 'NSW',
-            'NSW': 'NSW',
-            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน)': 'NT',
-            'NT': 'NT',
-            'โรงพยาบาลพะเยา จ.พะเยา': 'Phayao-Phayao',
-            'Phayao-Phayao': 'Phayao-Phayao',
-            'โรงพยาบาลป่าตอง จ.ภูเก็ต': 'Phuket-Patong',
-            'Phuket-Patong': 'Phuket-Patong',
-            'โรงพยาบาลบางกระทุ่ม จ.พิษณุโลก': 'Pitsanulok-Bangkrathum',
-            'Pitsanulok-Bangkrathum': 'Pitsanulok-Bangkrathum',
-            'โรงพยาบาลบางระกำ จ.พิษณุโลก': 'Pitsanulok-Bangrakam',
-            'Pitsanulok-Bangrakam': 'Pitsanulok-Bangrakam',
-            'โรงพยาบาลสมเด็จพระยุพราชนครไทย จ.พิษณุโลก': 'Pitsanulok-NakhonthaiCrownPrince',
-            'Pitsanulok-NakhonthaiCrownPrince': 'Pitsanulok-NakhonthaiCrownPrince',
-            'โรงพยาบาลเนินมะปราง จ.พิษณุโลก': 'Pitsanulok-Noenmaprang',
-            'Pitsanulok-Noenmaprang': 'Pitsanulok-Noenmaprang',
-            'โรงพยาบาลพรหมพิราม จ.พิษณุโลก': 'Pitsanulok-PhromPhiram',
-            'Pitsanulok-PhromPhiram': 'Pitsanulok-PhromPhiram',
-            'สำนักงานสาธารณสุขจังหวัดพิษณุโลก': 'Pitsanulok-SSJ',
-            'Pitsanulok-SSJ': 'Pitsanulok-SSJ',
-            'โรงพยาบาลวังทอง จ.พิษณุโลก': 'Pitsanulok-Wangthong',
-            'Pitsanulok-Wangthong': 'Pitsanulok-Wangthong',
-            'โรงพยาบาลวัดโบสถ์ จ.พิษณุโลก': 'โรงพยาบาลวัดโบสถ์ จ.พิษณุโลก',
-            'Pitsanulok-Watbot': 'Pitsanulok-Watbot',
-            'โรงพยาบาลนาดี จ.ปราจีนบุรี': 'Prachinburi-Nadi',
-            'Prachinburi-Nadi': 'Prachinburi-Nadi',
-            'โรงพยาบาลบางสะพาน จ.ประจวบคีรีขันธ์': 'Prachuap-Bangsaphan',
-            'Prachuap-Bangsaphan': 'Prachuap-Bangsaphan',
-            'โรงพยาบาลหัวหิน จ.ประจวบคีรีขันธ์': 'Prachuap-Huahin',
-            'Prachuap-Huahin': 'Prachuap-Huahin',
-            'โรงพยาบาลสามร้อยยอด จ.ประจวบคีรีขันธ์': 'Prachuap-Samroiyot',
-            'Prachuap-Samroiyot': 'Prachuap-Samroiyot',
-            'โรงพยาบาลทับสะแก จ.ประจวบคีรีขันธ์': 'Prachuap-Thapsakae',
-            'Prachuap-Thapsakae': 'Prachuap-Thapsakae',
-            'โรงพยาบาลบ้านโป่ง จ.ราชบุรี': 'Ratchaburi-Banpong',
-            'Ratchaburi-Banpong': 'Ratchaburi-Banpong',
-            'โรงพยาบาลพนมไพร จ.ร้อยเอ็ด': 'Roi-Et-Phanomphrai',
-            'Roi-Et-Phanomphrai': 'Roi-Et-Phanomphrai',
-            'โรงพยาบาลสมเด็จพระยุพราชสว่างแดนดิน จ.สกลนคร': 'Sakonnakhon-Sawang',
-            'Sakonnakhon-Sawang': 'Sakonnakhon-Sawang',
-            'โรงพยาบาลบางบ่อ จ.สมุทรปราการ': 'Samutprakarn-Bangbo',
-            'Samutprakarn-Bangbo': 'Samutprakarn-Bangbo',
-            'โรงพยาบาลบางจาก จ.สมุทรปราการ': 'Samutprakarn-Bangchak',
-            'Samutprakarn-Bangchak': 'Samutprakarn-Bangchak',
-            'โรงพยาบาลบางพลี จ.สมุทรปราการ': 'Samutprakarn-Bangplee',
-            'Samutprakarn-Bangplee': 'Samutprakarn-Bangplee',
-            'โรงพยาบาลสมุทรปราการ จ.สมุทรปราการ': 'Samutprakarn-Samutprakarn',
-            'Samutprakarn-Samutprakarn': 'Samutprakarn-Samutprakarn',
-            'สำนักงานสาธารณสุขจังหวัดสมุทรปราการ': 'Samutprakarn-SSJ',
-            'Samutprakarn-SSJ': 'Samutprakarn-SSJ',
-            'โรงพยาบาลสมเด็จพระพุทธเลิศหล้า จ.สมุทรสงคราม': 'Samutsongkhram-Somdet',
-            'Samutsongkhram-Somdet': 'Samutsongkhram-Somdet',
-            'บริษัท สยามคูโบต้า ลีสซิ่ง จำกัด': 'SKL',
-            'SKL': 'SKL',
-            'โรงพยาบาลสมเด็จพระสังฆราชองค์ที่ 17 จ.สุพรรณบุรี': 'Suphanburi-Somdej17',
-            'Suphanburi-Somdej17': 'Suphanburi-Somdej17',
-            'บริษัท ธนาคารไทยเครดิต เพื่อรายย่อย จำกัด (มหาชน)': 'TCRB',
-            'TCRB': 'TCRB',
-            'โรงพยาบาลตรัง จ.ตรัง': 'Trang Hospital',
-            'Trang Hospital': 'Trang Hospital',
-            'บริษัท ประกันภัยไทยวิวัฒน์ จำกัด (มหาชน)': 'TVI',
-            'TVI': 'TVI'
-        };
-
-        const companyFullNames = {
-            'Buriram-Bandan': 'เจ้าหน้าที่โรงพยาบาลบ้านด่าน',
-            'Buriram-Khaendong': 'เจ้าหน้าที่โรงพยาบาลแคนดง',
-            // Add other hospital full names here
-        };
-
+    
         const months = [
             'January', 'February', 'March', 'April',
             'May', 'June', 'July', 'August',
@@ -960,6 +482,24 @@
         let excelData = null;
         let companies = new Set();
         let selectedCompanies = new Set();
+
+        function isDataReady() {
+            return (
+                companyGroups &&
+                Object.keys(companyGroups).length > 0 &&
+                companyTypes &&
+                companyMappings &&
+                companyFullNames
+            );
+        }
+
+        function handleFile(file) {
+            if (!isDataReady()) {
+                alert('กรุณารอข้อมูลโหลดให้เสร็จก่อนอัพโหลดไฟล์');
+                return;
+            }
+        }
+
 
         function formatDateToEng(date) {
             const d = new Date(date);
@@ -1027,7 +567,26 @@
             const filtersContainer = document.getElementById('companyFilters');
             filtersContainer.innerHTML = '';
 
-            Object.entries(companyGroups).forEach(([groupId, group]) => {
+             // แปลง companyGroups เป็น Array เพื่อให้สามารถเรียงลำดับได้
+            const sortedGroups = Object.entries(companyGroups)
+                .sort((a, b) => {
+                    const numA = parseInt(a[0].replace('Shift ', '')) || Infinity;
+                    const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
+                    return numA - numB;
+                });
+
+            sortedGroups.forEach(([groupId, group]) => {
+                console.log(`Processing group ${groupId}:`, group); // Log ข้อมูลแต่ละกลุ่ม
+
+                // ถ้า group เป็น array โดยตรง (กรณีที่ไม่มี name)
+                const companies = Array.isArray(group) ? group : group.companies;
+                const groupName = Array.isArray(group) ? groupId : (group.name || groupId);
+
+                if (!companies || !Array.isArray(companies)) {
+                    console.warn(`Invalid companies data for ${groupId}:`, companies);
+                    return;
+                }
+
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'company-group';
 
@@ -1036,7 +595,7 @@
 
                 const groupTitle = document.createElement('h3');
                 groupTitle.className = 'company-group-title';
-                groupTitle.textContent = group.name;
+                groupTitle.textContent = groupName;
                 header.appendChild(groupTitle);
 
                 const buttonContainer = document.createElement('div');
@@ -1046,13 +605,13 @@
                 const selectGroupBtn = document.createElement('button');
                 selectGroupBtn.textContent = 'Select All';
                 selectGroupBtn.className = 'select-group-btn';
-                selectGroupBtn.onclick = () => selectGroupCompanies(group.companies);
+                selectGroupBtn.onclick = () => selectGroupCompanies(companies);
 
                 const unselectGroupBtn = document.createElement('button');
                 unselectGroupBtn.textContent = 'Unselect All';
                 unselectGroupBtn.className = 'select-group-btn';
                 unselectGroupBtn.style.backgroundColor = '#404040';
-                unselectGroupBtn.onclick = () => unselectGroupCompanies(group.companies);
+                unselectGroupBtn.onclick = () => unselectGroupCompanies(companies);
 
                 buttonContainer.appendChild(selectGroupBtn);
                 buttonContainer.appendChild(unselectGroupBtn);
@@ -1063,34 +622,33 @@
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'company-group-content';
 
-                group.companies.forEach(company => {
-                    if (companies.has(company)) {
-                        const label = document.createElement('label');
-                        label.className = 'company-checkbox';
+                companies.forEach(company => {
+                    const label = document.createElement('label');
+                    label.className = 'company-checkbox';
 
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.value = company;
-                        checkbox.checked = selectedCompanies.has(company);
-                        checkbox.addEventListener('change', function () {
-                            if (this.checked) {
-                                selectedCompanies.add(this.value);
-                            } else {
-                                selectedCompanies.delete(this.value);
-                            }
-                            updateAllTemplates();
-                        });
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = company;
+                    checkbox.checked = selectedCompanies.has(company);
+                    checkbox.addEventListener('change', function () {
+                        if (this.checked) {
+                            selectedCompanies.add(this.value);
+                        } else {
+                            selectedCompanies.delete(this.value);
+                        }
+                        updateAllTemplates();
+                    });
 
-                        label.appendChild(checkbox);
-                        label.appendChild(document.createTextNode(company));
-                        contentDiv.appendChild(label);
-                    }
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(company));
+                    contentDiv.appendChild(label);
                 });
 
                 groupDiv.appendChild(contentDiv);
                 filtersContainer.appendChild(groupDiv);
             });
         }
+
 
         function unselectGroupCompanies(groupCompanies) {
             groupCompanies.forEach(company => {
@@ -1285,18 +843,91 @@
             messagingSenderId: "632813871756",
             appId: "1:632813871756:web:57d674643f258ddd2e11a9",
         });
+
+        let companyGroups = {};
+        let companyTypes = {};
+        let companyMappings = {};
+        let companyFullNames = {};
+
+        async function loadCustomerData() {
+    try {
+        const db = firebase.firestore();
+        
+        // โหลด companyGroups และ log ข้อมูลที่ได้
+        const groupsDoc = await db.collection('customerManagement')
+            .doc('companyGroups').get();
+        
+        if (groupsDoc.exists) {
+            const data = groupsDoc.data();
+            console.log('Raw data from Firestore:', data); // ดูข้อมูลดิบที่ได้จาก Firestore
+
+            // ถ้าข้อมูลมี shifts อยู่แล้ว
+            if (data && data.shifts) {
+                companyGroups = data.shifts;
+            } 
+            // ถ้าข้อมูลเป็น object ที่มี key เป็น Shift 1, Shift 2, etc. โดยตรง
+            else if (data && Object.keys(data).some(key => key.startsWith('Shift'))) {
+                 // แปลง Object เป็น Array ของ [key, value] เพื่อให้สามารถ Sort ได้
+                const sortedEntries = Object.entries(data).sort((a, b) => {
+                  const numA = parseInt(a[0].replace('Shift ', '')) || Infinity;
+                  const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
+                    return numA - numB;
+                });
+
+                // แปลงกลับเป็น Object หลังจาก Sort แล้ว
+                companyGroups = Object.fromEntries(sortedEntries);
+            }
+            else {
+                console.warn('No valid shifts data found');
+                companyGroups = {};
+            }
+
+            console.log('Processed companyGroups:', companyGroups); // ดูข้อมูลหลังจัดรูปแบบ
+        }
+
+        // โหลดข้อมูลอื่นๆ เหมือนเดิม
+        const [typesDoc, mappingsDoc, fullNamesDoc] = await Promise.all([
+            db.collection('customerManagement').doc('companyTypes').get(),
+            db.collection('customerManagement').doc('companyMappings').get(),
+            db.collection('customerManagement').doc('companyFullNames').get()
+        ]);
+
+        companyTypes = typesDoc.exists ? typesDoc.data() : {};
+        companyMappings = mappingsDoc.exists ? mappingsDoc.data() : {};
+        companyFullNames = fullNamesDoc.exists ? fullNamesDoc.data() : {};
+
+        console.log('Loaded companyTypes:', companyTypes);
+        console.log('Loaded companyMappings:', companyMappings);
+        console.log('Loaded companyFullNames:', companyFullNames);
+
+        if (Object.keys(companyGroups).length > 0) {
+            updateCompanyFilters();
+        } else {
+            document.getElementById('companyFilters').innerHTML = 
+                '<p>ไม่พบข้อมูลบริษัท กรุณาตรวจสอบการตั้งค่าข้อมูลในระบบ</p>';
+        }
+        
+    } catch (error) {
+        console.error('Error loading customer data:', error);
+        document.getElementById('companyFilters').innerHTML = 
+            '<p>เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณารีเฟรชหน้าเว็บ</p>';
+    }
+}
+
+
     </script>
     <script>
         // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
+                await loadCustomerData();
                 try {
                     const userDoc = await firebase.firestore()
                         .collection('users')
                         .doc(user.uid)
                         .get();
 
-                    const userData = userDoc.data();
+                        const userData = userDoc.data();
                     const displayElement = document.getElementById('userDisplayName');
 
                     if (userData?.displayName) {

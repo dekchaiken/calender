@@ -516,7 +516,7 @@ const companyMappings = {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Following Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #FDB813;
@@ -528,7 +528,7 @@ const companyMappings = {
 
         * {
             box-sizing: border-box;
-            font-family: 'Sarabun', sans-serif;
+            font-family: 'Noto Sans Thai', sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -999,9 +999,6 @@ const companyMappings = {
                 companies: [
                     'MRTA',
                     'SKL',
-                    //กระทรวงการคลัง
-                    //กกพ.
-                    //สสวท.
                     
                 ]
             },
@@ -1153,7 +1150,7 @@ const companyMappings = {
             'Chonburi-SattahipKM10': 'hospital',
             'Chonburi-Watyan': 'hospital',
             'CJ': 'company',
-            'NT-DCSS': 'company',  ///ไม่แน่ใจ DCSS รอเช็ค
+            'NT-DCSS': 'company',  
             'Driessen': 'company',
             'E-VISA': 'company',
             'ERC': 'company',
