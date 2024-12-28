@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - จัดการประกาศระบบ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #f5f5f5;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .announcement-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        select.form-control {
+            background-color: white;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .announcement-list {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .announcement-item {
+            border: 1px solid #eee;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .announcement-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+
+        .badge-update {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .badge-maintenance {
+            background: var(--warning);
+            color: var(--accent);
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-back {
+            background: var(--secondary);
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+        <h1>จัดการประกาศระบบ</h1>
+    </div>
+
+    <div class="container">
+        <a href="admin.html" class="btn btn-back">กลับไปหน้า Admin</a>
+        
+        <div class="announcement-form">
+            <h2>สร้างประกาศใหม่</h2>
+            <form id="systemAnnouncementForm">
+                <div class="form-group">
+                    <label>ประเภท</label>
+                    <select class="form-control" id="announcementType" required>
+                        <option value="UPDATE">อัพเดตระบบ</option>
+                        <option value="MAINTENANCE">แจ้งปิดปรับปรุง</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>หัวข้อ</label>
+                    <input type="text" class="form-control" id="announcementTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>เนื้อหา</label>
+                    <textarea class="form-control" id="announcementContent" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">บันทึกประกาศ</button>
+            </form>
+        </div>
+
+        <div class="announcement-list">
+            <h2>ประกาศทั้งหมด</h2>
+            <div id="announcementsList">
+                <!-- ประกาศจะถูกแสดงที่นี่ -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Initialize Firebase
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+        });
+
+        // Check authentication
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Check if user is admin
+            const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+            if (!userDoc.data()?.role === 'admin') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            loadAnnouncements();
+        });
+
+        // Load announcements
+        async function loadAnnouncements() {
+            try {
+                const snapshot = await firebase.firestore()
+                    .collection('systemAnnouncements')
+                    .orderBy('date', 'desc')
+                    .get();
+
+                const container = document.getElementById('announcementsList');
+                container.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const announcement = doc.data();
+                    container.innerHTML += `
+                        <div class="announcement-item">
+                            <div class="announcement-header">
+                                <span class="announcement-badge badge-${announcement.type.toLowerCase()}">
+                                    ${announcement.type}
+                                </span>
+                                <button onclick="deleteAnnouncement('${doc.id}')" class="btn btn-delete">
+                                    ลบ
+                                </button>
+                            </div>
+                            <h3>${announcement.title}</h3>
+                            <p>${announcement.content}</p>
+                            <small>วันที่: ${new Date(announcement.date).toLocaleDateString('th-TH')}</small>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading announcements:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดประกาศ');
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('systemAnnouncementForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const announcement = {
+                type: document.getElementById('announcementType').value,
+                title: document.getElementById('announcementTitle').value,
+                content: document.getElementById('announcementContent').value,
+                date: new Date().toISOString()
+            };
+
+            try {
+                await firebase.firestore().collection('systemAnnouncements').add(announcement);
+                alert('บันทึกประกาศสำเร็จ');
+                e.target.reset();
+                loadAnnouncements();
+            } catch (error) {
+                console.error('Error saving announcement:', error);
+                alert('เกิดข้อผิดพลาดในการบันทึกประกาศ');
+            }
+        });
+
+        // Delete announcement
+        async function deleteAnnouncement(id) {
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะลบประกาศนี้?')) return;
+
+            try {
+                await firebase.firestore().collection('systemAnnouncements').doc(id).delete();
+                alert('ลบประกาศสำเร็จ');
+                loadAnnouncements();
+            } catch (error) {
+                console.error('Error deleting announcement:', error);
+                alert('เกิดข้อผิดพลาดในการลบประกาศ');
+            }
+        }
+    </script>
+</body>
+</html>

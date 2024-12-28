@@ -636,25 +636,20 @@
             `).join('');
         }
 
-        // System announcements
-        const systemAnnouncements = [
-            {
-                type: 'UPDATE',
-                title: 'อัพเดตระบบเวอร์ชัน 0.0.1',
-                content: 'เพิ่มฟีเจอร์ใหม่: ปรับปรุงประสิทธิภาพการโหลดหน้าเว็บ',
-                date: '2024-12-28'
-            },
-            {
-                type: 'MAINTENANCE',
-                title: 'แจ้งปิดปรับปรุงระบบ',
-                content: 'ระบบจะปิดปรับปรุงในวันที่ 30 ธันวาคม 2024 เวลา 02:00-04:00 น.',
-                date: '2024-12-28'
-            }
-        ];
+        async function displaySystemAnnouncements() {
+    const container = document.getElementById('systemAnnouncements');
+    try {
+        const snapshot = await firebase.firestore()
+            .collection('systemAnnouncements')
+            .orderBy('date', 'desc')
+            .limit(5)  // แสดง 5 ประกาศล่าสุด
+            .get();
 
-        function displaySystemAnnouncements() {
-            const container = document.getElementById('systemAnnouncements');
-            container.innerHTML = systemAnnouncements.map(announcement => `
+        container.innerHTML = '';
+        
+        snapshot.forEach(doc => {
+            const announcement = doc.data();
+            container.innerHTML += `
                 <div class="system-announcement">
                     <div class="system-announcement-header">
                         <span class="system-announcement-badge">${announcement.type}</span>
@@ -663,8 +658,14 @@
                     <p>${announcement.content}</p>
                     <small>ประกาศเมื่อ: ${new Date(announcement.date).toLocaleDateString('th-TH')}</small>
                 </div>
-            `).join('');
-        }
+            `;
+        });
+
+    } catch (error) {
+        console.error('Error fetching announcements:', error);
+        container.innerHTML = '<p>ไม่สามารถโหลดประกาศได้</p>';
+    }
+}
 
         // เพิ่มฟังก์ชันสำหรับแสดงโพสต์
         async function loadPosts() {
@@ -773,10 +774,11 @@
         }
         //โหลดโพสต์เมื่อเปิดหน้า
         firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                loadPosts();
-            }
-        });
+    if (user) {
+        displaySystemAnnouncements();
+        loadPosts();  // ฟังก์ชันที่มีอยู่แล้ว
+    }
+});
         // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
