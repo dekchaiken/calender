@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyfence - จัดการประกาศ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Cyfence - Post Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #FDB813;
@@ -14,27 +15,19 @@
             --success: #28a745;
             --warning: #ffc107;
             --danger: #dc3545;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-300: #dee2e6;
-            --gray-400: #ced4da;
-            --gray-500: #adb5bd;
-            --gray-600: #6c757d;
-            --gray-700: #495057;
-            --gray-800: #343a40;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         * {
             box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
             margin: 0;
             padding: 0;
-            font-family: 'Sarabun', sans-serif;
         }
 
         body {
-            background: var(--gray-100);
             min-height: 100vh;
-            line-height: 1.6;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
         }
 
         .header {
@@ -42,10 +35,7 @@
             align-items: center;
             padding: 1rem 2rem;
             background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            box-shadow: var(--shadow);
         }
 
         .logo {
@@ -53,550 +43,607 @@
             margin-right: 2rem;
         }
 
-        .container {
+        .admin-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .nav-btn {
+            background: #f0f0f0;
+            color: var(--secondary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .admin-container {
             max-width: 1200px;
             margin: 2rem auto;
-            padding: 0 2rem;
+            padding: 0 1rem;
         }
 
-        .posts-list {
+        .admin-card {
             background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .post-item {
-            background: white;
-            border: 1px solid var(--gray-200);
             border-radius: 8px;
             padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
         }
 
-        .post-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transform: translateY(-2px);
+        .admin-card h2 {
+            color: var(--secondary);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
         }
 
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            gap: 1rem;
-        }
-
-        .post-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-800);
-            margin-bottom: 0.5rem;
-            word-break: break-word;
-        }
-
-        .post-meta {
-            color: var(--gray-600);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .post-content {
-            color: var(--gray-700);
-            white-space: pre-wrap;
-            word-break: break-word;
-            margin-bottom: 1rem;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 0.5rem;
-            background: var(--gray-50);
-            border-radius: 4px;
-        }
-
-        .post-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 80px;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: var(--gray-800);
-        }
-
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-
-        .filter-container {
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .search-input {
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--gray-200);
-            border-radius: 8px;
+        .posts-table {
             width: 100%;
-            max-width: 400px;
-            transition: all 0.3s;
-            font-size: 1rem;
+            border-collapse: collapse;
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(253,184,19,0.2);
+        .posts-table th,
+        .posts-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
         }
 
-        .back-btn {
-            padding: 0.75rem 1.5rem;
-            background: var(--gray-200);
+        .posts-table th {
+            background: #f8f8f8;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .add-post-btn {
+            background: var(--primary);
+            color: var(--accent);
             border: none;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 4px;
             cursor: pointer;
-            margin-left: auto;
-            font-weight: 500;
-            transition: all 0.2s;
+            margin-bottom: 1rem;
+            font-weight: 600;
         }
 
-        .back-btn:hover {
-            background: var(--gray-300);
+        .action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .edit-btn {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            color: white;
         }
 
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            backdrop-filter: blur(4px);
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
             background: white;
             padding: 2rem;
-            border-radius: 12px;
-            width: 90%;
+            border-radius: 8px;
+            width: 100%;
             max-width: 600px;
-            margin: 3rem auto;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--gray-700);
+            color: var(--secondary);
         }
 
-        textarea.search-input {
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
             resize: vertical;
-            min-height: 200px;
-            font-family: inherit;
-            line-height: 1.6;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 1rem;
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .save-btn {
+            background: var(--primary);
+            color: var(--accent);
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cancel-btn {
+            background: #f0f0f0;
+            color: var(--secondary);
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            margin-top: 0.5rem;
+        }
+
+        .post-content {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .page-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: var(--accent);
+            border-color: var(--primary);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #FDB813;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
             }
 
-            .posts-list {
-                padding: 1rem;
-            }
-
-            .post-header {
-                flex-direction: column;
-            }
-
-            .post-actions {
-                width: 100%;
-                justify-content: flex-end;
-            }
-
-            .header {
-                padding: 1rem;
-                flex-wrap: wrap;
-            }
-
-            .logo {
-                margin-right: 1rem;
-            }
-
-            .back-btn {
-                margin-left: 0;
-                margin-top: 1rem;
-                width: 100%;
+            100% {
+                transform: rotate(360deg);
             }
         }
     </style>
 </head>
+
 <body>
     <div class="header">
-        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
-        <h1>จัดการประกาศ</h1>
-        <button onclick="window.location.href='admin.html'" class="back-btn">กลับหน้าแอดมิน</button>
-    </div>
-
-    <div class="container">
-        <div class="filter-container">
-            <input type="text" class="search-input" placeholder="ค้นหาประกาศ..." oninput="filterPosts(this.value)">
-        </div>
-
-        <div class="posts-list" id="postsList">
-            <!-- Posts will be loaded here -->
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
+        <h1 class="admin-title">จัดการประกาศ</h1>
+        <div class="user-container">
+            <span class="user-name" id="userDisplayName">Loading...</span>
+            <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
     </div>
 
-    <div id="editModal" class="modal">
+    <div class="admin-container">
+        <div class="admin-card">
+            <h2>จัดการประกาศทั้งหมด</h2>
+            <button onclick="showAddPostModal()" class="add-post-btn">เพิ่มประกาศใหม่</button>
+            <table class="posts-table">
+                <thead>
+                    <tr>
+                        <th>หัวข้อ</th>
+                        <th>เนื้อหา</th>
+                        <th>ผู้โพสต์</th>
+                        <th>วันที่</th>
+                        <th>รูปภาพ</th>
+                        <th>การดำเนินการ</th>
+                    </tr>
+                </thead>
+                <tbody id="postsTableBody">
+                    <!-- ข้อมูลโพสต์จะถูกเพิ่มที่นี่ด้วย JavaScript -->
+                </tbody>
+            </table>
+            <div class="pagination" id="pagination">
+                <!-- ปุ่มเพจจะถูกเพิ่มที่นี่ด้วย JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal สำหรับเพิ่ม/แก้ไขโพสต์ -->
+    <div id="postModal" class="modal">
         <div class="modal-content">
-            <h2 style="margin-bottom: 1.5rem">แก้ไขประกาศ</h2>
-            <div class="form-group">
-                <label>หัวข้อ</label>
-                <input type="text" id="editTitle" class="search-input">
-            </div>
-            <div class="form-group">
-                <label>เนื้อหา</label>
-                <textarea id="editContent" class="search-input"></textarea>
-            </div>
-            <div class="post-actions">
-                <button onclick="closeEditModal()" class="btn btn-warning">ยกเลิก</button>
-                <button onclick="saveEdit()" class="btn btn-primary" style="background: var(--primary)">บันทึก</button>
-            </div>
+            <h3 id="modalTitle">เพิ่มประกาศใหม่</h3>
+            <form id="postForm" onsubmit="handlePostSubmit(event)">
+                <div class="form-group">
+                    <label for="title">หัวข้อ</label>
+                    <input type="text" id="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="content">เนื้อหา</label>
+                    <textarea id="content" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="image">รูปภาพ (ถ้ามี)</label>
+                    <input type="file" id="image" accept="image/*" onchange="previewImage(event)">
+                    <img id="imagePreview" class="preview-image" style="display: none;">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">ยกเลิก</button>
+                    <button type="submit" class="save-btn">บันทึก</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
-        // Your existing Firebase configuration and JavaScript code remains the same
-        firebase.initializeApp({
-            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
-            authDomain: "cyfencedevbyken.firebaseapp.com",
-            projectId: "cyfencedevbyken",
-            storageBucket: "cyfencedevbyken.appspot.com",
-            messagingSenderId: "632813871756",
-            appId: "1:632813871756:web:57d674643f258ddd2e11a9"
-        });
-
-        let currentPosts = [];
+        // ตัวแปรสำหรับการแบ่งหน้า
+        const POSTS_PER_PAGE = 10;
+        let currentPage = 1;
+        let totalPages = 1;
         let editingPostId = null;
+        let cachedPosts = new Map(); // เก็บแคช posts แต่ละหน้า
 
-        async function loadPosts() {
+        // โหลดโพสต์ทั้งหมด
+        async function loadPosts(page = 1) {
+            showLoading();
+            const postsTableBody = document.getElementById('postsTableBody');
             try {
-                const snapshot = await firebase.firestore().collection('posts')
-                    .orderBy('createdAt', 'desc')
+                const snapshot = await firebase.firestore()
+                    .collection('posts')
+                    .orderBy('createdAt', 'desc') // เพิ่มการเรียงลำดับตาม createdAt จากใหม่ไปเก่า
                     .get();
 
-                currentPosts = snapshot.docs.map(doc => ({
+                totalPages = Math.ceil(snapshot.size / POSTS_PER_PAGE);
+
+                // คำนวณ start และ end index สำหรับหน้าปัจจุบัน
+                const start = (page - 1) * POSTS_PER_PAGE;
+                const end = start + POSTS_PER_PAGE;
+
+                // เก็บข้อมูลทั้งหมดในอาเรย์
+                const allPosts = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
 
-                displayPosts(currentPosts);
+                // แบ่งข้อมูลตามหน้า
+                const postsForCurrentPage = allPosts.slice(start, end);
+
+                // ล้างข้อมูลเก่า
+                postsTableBody.innerHTML = '';
+
+                postsForCurrentPage.forEach(post => {
+                    const postDate = post.createdAt ? new Date(post.createdAt.seconds * 1000) : new Date();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${post.title}</td>
+                <td class="post-content">${post.content}</td>
+                <td>${post.authorName || 'ไม่ระบุชื่อ'}</td>
+                <td>${postDate.toLocaleDateString('th-TH')}</td>
+                <td>${post.image ? '<img src="' + post.image + '" style="max-width: 50px;">' : 'ไม่มีรูปภาพ'}</td>
+                <td>
+                    <button onclick="editPost('${post.id}')" class="action-btn edit-btn">แก้ไข</button>
+                    <button onclick="deletePost('${post.id}')" class="action-btn delete-btn">ลบ</button>
+                </td>
+            `;
+                    postsTableBody.appendChild(row);
+                });
+
+                currentPage = page;
+                updatePagination();
             } catch (error) {
                 console.error('Error loading posts:', error);
                 alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            } finally {
+                hideLoading();
             }
         }
 
-        function displayPosts(posts) {
-            const postsList = document.getElementById('postsList');
-            postsList.innerHTML = posts.map(post => `
-                <div class="post-item">
-                    <div class="post-header">
-                        <div>
-                            <div class="post-title">${post.title}</div>
-                            <div class="post-meta">
-                                โดย: ${post.authorName || 'ไม่ระบุ'}
-                                <br>
-                                เมื่อ: ${post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleString('th-TH') : 'ไม่ระบุ'}
-                            </div>
-                        </div>
-                        <div class="post-actions">
-                            <button onclick="editPost('${post.id}')" class="btn btn-warning">แก้ไข</button>
-                            <button onclick="deletePost('${post.id}')" class="btn btn-danger">ลบ</button>
-                        </div>
-                    </div>
-                    <div class="post-content">${post.content}</div>
-                </div>
-            `).join('');
-        }
-
-        function filterPosts(searchTerm) {
-            const filtered = currentPosts.filter(post => 
-                post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                post.content.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            displayPosts(filtered);
-        }
-
-        function editPost(postId) {
-            const post = currentPosts.find(p => p.id === postId);
-            if (post) {
-                editingPostId = postId;
-                document.getElementById('editTitle').value = post.title;
-                document.getElementById('editContent').value = post.content;
-                document.getElementById('editModal').style.display = 'block';
-            }
-        }
-
-        async function saveEdit() {
-            if (!editingPostId) return;
-
-            const newTitle = document.getElementById('editTitle').value;
-            const newContent = document.getElementById('editContent').value;
-
+        // ลบโพสต์
+        async function editPost(postId) {
+            showLoading();
             try {
-                await firebase.firestore().collection('posts').doc(editingPostId).update({
-                    title: newTitle,
-                    content: newContent,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                const doc = await firebase.firestore()
+                    .collection('posts')
+                    .doc(postId)
+                    .get();
 
-                await firebase.firestore().collection('logs').add({
-                    action: 'edit_post',
-                    postId: editingPostId,
-                    userId: firebase.auth().currentUser.uid,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                closeEditModal();
-                loadPosts();
-                alert('แก้ไขประกาศสำเร็จ');
+                if (doc.exists) {
+                    const post = doc.data();
+                    document.getElementById('modalTitle').textContent = 'แก้ไขประกาศ';
+                    document.getElementById('title').value = post.title;
+                    document.getElementById('content').value = post.content;
+                    if (post.image) {
+                        document.getElementById('imagePreview').src = post.image;
+                        document.getElementById('imagePreview').style.display = 'block';
+                    }
+                    document.getElementById('postModal').style.display = 'flex';
+                    editingPostId = postId;
+                }
             } catch (error) {
-                console.error('Error updating post:', error);
-                alert('เกิดข้อผิดพลาดในการแก้ไขประกาศ');
+                console.error('Error loading post:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            } finally {
+                hideLoading();
             }
         }
 
+        // ลบโพสต์
         async function deletePost(postId) {
-            if (!confirm('คุณต้องการลบประกาศนี้ใช่หรือไม่?')) return;
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะลบประกาศนี้?')) return;
 
+            showLoading();
             try {
                 await firebase.firestore().collection('posts').doc(postId).delete();
-
-                await firebase.firestore().collection('logs').add({
-                    action: 'delete_post',
-                    postId: postId,
-                    userId: firebase.auth().currentUser.uid,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                loadPosts();
                 alert('ลบประกาศสำเร็จ');
+                loadPosts(currentPage);
             } catch (error) {
                 console.error('Error deleting post:', error);
                 alert('เกิดข้อผิดพลาดในการลบประกาศ');
+            } finally {
+                hideLoading();
             }
         }
 
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
+        function showAddPostModal() {
+            // รีเซ็ตฟอร์มและตั้งค่าเริ่มต้น
+            document.getElementById('postForm').reset();
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('modalTitle').textContent = 'เพิ่มประกาศใหม่';
+            editingPostId = null;
+
+            // แสดง Modal
+            document.getElementById('postModal').style.display = 'flex';
+        }
+
+        // แสดงตัวอย่างรูปภาพ
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showLoading() {
+            const overlay = document.createElement('div');
+            overlay.className = 'loading-overlay';
+            overlay.innerHTML = '<div class="loading-spinner"></div>';
+            document.body.appendChild(overlay);
+        }
+
+        function hideLoading() {
+            const overlay = document.querySelector('.loading-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
+        }
+        // จัดการการส่งฟอร์ม
+        async function handlePostSubmit(event) {
+            event.preventDefault();
+            showLoading();
+
+            const form = event.target;
+            const title = form.title.value;
+            const content = form.content.value;
+            const imageFile = form.image.files[0];
+
+            try {
+                let imageUrl = null;
+                const currentUser = firebase.auth().currentUser;
+
+                // ดึงข้อมูล displayName จาก Firestore
+                const userDoc = await firebase.firestore()
+                    .collection('users')
+                    .doc(currentUser.uid)
+                    .get();
+
+                const userData = userDoc.data();
+                const authorName = userData?.displayName || 'ไม่ระบุชื่อ';
+
+                // อัพโหลดรูปภาพ (ถ้ามี)
+                if (imageFile) {
+                    const storageRef = firebase.storage().ref();
+                    const imageRef = storageRef.child(`posts/${Date.now()}_${imageFile.name}`);
+                    await imageRef.put(imageFile);
+                    imageUrl = await imageRef.getDownloadURL();
+                }
+
+                const postData = {
+                    title,
+                    content,
+                    authorId: currentUser.uid,
+                    authorName: authorName,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (imageUrl) {
+                    postData.image = imageUrl;
+                }
+
+                if (editingPostId) {
+                    // แก้ไขโพสต์
+                    await firebase.firestore()
+                        .collection('posts')
+                        .doc(editingPostId)
+                        .update(postData);
+                    alert('แก้ไขประกาศสำเร็จ');
+                } else {
+                    // เพิ่มโพสต์ใหม่
+                    postData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await firebase.firestore()
+                        .collection('posts')
+                        .add(postData);
+                    alert('เพิ่มประกาศสำเร็จ');
+                }
+
+                closeModal();
+                loadPosts(1); // กลับไปหน้าแรกหลังจากเพิ่ม/แก้ไขโพสต์
+            } catch (error) {
+                console.error('Error saving post:', error);
+                alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ปิด Modal
+        function closeModal() {
+            document.getElementById('postModal').style.display = 'none';
+            document.getElementById('postForm').reset();
+            document.getElementById('imagePreview').style.display = 'none';
             editingPostId = null;
         }
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('editModal');
-            if (event.target == modal) {
-                closeEditModal();
+        // อัพเดทปุ่มแบ่งหน้า
+        function updatePagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            // ปุ่มหน้าก่อนหน้า
+            if (currentPage > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'page-btn';
+                prevBtn.textContent = 'ก่อนหน้า';
+                prevBtn.onclick = () => loadPosts(currentPage - 1);
+                pagination.appendChild(prevBtn);
+            }
+
+            // ปุ่มตัวเลขหน้า
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => loadPosts(i);
+                pagination.appendChild(pageBtn);
+            }
+
+            // ปุ่มหน้าถัดไป
+            if (currentPage < totalPages) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'page-btn';
+                nextBtn.textContent = 'ถัดไป';
+                nextBtn.onclick = () => loadPosts(currentPage + 1);
+                pagination.appendChild(nextBtn);
             }
         }
 
-        // Check authentication and load posts
-        firebase.auth().onAuthStateChanged(user => {
-            if (!user) {
-                window.location.href = 'login.html';
-            } else {
-                loadPosts();
-            }
-        });
-    </script>
-
-    <!-- Add sweet alert for better notifications -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        // Enhanced notifications
-        function showAlert(title, icon = 'success') {
-            Swal.fire({
-                title: title,
-                icon: icon,
-                confirmButtonText: 'ตกลง',
-                confirmButtonColor: '#FDB813'
-            });
-        }
-
-        // Enhanced success notification
-        function showSuccess(message) {
-            showAlert(message, 'success');
-        }
-
-        // Enhanced error notification
-        function showError(message) {
-            showAlert(message, 'error');
-        }
-
-        // Enhanced delete confirmation
-        async function deletePost(postId) {
-            const result = await Swal.fire({
-                title: 'ยืนยันการลบ',
-                text: 'คุณต้องการลบประกาศนี้ใช่หรือไม่?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'ลบ',
-                cancelButtonText: 'ยกเลิก'
-            });
-
-            if (result.isConfirmed) {
+        // อัพเดทชื่อผู้ใช้ที่กำลังใช้งาน
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
                 try {
-                    await firebase.firestore().collection('posts').doc(postId).delete();
-                    await firebase.firestore().collection('logs').add({
-                        action: 'delete_post',
-                        postId: postId,
-                        userId: firebase.auth().currentUser.uid,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
+
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
+                    }
+
+                    // โหลดโพสต์เมื่อเข้าสู่ระบบสำเร็จ
                     loadPosts();
-                    showSuccess('ลบประกาศสำเร็จ');
                 } catch (error) {
-                    console.error('Error deleting post:', error);
-                    showError('เกิดข้อผิดพลาดในการลบประกาศ');
+                    console.error('Error fetching user data:', error);
                 }
-            }
-        }
-
-        // Enhanced save functionality
-        async function saveEdit() {
-            if (!editingPostId) return;
-
-            const newTitle = document.getElementById('editTitle').value.trim();
-            const newContent = document.getElementById('editContent').value.trim();
-
-            if (!newTitle || !newContent) {
-                showError('กรุณากรอกข้อมูลให้ครบถ้วน');
-                return;
-            }
-
-            try {
-                await firebase.firestore().collection('posts').doc(editingPostId).update({
-                    title: newTitle,
-                    content: newContent,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                await firebase.firestore().collection('logs').add({
-                    action: 'edit_post',
-                    postId: editingPostId,
-                    userId: firebase.auth().currentUser.uid,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                closeEditModal();
-                loadPosts();
-                showSuccess('แก้ไขประกาศสำเร็จ');
-            } catch (error) {
-                console.error('Error updating post:', error);
-                showError('เกิดข้อผิดพลาดในการแก้ไขประกาศ');
-            }
-        }
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && document.getElementById('editModal').style.display === 'block') {
-                closeEditModal();
+            } else {
+                window.location.href = 'login.html';
             }
         });
 
-        // Add loading state
-        function showLoading() {
-            Swal.fire({
-                title: 'กำลังโหลด...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+        // ฟังก์ชันออกจากระบบ
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
         }
-
-        // Modify loadPosts to show loading state
-        async function loadPosts() {
-            showLoading();
-            try {
-                const snapshot = await firebase.firestore().collection('posts')
-                    .orderBy('createdAt', 'desc')
-                    .get();
-
-                currentPosts = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-
-                displayPosts(currentPosts);
-                Swal.close();
-            } catch (error) {
-                console.error('Error loading posts:', error);
-                showError('เกิดข้อผิดพลาดในการโหลดข้อมูล');
-            }
-        }
-
-        // Add character count for content
-        document.getElementById('editContent').addEventListener('input', function() {
-            const maxLength = 1000;
-            const currentLength = this.value.length;
-            const remainingChars = maxLength - currentLength;
-            
-            // Add character counter if it doesn't exist
-            let counter = document.getElementById('charCounter');
-            if (!counter) {
-                counter = document.createElement('div');
-                counter.id = 'charCounter';
-                counter.style.cssText = 'text-align: right; color: var(--gray-600); font-size: 0.9rem; margin-top: 0.5rem;';
-                this.parentNode.appendChild(counter);
-            }
-            
-            counter.textContent = `${currentLength}/${maxLength} ตัวอักษร`;
-            counter.style.color = remainingChars < 0 ? 'var(--danger)' : 'var(--gray-600)';
-        });
     </script>
 </body>
+
 </html>

@@ -374,6 +374,114 @@
             background: #cc0000;
         }
 
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), #ff9800);
+            z-index: 1000;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .system-announcement {
+            background: linear-gradient(135deg, #FFF3DC, #FFE5E5);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .system-announcement-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .system-announcement-badge {
+            background: var(--primary);
+            color: var(--accent);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .menu-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .menu-card:hover::after {
+            transform: translateX(100%);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .post-skeleton {
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-skeleton-title {
+            height: 24px;
+            width: 70%;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-skeleton-meta {
+            height: 16px;
+            width: 40%;
+            margin-bottom: 1rem;
+        }
+
+        .post-skeleton-content {
+            height: 80px;
+            width: 100%;
+        }
+
 
         .admin-btn {
             padding: 8px 16px;
@@ -421,6 +529,8 @@
         </div>
     </div>
 
+    <div class="page-transition" id="pageTransition"></div>
+
     <div class="main-content">
         <div class="announcements">
             <div class="announcements-header">
@@ -437,7 +547,8 @@
                 </div>
             </div>
             <div class="posts-scroll-container" id="posts-container">
-                <!-- Posts will be added here by JavaScript -->
+                <div id="systemAnnouncements"></div>
+                <div id="postSkeletons"></div>
             </div>
         </div>
 
@@ -495,19 +606,85 @@
     </script>
 
     <script>
+
+        function showPageTransition() {
+            const transition = document.getElementById('pageTransition');
+            transition.style.transform = 'scaleX(1)';
+            setTimeout(() => {
+                transition.style.transform = 'scaleX(0)';
+            }, 500);
+        }
+        document.querySelectorAll('.menu-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = card.getAttribute('onclick').match(/'([^']+)'/)[1];
+                showPageTransition();
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 300);
+            });
+        });
+        // Create skeleton loading effect
+        function createSkeletons() {
+            const container = document.getElementById('postSkeletons');
+            container.innerHTML = Array(3).fill('').map(() => `
+                <div class="post-skeleton">
+                    <div class="skeleton post-skeleton-title"></div>
+                    <div class="skeleton post-skeleton-meta"></div>
+                    <div class="skeleton post-skeleton-content"></div>
+                </div>
+            `).join('');
+        }
+
+        // System announcements
+        const systemAnnouncements = [
+            {
+                type: 'UPDATE',
+                title: 'อัพเดตระบบเวอร์ชัน 0.0.1',
+                content: 'เพิ่มฟีเจอร์ใหม่: ปรับปรุงประสิทธิภาพการโหลดหน้าเว็บ',
+                date: '2024-03-28'
+            },
+            {
+                type: 'MAINTENANCE',
+                title: 'แจ้งปิดปรับปรุงระบบ',
+                content: 'ระบบจะปิดปรับปรุงในวันที่ 30 มีนาคม 2024 เวลา 02:00-04:00 น.',
+                date: '2024-03-27'
+            }
+        ];
+
+        function displaySystemAnnouncements() {
+            const container = document.getElementById('systemAnnouncements');
+            container.innerHTML = systemAnnouncements.map(announcement => `
+                <div class="system-announcement">
+                    <div class="system-announcement-header">
+                        <span class="system-announcement-badge">${announcement.type}</span>
+                        <strong>${announcement.title}</strong>
+                    </div>
+                    <p>${announcement.content}</p>
+                    <small>ประกาศเมื่อ: ${new Date(announcement.date).toLocaleDateString('th-TH')}</small>
+                </div>
+            `).join('');
+        }
+
         // เพิ่มฟังก์ชันสำหรับแสดงโพสต์
         async function loadPosts() {
             const postsContainer = document.getElementById('posts-container');
             const currentUser = firebase.auth().currentUser;
 
+            createSkeletons();
+
             try {
+                // Display system announcements first
+                displaySystemAnnouncements();
+                
                 const querySnapshot = await firebase.firestore()
                     .collection('posts')
                     .orderBy('createdAt', 'desc')
                     .limit(6)
                     .get();
 
-                postsContainer.innerHTML = '';
+                // Clear skeletons
+                document.getElementById('postSkeletons').innerHTML = '';
 
                 querySnapshot.forEach(doc => {
                     const post = doc.data();
@@ -557,6 +734,8 @@
                 postsContainer.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดประกาศ</p>';
             }
         }
+
+        
 
         // ฟังก์ชันเปิด Modal แสดงรูปภาพ
         function openImageModal(imageUrl) {
