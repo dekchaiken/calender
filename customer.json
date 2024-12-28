@@ -1,0 +1,22 @@
+{
+    "companies": {
+      "MSIG": {
+        "code": "MSIG",
+        "type": "company",
+        "fullName": "MSIG Insurance"
+      }
+    },
+
+
+    "shifts": {
+      "Shift1": {
+        "name": "Shift 1",
+        "companies": ["MSIG", "TCRB"]
+      }
+    },
+    "mappings": {
+        
+    }
+  }
+  
+  

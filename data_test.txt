@@ -499,3 +499,1337 @@ const companyMappings = {
             'TCRB': 'TCRB',
             'Trang Hospital': 'Trang Hospital',
             'TVI': 'TVI',
+
+
+
+
+
+
+////////////////
+
+
+
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - Following Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            color: var(--secondary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+
+        .logout-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--accent);
+            box-shadow: 0 2px 4px rgba(253, 184, 19, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .company-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .company-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .company-checkbox:hover {
+            background: #f0f0f0;
+            transform: translateY(-1px);
+        }
+
+        .company-checkbox input {
+            margin-right: 0.75rem;
+            width: 16px;
+            height: 16px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .preview-area {
+            background: #f8f8f8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            min-height: 200px;
+            border: 2px solid #eee;
+            margin-bottom: 1rem;
+        }
+
+        #dropZone {
+            border: 2px dashed #ddd;
+            padding: 3rem;
+            text-align: center;
+            margin: 1rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #dropZone:hover {
+            border-color: var(--primary);
+            background: #fafafa;
+        }
+
+        .nav-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .company-filters {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loadingScreen">
+        <div class="spinner"></div>
+        <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
+    </div>
+    <div id="mainContent" style="display: none"></div>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
+        <h1>Following Report</h1>
+        <div class="user-container">
+            <span class="user-name" id="userDisplayName">Loading...</span>
+            <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>เลือกวันที่ติดตาม</h2>
+            <div class="form-group">
+                <label for="followDate">วันที่ติดตาม:</label>
+                <input type="date" id="followDate" class="form-control">
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>อัพโหลดไฟล์ Excel</h2>
+            <div id="dropZone">
+                ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์
+                <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+            </div>
+            <div id="debug" class="debug-info" style="display: none;"></div>
+        </div>
+
+        <div class="card">
+            <h2>เลือกบริษัทที่ต้องการกรอง</h2>
+            <div class="filter-controls">
+                <input type="text" id="searchCompany" class="search-box" placeholder="ค้นหาชื่อบริษัท...">
+                <button onclick="selectAllCompanies()" class="nav-btn">เลือกทั้งหมด</button>
+                <button onclick="deselectAllCompanies()" class="logout-btn">ยกเลิกทั้งหมด</button>
+                <button onclick="exportExcelByCompany()" class="btn btn-primary">Export Excel แยกตามบริษัท</button>
+            </div>
+            <div id="companyFilters" class="company-filters">
+                <!-- Company checkboxes will be dynamically added here -->
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Template สำหรับบริษัทที่เลือก</h2>
+            <div id="allTemplates" class="preview-area">
+                โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...
+            </div>
+            <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem;">คัดลอก Template
+                ทั้งหมด</button>
+        </div>
+        <div class="card">
+            <h2>หมายเหตุและวิธีการใช้งาน</h2>
+            <div class="info-content" style="background: #f8f8f8; padding: 1rem; border-radius: 8px;">
+                <h3 style="color: #2D2D2D; margin-bottom: 0.5rem;">การ Export Excel:</h3>
+                <ul style="list-style-type: disc; margin-left: 1.5rem;">
+                    <li>ระบบจะ Export เฉพาะบริษัทที่คุณเลือกในส่วน "เลือกบริษัทที่ต้องการกรอง"</li>
+                    <li>ไฟล์ Excel จะถูกแยกตามบริษัท โดยชื่อไฟล์จะเป็น: [ชื่อบริษัท]_Incidents_[วันที่].xlsx</li>
+                    <li>ข้อมูลจะถูกจัดเรียงตามลำดับ: Incident ID, Summary, Customer และข้อมูลอื่นๆ</li>
+                </ul>
+
+                <h3 style="color: #2D2D2D; margin: 1rem 0 0.5rem;">วิธีการใช้งาน:</h3>
+                <ol style="list-style-type: decimal; margin-left: 1.5rem;">
+                    <li>เลือกวันที่ติดตาม</li>
+                    <li>อัพโหลดไฟล์ Excel ที่ต้องการ</li>
+                    <li>เลือกบริษัทที่ต้องการจากรายการ</li>
+                    <li>กดปุ่ม "Export Excel แยกตามบริษัท" เพื่อดาวน์โหลดไฟล์</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        const newStyles = `
+.company-group {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+}
+
+.company-group-content {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.company-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: #FDB813;
+    border-radius: 4px;
+    color: #2D2D2D;
+}
+
+.company-group-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.select-group-btn {
+    background-color: #2D2D2D;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 12px;
+}
+
+.select-group-btn:hover {
+    background-color: #404040;
+    transform: translateY(-1px);
+}
+
+.company-checkbox {
+    display: block;
+    padding: 8px;
+    margin: 2px 0;
+    background: #f8f8f8;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    font-size: 13px;
+}
+    
+.company-checkbox input[type="checkbox"] {
+    margin-right: 8px;
+    width: 14px;
+    height: 14px;
+}
+
+.company-checkbox:hover {
+    background: #f0f0f0;
+}
+
+.company-group-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.company-group-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.company-group-content::-webkit-scrollbar-thumb {
+    background: #FDB813;
+    border-radius: 4px;
+}
+
+.company-group-content::-webkit-scrollbar-thumb:hover {
+    background: #e5a700;
+}
+`;
+
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = newStyles;
+        document.head.appendChild(styleSheet);
+
+        const companyGroups = {
+            'Shift 1': {
+                name: 'Shift 1',
+                companies: [
+                    'MSIG',
+                    'TCRB',
+                    'TVI',
+                    'Falcon',
+
+                ]
+            },
+            'Shift 2': {
+                name: 'Shift 2',
+                companies: [
+                    'MRTA',
+                    'SKL',
+                    //กระทรวงการคลัง
+                    //กกพ.
+                    //สสวท.
+                    
+                ]
+            },
+            'Shift 3': {
+                name: 'Shift 3',
+                companies: [
+                    'KSAM',
+                    'Carabao',
+                    'CJ',
+                    'NCI',
+                    'BLA',
+                    'Drissen',
+                    'Avius',
+                    'E-VISA',
+                    'CCDC',
+                ]
+            },
+            'Shift 4': {
+                name: 'Shift 4',
+                companies: [
+                    'ETax',
+                    'NSW',
+                    'GDCC',
+                ]
+            },
+            'Shift 5': {
+                name: 'Shift 5',
+                companies: [
+                    'Buriram-Bandan',
+                    'Buriram-Banmaichaipod',
+                    'Buriram-Buriram',
+                    'Buriram-Chaloemphrakiat',
+                    'Buriram-Khaendong',
+                    'Buriram-Khumuang',
+                    'Buriram-Krasang',
+                    'Buriram-Lahansai',
+                    'Buriram-Lamplaimat',
+                    'Buriram-NongKi',
+                    'Buriram-Nonsuwan',
+                    'Buriram-Phutthaisong',
+                    'Buriram-PrakhonChai',
+                    'Buriram-Satuek',
+                    'Buriram-SSJ',
+                    'Chiangrai-Prachanukroh',
+                    'Chonburi-Banbung',
+                    'Chonburi-BangLamung',
+                    'Chonburi-BoThong',
+                    'Chonburi-Kohchan',
+                    'Chonburi-KohSichang',
+                    'Chonburi-Laemchabang',
+                    'Chonburi-PhanatNikhom',
+                    'Chonburi-PhanThong',
+                    'Chonburi-SattahipKM10',
+                    'Chonburi-Watyan',
+                    'Chiangmai-Sansai',
+                    'Chiangmai-SSJ',
+                    'Krabi-Kohlanta',
+                    'Krabi-Lamthap',
+                    'Loei-Nonghin',
+                    'Loei-Phukradueng',
+                    'Loei-Dansai',
+                    'Loei-Nahaeo',
+                    'Loei-Phakhao',
+                    'Loei-SSJ',
+                    'Loei-Thali',
+                    'Nakhonsawan-Latyao',
+                    'Nakhonsawan-Phaisali',
+                    'Nakhonsi-Bangkhan',
+                    'Nakhonsi-ChawangCrownPrince',
+                    'Nakhonsi-Chulabhorn',
+                    'Nakhonsi-Huasai',
+                    'Nakhonsi-Khanom',
+                    'Nakhonsi-Lansaka',
+                    'Nakhonsi-Nabon',
+                    'Nakhonsi-Pakphanang',
+                    'Nakhonsi-Phipun',
+                    'Nakhonsi-Phraphrom',
+                    'Nakhonsi-Porthanklai',
+                    'Nakhonsi-Promkiri',
+                    'Nakhonsi-Ronphibun',
+                    'Nakhonsi-SSJ',
+                    'Nakhonsi-Thamphannara',
+                    'Nakhonsi-Thungsong',
+                    'Nakhonsi-Thungyai',
+                    'Nan-ChiangKlang',
+                    'Nan-PuaCrownPrince',
+                    'Nan-SongKhwae',
+                    'Nan-ThaWangPha',
+                    'Phayao-Phayao',
+                    'Phuket-Patong',
+                    'Pitsanulok-Bangkrathum',
+                    'Pitsanulok-Bangrakam',
+                    'Pitsanulok-NakhonthaiCrownPrince',
+                    'Pitsanulok-Noenmaprang',
+                    'Pitsanulok-PhromPhiram',
+                    'Pitsanulok-SSJ',
+                    'Pitsanulok-Wangthong',
+                    'Pitsanulok-WatBot',
+                    'Prachinburi-Nadi',
+                    'Prachuap-Bangsaphan',
+                    'Prachuap-Huahin',
+                    'Prachuap-Samroiyot',
+                    'Prachuap-Thapsakae',
+                    'Ratchaburi-Banpong',
+                    'Roi-Et-Phanomphrai',
+                    'Sakonnakhon-Sawang',
+                    'Samutprakarn-Bangbo',
+                    'Samutprakarn-Bangchak',
+                    'Samutprakarn-Bangplee',
+                    'Samutprakarn-Samutprakarn',
+                    'Samutprakarn-SSJ',
+                    'Samutsongkhram-Somdet',
+                    'Suphanburi-Somdej17',
+                    'Trang Hospital',
+                ]
+            }
+        };
+
+        const companyTypes = {
+            'Avius': 'company',
+            'BLA': 'company',
+            'Buriram-Bandan': 'hospital',
+            'Buriram-Banmaichaipod': 'hospital',
+            'Buriram-Buriram': 'hospital',
+            'Buriram-Chaloemphrakiat': 'hospital',
+            'Buriram-Khaendong': 'hospital',
+            'Buriram-Khumuang': 'hospital',
+            'Buriram-Krasang': 'hospital',
+            'Buriram-Lahansai': 'hospital',
+            'Buriram-Lamplaimat': 'hospital',
+            'Buriram-NongKi': 'hospital',
+            'Buriram-Nonsuwan': 'hospital',
+            'Buriram-Phutthaisong': 'hospital',
+            'Buriram-PrakhonChai': 'hospital',
+            'Buriram-Satuek': 'hospital',
+            ///'Buriram-SSJ': 'hospital',
+            'Carabao': 'company',
+            'Chiangmai-Sansai': 'hospital',
+            ///'Chiangmai-SSJ': 'hospital',
+            'Chiangrai-Prachanukroh': 'hospital',
+            'Chonburi-Banbung': 'hospital',
+            'Chonburi-BangLamung': 'hospital',
+            'Chonburi-BoThong': 'hospital',
+            'Chonburi-Kohchan': 'hospital',
+            'Chonburi-KohSichang': 'hospital',
+            'Chonburi-Laemchabang': 'hospital',
+            'Chonburi-PhanatNikhom': 'hospital',
+            'Chonburi-PhanThong': 'hospital',
+            'Chonburi-SattahipKM10': 'hospital',
+            'Chonburi-Watyan': 'hospital',
+            'CJ': 'company',
+            'NT-DCSS': 'company',  ///ไม่แน่ใจ DCSS รอเช็ค
+            'Driessen': 'company',
+            'E-VISA': 'company',
+            'ERC': 'company',
+            'ETax': 'company',
+            'Falcon': 'company',
+            'GDCC': 'company',
+            'GFMIS': 'company',
+            'IPST': 'company',
+            'Krabi-KohLanta': 'hospital',
+            'Krabi-Lamthap': 'hospital',
+            'KSAM': 'company',
+            'Loei-Nonghin': 'hospital',
+            'Loei-Phukradueng': 'hospital',
+            'Loei-Dansai': 'hospital',
+            'Loei-Nahaeo': 'hospital',
+            'Loei-Phakhao': 'hospital',
+            ///'Loei-SSJ': 'hospital',
+            'Loei-Thali': 'hospital',
+            'MRTA': 'company',
+            'MSIG': 'company',
+            'MTL': 'company',
+            'MY': 'company',
+            'Nakhonsawan-Latyao': 'hospital',
+            'Nakhonsawan-Phaisali': 'hospital',
+            'Nakhonsi-Bangkhan': 'hospital',
+            'Nakhonsi-ChawangCrownPrince': 'hospital',
+            'Nakhonsi-Chulabhorn': 'hospital',
+            'Nakhonsi-Huasai': 'hospital',
+            'Nakhonsi-Khanom': 'hospital',
+            'Nakhonsi-Lansaka': 'hospital',
+            'Nakhonsi-Nabon': 'hospital',
+            'Nakhonsi-Pakphanang': 'hospital',
+            'Nakhonsi-Phipun': 'hospital',
+            'Nakhonsi-Phraphrom': 'hospital',
+            'Nakhonsi-Porthanklai': 'hospital',
+            'Nakhonsi-Promkiri': 'hospital',
+            'Nakhonsi-Ronphibun': 'hospital',
+            ///'Nakhonsi-SSJ': 'hospital',
+            'Nakhonsi-Thamphannara': 'hospital',
+            'Nakhonsi-Thungsong': 'hospital',
+            'Nakhonsi-Thungyai': 'hospital',
+            'Nan-ChiangKlang': 'hospital',
+            'Nan-PuaCrownPrince': 'hospital',
+            'Nan-SongKhwae': 'hospital',
+            'Nan-ThaWangPha': 'hospital',
+            'NCI': 'company',
+            'NSW': 'company',
+            'NT': 'company',
+            'Phayao-Phayao': 'hospital',
+            'Phuket-Patong': 'hospital',
+            'Pitsanulok-Bangkrathum': 'hospital',
+            'Pitsanulok-Bangrakam': 'hospital',
+            'Pitsanulok-NakhonthaiCrownPrince': 'hospital',
+            'Pitsanulok-Noenmaprang': 'hospital',
+            'Pitsanulok-PhromPhiram': 'hospital',
+            ///'Pitsanulok-SSJ': 'hospital',
+            'Pitsanulok-Wangthong': 'hospital',
+            'Pitsanulok-WatBot': 'hospital',
+            'Prachinburi-Nadi': 'hospital',
+            'Prachuap-Bangsaphan': 'hospital',
+            'Prachuap-Huahin': 'hospital',
+            'Prachuap-Samroiyot': 'hospital',
+            'Prachuap-Thapsakae': 'hospital',
+            'Ratchaburi-Banpong': 'hospital',
+            'Roi-Et-Phanomphrai': 'hospital',
+            'Sakonnakhon-Sawang': 'hospital',
+            'Samutprakarn-Bangbo': 'hospital',
+            'Samutprakarn-Bangchak': 'hospital',
+            'Samutprakarn-Bangplee': 'hospital',
+            'Samutprakarn-Samutprakarn': 'hospital',
+            ///'Samutprakarn-SSJ': 'hospital',
+            'Samutsongkhram-Somdet': 'hospital',
+            'SKL': 'company',
+            'Suphanburi-Somdej17': 'hospital',
+            'TCRB': 'company',
+            'Trang Hospital': 'hospital',
+            'TVI': 'company',
+        };
+
+        const companyMappings = {
+            'บริษัท อาวียุส ยูแอลดี จำกัด': 'Avius',
+            'Avius': 'Avius',
+            'บริษัท กรุงเทพประกันชีวิต จำกัด (มหาชน)': 'BLA',
+            'BLA': 'BLA',
+            'โรงพยาบาลบ้านด่าน จ.บุรีรัมย์': 'Buriram-Bandan',
+            'Buriram-Bandan': 'Buriram-Bandan',
+            'โรงพยาบาลบ้านใหม่ไชยพจน์ จ.บุรีรัมย์': 'Buriram-Banmaichaipod',
+            'Buriram-Banmaichaipod': 'Buriram-Banmaichaipod',
+            'โรงพยาบาลบุรีรัมย์ จ.บุรีรัมย์': 'Buriram-Buriram',
+            'Buriram-Buriram': 'Buriram-Buriram',
+            'โรงพยาบาลเฉลิมพระเกียรติ จ.บุรีรัมย์': 'Buriram-Chaloemphrakiat',
+            'Buriram-Chaloemphrakiat': 'Buriram-Chaloemphrakiat',
+            'โรงพยาบาลแคนดง จ.บุรีรัมย์': 'Buriram-Khaendong',
+            'Buriram-Khaendong': 'Buriram-Khaendong',
+            'โรงพยาบาลคูเมือง จ.บุรีรัมย์': 'Buriram-Khumuang',
+            'Buriram-Khumuang': 'Buriram-Khumuang',
+            'โรงพยาบาลกระสัง จ.บุรีรัมย์': 'Buriram-Krasang',
+            'Buriram-Krasang': 'Buriram-Krasang',
+            'โรงพยาบาลละหานทราย จ.บุรีรัมย์': 'Buriram-Lahansai',
+            'Buriram-Lahansai': 'Buriram-Lahansai',
+            'โรงพยาบาลลำปลายมาศ จ.บุรีรัมย์': 'Buriram-Lamplaimat',
+            'Buriram-Lamplaimat': 'Buriram-Lamplaimat',
+            'โรงพยาบาลหนองกี่ จ.บุรีรัมย์': 'Buriram-NongKi',
+            'Buriram-NongKi': 'Buriram-NongKi',
+            'โรงพยาบาลโนนสุวรรณ จ.บุรีรัมย์': 'Buriram-Nonsuwan',
+            'Buriram-Nonsuwan': 'Buriram-Nonsuwan',
+            'โรงพยาบาลพุทไธสง จ.บุรีรัมย์': 'Buriram-Phutthaisong',
+            'Buriram-Phutthaisong': 'Buriram-Phutthaisong',
+            'โรงพยาบาลประโคนชัย จ.บุรีรัมย์': 'Buriram-PrakhonChai',
+            'Buriram-PrakhonChai': 'Buriram-PrakhonChai',
+            'โรงพยาบาลสตึก จ.บุรีรัมย์': 'Buriram-Satuek',
+            'Buriram-Satuek': 'Buriram-Satuek',
+            'สำนักงานสาธารณสุขจังหวัดบุรีรัมย์': 'Buriram-SSJ',
+            'Buriram-SSJ': 'Buriram-SSJ',
+            'บริษัท คาราบาวตะวันแดง จำกัด': 'Carabao',
+            'Carabao': 'Carabao',
+            'โรงพยาบาลสันทราย จ.เชียงใหม่': 'Chiangmai-Sansai',
+            'Chiangmai-Sansai': 'Chiangmai-Sansai',
+            'สำนักงานสาธารณสุขจังหวัดเชียงใหม่': 'Chiangmai-SSJ',
+            'Chiangmai-SSJ': 'Chiangmai-SSJ',
+            'โรงพยาบาลเชียงรายประชานุเคราะห์ จ.เชียงราย': 'Chiangrai-Prachanukroh',
+            'Chiangrai-Prachanukroh': 'Chiangrai-Prachanukroh',
+            'โรงพยาบาลบ้านบึง จ.ชลบุรี': 'Chonburi-Banbung',
+            'Chonburi-Banbung': 'Chonburi-Banbung',
+            'โรงพยาบาลบางละมุง จ.ชลบุรี': 'Chonburi-BangLamung',
+            'Chonburi-BangLamung': 'Chonburi-BangLamung',
+            'โรงพยาบาลบ่อทอง จ.ชลบุรี': 'Chonburi-BoThong',
+            'Chonburi-BoThong': 'Chonburi-BoThong',
+            'โรงพยาบาลเกาะจันทร์ จ.ชลบุรี': 'Chonburi-Kohchan',
+            'Chonburi-Kohchan': 'Chonburi-Kohchan',
+            'โรงพยาบาลเกาะสีชัง จ.ชลบุรี': 'Chonburi-KohSichang',
+            'Chonburi-KohSichang': 'Chonburi-KohSichang',
+            'โรงพยาบาลแหลมฉบัง จ.ชลบุรี': 'Chonburi-Laemchabang',
+            'Chonburi-Laemchabang': 'Chonburi-Laemchabang',
+            'โรงพยาบาลพนัสนิคม จ.ชลบุรี': 'Chonburi-PhanatNikhom',
+            'Chonburi-PhanatNikhom': 'Chonburi-PhanatNikhom',
+            'โรงพยาบาลพานทอง จ.ชลบุรี': 'Chonburi-PhanThong',
+            'Chonburi-PhanThong': 'Chonburi-PhanThong',
+            'โรงพยาบาลสัตหีบ กม.10 จ.ชลบุรี': 'Chonburi-SattahipKM10',
+            'Chonburi-SattahipKM10': 'Chonburi-SattahipKM10',
+            'โรงพยาบาลวัดญาณสังวราราม จ.ชลบุรี': 'Chonburi-Watyan',
+            'Chonburi-Watyan': 'Chonburi-Watyan',
+            'บริษัท ซี.เจ. เอ็กซ์เพรส กรุ๊ป จำกัด': 'CJ',
+            'CJ': 'CJ',
+            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน) - DCSS': 'NT-DCSS',
+            'NT-DCSS': 'NT-DCSS',
+            'บริษัท ดริสเซ่น เคเทอร์ริ่ง อีควิปเม้นท์ จำกัด': 'Driessen',
+            'Driessen': 'Driessen',
+            'กรมการกงสุล - Thai E-VISA': 'E-VISA',
+            'E-VISA': 'E-VISA',
+            'สำนักงานคณะกรรมการกำกับกิจการพลังงาน (สำนักงาน กกพ.)': 'ERC',
+            'ERC': 'ERC',
+            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน) - ETAX': 'ETax',
+            'ETax': 'ETax',
+            'บริษัท ฟอลคอนประกันภัย จำกัด (มหาชน)': 'Falcon',
+            'Falcon': 'Falcon',
+            'โครงการพัฒนาระบบคลาวด์กลางภาครัฐ': 'โครงการพัฒนาระบบคลาวด์กลางภาครัฐ',
+            'GDCC': 'GDCC',
+            'ระบบบริหารการเงินการคลังภาครัฐแบบอิเล็กทรอนิกส์ กระทรวงการคลัง': 'GFMIS',
+            'GFMIS': 'GFMIS',
+            'สถาบันส่งเสริมการสอนวิทยาศาสตร์และเทคโนโลยี (สสวท.)': 'IPST',
+            'IPST': 'IPST',
+            'โรงพยาบาลเกาะลันตา จ.กระบี่': 'Krabi-Kohlanta',
+            'Krabi-Kohlanta': 'Krabi-Kohlanta',
+            'โรงพยาบาลลำทับ จ.กระบี่': 'Krabi-Lamthap',
+            'Krabi-Lamthap': 'Krabi-Lamthap',
+            'บริษัท หลักทรัพย์จัดการกองทุน กรุงศรี จำกัด (บลจ.กรุงศรี)': 'KSAM',
+            'KSAM': 'KSAM',
+            'โรงพยาบาลหนองหิน จ.เลย': 'Loei-Nonghin',
+            'Loei-Nonghin': 'Loei-Nonghin',
+            'โรงพยาบาลภูกระดึง จ.เลย': 'Loei-Phukradueng',
+            'Loei-Phukradueng': 'Loei-Phukradueng',
+            'โรงพยาบาลสมเด็จพระยุพราชด่านซ้าย จ.เลย': 'Loei-Dansai',
+            'Loei-Dansai': 'Loei-Dansai',
+            'โรงพยาบาลนาแห้ว จ.เลย': 'Loei-Nahaeo',
+            'Loei-Nahaeo': 'Loei-Nahaeo',
+            'โรงพยาบาลผาขาว จ.เลย': 'Loei-Phakhao',
+            'Loei-Phakhao': 'Loei-Phakhao',
+            'สำนักงานสาธารณสุขจังหวัดเลย': 'Loei-SSJ',
+            'Loei-SSJ': 'Loei-SSJ',
+            'โรงพยาบาลท่าลี่ จ.เลย': 'Loei-Thali',
+            'Loei-Thali': 'Loei-Thali',
+            'การรถไฟฟ้าขนส่งมวลชนแห่งประเทศไทย': 'MRTA',
+            'MRTA': 'MRTA',
+            'บริษัท เอ็ม เอส ไอ จี ประกันภัย (ประเทศไทย) จำกัด (มหาชน)': 'MSIG',
+            'MSIG': 'MSIG',
+            'บริษัท มูราตะ อิเล็กทรอนิกส์ (ประเทศไทย) จำกัด': 'MTL',
+            'MTL': 'MTL',
+            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน) - MY': 'MY',
+            'MY': 'MY',
+            'โรงพยาบาลลาดยาว จ.นครสวรรค์': 'Nakhonsawan-Latyao',
+            'Nakhonsawan-Latyao': 'Nakhonsawan-Latyao',
+            'โรงพยาบาลไพศาลี จ.นครสวรรค์': 'Nakhonsawan-Phaisalee',
+            'Nakhonsawan-Phaisalee': 'Nakhonsawan-Phaisalee',
+            'โรงพยาบาลบางขัน จ.นครศรีธรรมราช': 'Nakhonsi-Bangkhan',
+            'Nakhonsi-Bangkhan': 'Nakhonsi-Bangkhan',
+            'โรงพยาบาลสมเด็จพระยุพราชฉวาง จ.นครศรีธรรมราช': 'Nakhonsi-ChawangCrownPrince',
+            'Nakhonsi-ChawangCrownPrince': 'Nakhonsi-ChawangCrownPrince',
+            'โรงพยาบาลจุฬาภรณ์ จ.นครศรีธรรมราช': 'Nakhonsi-Chulabhorn',
+            'Nakhonsi-Chulabhorn': 'Nakhonsi-Chulabhorn',
+            'โรงพยาบาลหัวไทร จ.นครศรีธรรมราช': 'Nakhonsi-Huasai',
+            'Nakhonsi-Huasai': 'Nakhonsi-Huasai',
+            'โรงพยาบาลขนอม จ.นครศรีธรรมราช': 'Nakhonsi-Khanom',
+            'Nakhonsi-Khanom': 'Nakhonsi-Khanom',
+            'โรงพยาบาลลานสกา จ.นครศรีธรรมราช': 'Nakhonsi-Lansaka',
+            'Nakhonsi-Lansaka': 'Nakhonsi-Lansaka',
+            'โรงพยาบาลนาบอน จ.นครศรีธรรมราช': 'Nakhonsi-Nabon',
+            'Nakhonsi-Nabon': 'Nakhonsi-Nabon',
+            'โรงพยาบาลปากพนัง จ.นครศรีธรรมราช': 'Nakhonsi-Pakphanang',
+            'Nakhonsi-Pakphanang': 'Nakhonsi-Pakphanang',
+            'โรงพยาบาลพิปูน จ.นครศรีธรรมราช': 'Nakhonsi-Phipun',
+            'Nakhonsi-Phipun': 'Nakhonsi-Phipun',
+            'โรงพยาบาลพระพรหม จ.นครศรีธรรมราช': 'Nakhonsi-Phraphrom',
+            'Nakhonsi-Phraphrom': 'Nakhonsi-Phraphrom',
+            'โรงพยาบาลพ่อท่านคล้ายวาจาสิทธิ์ จ.นครศรีธรรมราช': 'Nakhonsi-Porthanklai',
+            'Nakhonsi-Porthanklai': 'Nakhonsi-Porthanklai',
+            'โรงพยาบาลพรหมคีรี จ.นครศรีธรรมราช': 'Nakhonsi-Promkiri',
+            'Nakhonsi-Promkiri': 'Nakhonsi-Promkiri',
+            'โรงพยาบาลร่อนพิบูลย์ จ.นครศรีธรรมราช': 'Nakhonsi-Ronphibun',
+            'Nakhonsi-Ronphibun': 'Nakhonsi-Ronphibun',
+            'สำนักงานสาธารณสุขจังหวัดนครศรีธรรมราช': 'Nakhonsi-SSJ',
+            'Nakhonsi-SSJ': 'Nakhonsi-SSJ',
+            'โรงพยาบาลถ้ำพรรณรา จ.นครศรีธรรมราช': 'Nakhonsi-Thamphannara',
+            'Nakhonsi-Thamphannara': 'Nakhonsi-Thamphannara',
+            'โรงพยาบาลทุ่งสง จ.นครศรีธรรมราช': 'Nakhonsi-Thungsong',
+            'Nakhonsi-Thungsong': 'Nakhonsi-Thungsong',
+            'โรงพยาบาลทุ่งใหญ่ จ.นครศรีธรรมราช': 'Nakhonsi-Thungyai',
+            'Nakhonsi-Thungyai': 'Nakhonsi-Thungyai',
+            'โรงพยาบาลเชียงกลาง จ.น่าน': 'Nan-ChiangKlang',
+            'Nan-ChiangKlang': 'Nan-ChiangKlang',
+            'โรงพยาบาลสมเด็จพระยุพราชปัว จ.น่าน': 'Nan-PuaCrownPrince',
+            'Nan-PuaCrownPrince': 'Nan-PuaCrownPrince',
+            'โรงพยาบาลสองแคว จ.น่าน': 'Nan-SongKhwae',
+            'Nan-SongKhwae': 'Nan-SongKhwae',
+            'โรงพยาบาลท่าวังผา จ.น่าน': 'Nan-ThaWangPha',
+            'Nan-ThaWangPha': 'Nan-ThaWangPha',
+            'สถาบันมะเร็งแห่งชาติ': 'NCI',
+            'NCI': 'NCI',
+            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน) - NSW': 'NSW',
+            'NSW': 'NSW',
+            'บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน)': 'NT',
+            'NT': 'NT',
+            'โรงพยาบาลพะเยา จ.พะเยา': 'Phayao-Phayao',
+            'Phayao-Phayao': 'Phayao-Phayao',
+            'โรงพยาบาลป่าตอง จ.ภูเก็ต': 'Phuket-Patong',
+            'Phuket-Patong': 'Phuket-Patong',
+            'โรงพยาบาลบางกระทุ่ม จ.พิษณุโลก': 'Pitsanulok-Bangkrathum',
+            'Pitsanulok-Bangkrathum': 'Pitsanulok-Bangkrathum',
+            'โรงพยาบาลบางระกำ จ.พิษณุโลก': 'Pitsanulok-Bangrakam',
+            'Pitsanulok-Bangrakam': 'Pitsanulok-Bangrakam',
+            'โรงพยาบาลสมเด็จพระยุพราชนครไทย จ.พิษณุโลก': 'Pitsanulok-NakhonthaiCrownPrince',
+            'Pitsanulok-NakhonthaiCrownPrince': 'Pitsanulok-NakhonthaiCrownPrince',
+            'โรงพยาบาลเนินมะปราง จ.พิษณุโลก': 'Pitsanulok-Noenmaprang',
+            'Pitsanulok-Noenmaprang': 'Pitsanulok-Noenmaprang',
+            'โรงพยาบาลพรหมพิราม จ.พิษณุโลก': 'Pitsanulok-PhromPhiram',
+            'Pitsanulok-PhromPhiram': 'Pitsanulok-PhromPhiram',
+            'สำนักงานสาธารณสุขจังหวัดพิษณุโลก': 'Pitsanulok-SSJ',
+            'Pitsanulok-SSJ': 'Pitsanulok-SSJ',
+            'โรงพยาบาลวังทอง จ.พิษณุโลก': 'Pitsanulok-Wangthong',
+            'Pitsanulok-Wangthong': 'Pitsanulok-Wangthong',
+            'โรงพยาบาลวัดโบสถ์ จ.พิษณุโลก': 'โรงพยาบาลวัดโบสถ์ จ.พิษณุโลก',
+            'Pitsanulok-Watbot': 'Pitsanulok-Watbot',
+            'โรงพยาบาลนาดี จ.ปราจีนบุรี': 'Prachinburi-Nadi',
+            'Prachinburi-Nadi': 'Prachinburi-Nadi',
+            'โรงพยาบาลบางสะพาน จ.ประจวบคีรีขันธ์': 'Prachuap-Bangsaphan',
+            'Prachuap-Bangsaphan': 'Prachuap-Bangsaphan',
+            'โรงพยาบาลหัวหิน จ.ประจวบคีรีขันธ์': 'Prachuap-Huahin',
+            'Prachuap-Huahin': 'Prachuap-Huahin',
+            'โรงพยาบาลสามร้อยยอด จ.ประจวบคีรีขันธ์': 'Prachuap-Samroiyot',
+            'Prachuap-Samroiyot': 'Prachuap-Samroiyot',
+            'โรงพยาบาลทับสะแก จ.ประจวบคีรีขันธ์': 'Prachuap-Thapsakae',
+            'Prachuap-Thapsakae': 'Prachuap-Thapsakae',
+            'โรงพยาบาลบ้านโป่ง จ.ราชบุรี': 'Ratchaburi-Banpong',
+            'Ratchaburi-Banpong': 'Ratchaburi-Banpong',
+            'โรงพยาบาลพนมไพร จ.ร้อยเอ็ด': 'Roi-Et-Phanomphrai',
+            'Roi-Et-Phanomphrai': 'Roi-Et-Phanomphrai',
+            'โรงพยาบาลสมเด็จพระยุพราชสว่างแดนดิน จ.สกลนคร': 'Sakonnakhon-Sawang',
+            'Sakonnakhon-Sawang': 'Sakonnakhon-Sawang',
+            'โรงพยาบาลบางบ่อ จ.สมุทรปราการ': 'Samutprakarn-Bangbo',
+            'Samutprakarn-Bangbo': 'Samutprakarn-Bangbo',
+            'โรงพยาบาลบางจาก จ.สมุทรปราการ': 'Samutprakarn-Bangchak',
+            'Samutprakarn-Bangchak': 'Samutprakarn-Bangchak',
+            'โรงพยาบาลบางพลี จ.สมุทรปราการ': 'Samutprakarn-Bangplee',
+            'Samutprakarn-Bangplee': 'Samutprakarn-Bangplee',
+            'โรงพยาบาลสมุทรปราการ จ.สมุทรปราการ': 'Samutprakarn-Samutprakarn',
+            'Samutprakarn-Samutprakarn': 'Samutprakarn-Samutprakarn',
+            'สำนักงานสาธารณสุขจังหวัดสมุทรปราการ': 'Samutprakarn-SSJ',
+            'Samutprakarn-SSJ': 'Samutprakarn-SSJ',
+            'โรงพยาบาลสมเด็จพระพุทธเลิศหล้า จ.สมุทรสงคราม': 'Samutsongkhram-Somdet',
+            'Samutsongkhram-Somdet': 'Samutsongkhram-Somdet',
+            'บริษัท สยามคูโบต้า ลีสซิ่ง จำกัด': 'SKL',
+            'SKL': 'SKL',
+            'โรงพยาบาลสมเด็จพระสังฆราชองค์ที่ 17 จ.สุพรรณบุรี': 'Suphanburi-Somdej17',
+            'Suphanburi-Somdej17': 'Suphanburi-Somdej17',
+            'บริษัท ธนาคารไทยเครดิต เพื่อรายย่อย จำกัด (มหาชน)': 'TCRB',
+            'TCRB': 'TCRB',
+            'โรงพยาบาลตรัง จ.ตรัง': 'Trang Hospital',
+            'Trang Hospital': 'Trang Hospital',
+            'บริษัท ประกันภัยไทยวิวัฒน์ จำกัด (มหาชน)': 'TVI',
+            'TVI': 'TVI'
+        };
+
+        const companyFullNames = {
+            'Buriram-Bandan': 'เจ้าหน้าที่โรงพยาบาลบ้านด่าน',
+            'Buriram-Khaendong': 'เจ้าหน้าที่โรงพยาบาลแคนดง',
+            // Add other hospital full names here
+        };
+
+        const months = [
+            'January', 'February', 'March', 'April',
+            'May', 'June', 'July', 'August',
+            'September', 'October', 'November', 'December'
+        ];
+
+        let excelData = null;
+        let companies = new Set();
+        let selectedCompanies = new Set();
+
+        function formatDateToEng(date) {
+            const d = new Date(date);
+            return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
+        // ฟังก์ชันสำหรับจัดการการค้นหาบริษัท
+        document.getElementById('searchCompany').addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const checkboxes = document.querySelectorAll('.company-checkbox');
+
+            checkboxes.forEach(checkbox => {
+                const companyName = checkbox.textContent.toLowerCase();
+                checkbox.style.display = companyName.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        function selectAllCompanies() {
+            const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                selectedCompanies.add(checkbox.value);
+            });
+            updateAllTemplates();
+        }
+
+        function deselectAllCompanies() {
+            const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                selectedCompanies.delete(checkbox.value);
+            });
+            updateAllTemplates();
+        }
+
+        function generateTemplate(companyCode, formattedDate, incidents) {
+            const isHospital = companyTypes[companyCode] === 'hospital';
+            let template = '';
+
+            if (isHospital) {
+                // Template for hospitals
+                template += `เรียนทีม ${companyFullNames[companyCode]}\n`;
+                template += `${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
+            } else {
+                // Template for regular companies
+                template += `เรียนทีม ${companyCode}\n`;
+                template += `${companyCode} Follow Incident ${formattedDate}\n\n`;
+            }
+
+            if (incidents.length > 0) {
+                template += `ขอแจ้ง Incident ที่มีสถานะยังคง Pending ครับ\n`;
+                incidents.forEach((incident, idx) => {
+                    template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
+                });
+                template += `\nรายละเอียดเพิ่มเติม ส่งให้ทาง E-mail ครับ\n`;
+                template += `หากดำเนินการแก้ไขแล้ว รบกวนแจ้งปิดเคสด้วยครับ`;
+            } else {
+                template += `- ไม่พบ Incident ที่มีสถานะ pending ครับ`;
+            }
+
+            return template;
+        }
+
+        function updateCompanyFilters() {
+            const filtersContainer = document.getElementById('companyFilters');
+            filtersContainer.innerHTML = '';
+
+            Object.entries(companyGroups).forEach(([groupId, group]) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'company-group';
+
+                const header = document.createElement('div');
+                header.className = 'company-group-header';
+
+                const groupTitle = document.createElement('h3');
+                groupTitle.className = 'company-group-title';
+                groupTitle.textContent = group.name;
+                header.appendChild(groupTitle);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.display = 'flex';
+                buttonContainer.style.gap = '8px';
+
+                const selectGroupBtn = document.createElement('button');
+                selectGroupBtn.textContent = 'Select All';
+                selectGroupBtn.className = 'select-group-btn';
+                selectGroupBtn.onclick = () => selectGroupCompanies(group.companies);
+
+                const unselectGroupBtn = document.createElement('button');
+                unselectGroupBtn.textContent = 'Unselect All';
+                unselectGroupBtn.className = 'select-group-btn';
+                unselectGroupBtn.style.backgroundColor = '#404040';
+                unselectGroupBtn.onclick = () => unselectGroupCompanies(group.companies);
+
+                buttonContainer.appendChild(selectGroupBtn);
+                buttonContainer.appendChild(unselectGroupBtn);
+                header.appendChild(buttonContainer);
+
+                groupDiv.appendChild(header);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'company-group-content';
+
+                group.companies.forEach(company => {
+                    if (companies.has(company)) {
+                        const label = document.createElement('label');
+                        label.className = 'company-checkbox';
+
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = company;
+                        checkbox.checked = selectedCompanies.has(company);
+                        checkbox.addEventListener('change', function () {
+                            if (this.checked) {
+                                selectedCompanies.add(this.value);
+                            } else {
+                                selectedCompanies.delete(this.value);
+                            }
+                            updateAllTemplates();
+                        });
+
+                        label.appendChild(checkbox);
+                        label.appendChild(document.createTextNode(company));
+                        contentDiv.appendChild(label);
+                    }
+                });
+
+                groupDiv.appendChild(contentDiv);
+                filtersContainer.appendChild(groupDiv);
+            });
+        }
+
+        function unselectGroupCompanies(groupCompanies) {
+            groupCompanies.forEach(company => {
+                if (companies.has(company)) {
+                    selectedCompanies.delete(company);
+                    const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                    if (checkbox) checkbox.checked = false;
+                }
+            });
+            updateAllTemplates();
+        }
+
+        function selectGroupCompanies(groupCompanies) {
+            groupCompanies.forEach(company => {
+                if (companies.has(company)) {
+                    selectedCompanies.add(company);
+                    const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                    if (checkbox) checkbox.checked = true;
+                }
+            });
+            updateAllTemplates();
+        }
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const debugDiv = document.getElementById('debug');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            handleFile(file);
+        });
+
+        function getCompanyCode(customerName) {
+            return companyMappings[customerName] || customerName;
+        }
+
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    excelData = XLSX.utils.sheet_to_json(firstSheet);
+
+                    // เพิ่มบริษัททั้งหมดจาก companyMappings
+                    companies = new Set([
+                        ...new Set(excelData.map(incident => getCompanyCode(incident.Customer))),
+                        ...new Set(Object.values(companyMappings))
+                    ]);
+                    selectedCompanies = new Set(companies); // เลือกทุกบริษัทเริ่มต้น
+
+                    updateCompanyFilters();
+                    updateAllTemplates();
+
+                    debugDiv.style.display = 'block';
+                    debugDiv.innerHTML = `อ่านข้อมูลสำเร็จ: ${excelData.length} รายการ`;
+                } catch (error) {
+                    debugDiv.style.display = 'block';
+                    debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+
+        document.getElementById('followDate').addEventListener('change', updateAllTemplates);
+
+        function updateAllTemplates() {
+            const date = document.getElementById('followDate').value;
+            if (!date || !excelData) {
+                return;
+            }
+
+            const formattedDate = formatDateToEng(date);
+            let allTemplates = '';
+
+            // กรองเฉพาะบริษัทที่ถูกเลือกจาก checkbox
+            const selectedCompaniesArray = Array.from(selectedCompanies).sort();
+
+            selectedCompaniesArray.forEach((companyCode, index) => {
+                const checkbox = document.querySelector(`input[type="checkbox"][value="${companyCode}"]`);
+
+                // สร้าง template เฉพาะบริษัทที่ถูกเลือกใน checkbox
+                if (checkbox && checkbox.checked) {
+                    if (index > 0) {
+                        allTemplates += '\n\n' + '='.repeat(50) + '\n\n';
+                    }
+
+                    const incidents = excelData.filter(incident =>
+                        getCompanyCode(incident.Customer) === companyCode
+                    );
+
+                    allTemplates += generateTemplate(companyCode, formattedDate, incidents);
+                }
+            });
+
+            document.getElementById('allTemplates').textContent = allTemplates || 'กรุณาเลือกบริษัทที่ต้องการดู Template';
+        }
+
+        function copyAllTemplates() {
+            const templates = document.getElementById('allTemplates').textContent;
+            navigator.clipboard.writeText(templates)
+                .then(() => alert('คัดลอก Template ทั้งหมดสำเร็จ'))
+                .catch(err => alert('เกิดข้อผิดพลาดในการคัดลอก: ' + err));
+        }
+        function exportExcelByCompany() {
+            if (!excelData || selectedCompanies.size === 0) {
+                alert('กรุณาอัพโหลดไฟล์ Excel และเลือกบริษัทก่อน');
+                return;
+            }
+
+            const date = document.getElementById('followDate').value;
+            if (!date) {
+                alert('กรุณาเลือกวันที่ก่อน Export');
+                return;
+            }
+
+            const formattedDate = formatDateToEng(date);
+            const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]:checked');
+
+            if (checkboxes.length === 0) {
+                alert('กรุณาเลือกอย่างน้อย 1 บริษัท');
+                return;
+            }
+
+            checkboxes.forEach(checkbox => {
+                const companyCode = checkbox.value;
+                const companyData = excelData.filter(incident =>
+                    getCompanyCode(incident.Customer) === companyCode
+                );
+
+                if (companyData.length === 0) return;
+
+                const formattedData = companyData.map(incident => ({
+                    'Incident ID': incident['Incident ID'],
+                    'Summary': incident['Summary'],
+                    'Customer': incident['Customer'],
+                    ...Object.keys(incident)
+                        .filter(key => !['Incident ID', 'Customer', 'Summary'].includes(key))
+                        .reduce((obj, key) => ({
+                            ...obj,
+                            [key]: incident[key]
+                        }), {})
+                }));
+
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.json_to_sheet(formattedData);
+                XLSX.utils.book_append_sheet(wb, ws, companyCode);
+
+                // Generate filename based on company type
+                const fileName = `${companyCode} Follow Incident ${formattedDate}.xlsx`;
+
+                XLSX.writeFile(wb, fileName);
+            });
+        }
+
+        // ฟังก์ชันช่วยจัดรูปแบบวันที่สำหรับชื่อไฟล์
+        function formatDateForFileName(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}${month}${day}`;
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase initialization
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+        });
+    </script>
+    <script>
+        // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
+
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
+                    }
+
+                    // Add admin button if user has admin role
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            }
+        });
+
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
+    </script>
+    <script src="auth.js"></script>
+</body>
+
+</html>
