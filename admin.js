@@ -337,16 +337,6 @@ async function deleteUser(userId) {
             showLoading('กำลังลบผู้ใช้งาน...');
             // 1. ลบผู้ใช้จาก Firestore
             await firebase.firestore().collection('users').doc(userId).delete();
-            // 2. ลบผู้ใช้จาก Authentication
-            try{
-                const user = await firebase.auth().getUserByUid(userId)
-                if (user) {
-                    await firebase.auth().deleteUser(user.uid);
-                }
-            }catch(error){
-                console.warn("user not found in auth");
-            }
-
             await loadUsers();
             hideLoading();
             await showAlert('ลบผู้ใช้งานสำเร็จ');
