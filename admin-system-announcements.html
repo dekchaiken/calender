@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
             --success: #28a745;
             --warning: #ffc107;
             --danger: #dc3545;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         * {
@@ -24,7 +26,8 @@
         }
 
         body {
-            background: #f5f5f5;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
         }
 
         .header {
@@ -32,7 +35,7 @@
             align-items: center;
             padding: 1rem 2rem;
             background: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
         }
 
         .logo {
@@ -40,17 +43,65 @@
             margin-right: 2rem;
         }
 
-        .container {
+        .admin-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .nav-btn {
+            background: #f0f0f0;
+            color: var(--secondary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .admin-container {
             max-width: 1200px;
             margin: 2rem auto;
-            padding: 0 2rem;
+            padding: 0 1rem;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .admin-card h2 {
+            color: var(--secondary);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
         }
 
         .announcement-form {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
         }
 
@@ -95,10 +146,7 @@
         }
 
         .announcement-list {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
         }
 
         .announcement-item {
@@ -139,49 +187,80 @@
             font-size: 0.875rem;
         }
 
-        .btn-back {
-            background: var(--secondary);
-            color: white;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 1rem;
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #FDB813;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="header">
-        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
-        <h1>จัดการประกาศระบบ</h1>
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
+        <h1 class="admin-title">จัดการประกาศระบบ</h1>
+        <div class="user-container">
+            <span class="user-name" id="userDisplayName">Loading...</span>
+            <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+        </div>
     </div>
 
-    <div class="container">
-        <a href="admin.html" class="btn btn-back">กลับไปหน้า Admin</a>
-        
-        <div class="announcement-form">
+    <div class="admin-container">
+        <div class="admin-card">
             <h2>สร้างประกาศใหม่</h2>
-            <form id="systemAnnouncementForm">
-                <div class="form-group">
-                    <label>ประเภท</label>
-                    <select class="form-control" id="announcementType" required>
-                        <option value="UPDATE">อัพเดตระบบ</option>
-                        <option value="MAINTENANCE">แจ้งปิดปรับปรุง</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>หัวข้อ</label>
-                    <input type="text" class="form-control" id="announcementTitle" required>
-                </div>
-                <div class="form-group">
-                    <label>เนื้อหา</label>
-                    <textarea class="form-control" id="announcementContent" rows="4" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">บันทึกประกาศ</button>
-            </form>
+            <div class="announcement-form">
+                <form id="systemAnnouncementForm">
+                    <div class="form-group">
+                        <label>ประเภท</label>
+                        <select class="form-control" id="announcementType" required>
+                            <option value="UPDATE">อัพเดตระบบ</option>
+                            <option value="MAINTENANCE">แจ้งปิดปรับปรุง</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>หัวข้อ</label>
+                        <input type="text" class="form-control" id="announcementTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label>เนื้อหา</label>
+                        <textarea class="form-control" id="announcementContent" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">บันทึกประกาศ</button>
+                </form>
+            </div>
         </div>
 
-        <div class="announcement-list">
+        <div class="admin-card">
             <h2>ประกาศทั้งหมด</h2>
-            <div id="announcementsList">
+            <div class="announcement-list" id="announcementsList">
                 <!-- ประกาศจะถูกแสดงที่นี่ -->
             </div>
         </div>
@@ -190,36 +269,28 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
-        // Initialize Firebase
-        firebase.initializeApp({
-            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
-            authDomain: "cyfencedevbyken.firebaseapp.com",
-            projectId: "cyfencedevbyken",
-            storageBucket: "cyfencedevbyken.appspot.com",
-            messagingSenderId: "632813871756",
-            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
-        });
 
-        // Check authentication
-        firebase.auth().onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
+        // แสดง loading overlay
+        function showLoading() {
+            const overlay = document.createElement('div');
+            overlay.className = 'loading-overlay';
+            overlay.innerHTML = '<div class="loading-spinner"></div>';
+            document.body.appendChild(overlay);
+        }
+
+        // ซ่อน loading overlay
+        function hideLoading() {
+            const overlay = document.querySelector('.loading-overlay');
+            if (overlay) {
+                overlay.remove();
             }
-
-            // Check if user is admin
-            const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
-            if (!userDoc.data()?.role === 'admin') {
-                window.location.href = 'dashboard.html';
-                return;
-            }
-
-            loadAnnouncements();
-        });
+        }
 
         // Load announcements
         async function loadAnnouncements() {
+            showLoading();
             try {
                 const snapshot = await firebase.firestore()
                     .collection('systemAnnouncements')
@@ -250,12 +321,15 @@
             } catch (error) {
                 console.error('Error loading announcements:', error);
                 alert('เกิดข้อผิดพลาดในการโหลดประกาศ');
+            } finally {
+              hideLoading();
             }
         }
 
         // Handle form submission
         document.getElementById('systemAnnouncementForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            showLoading();
 
             const announcement = {
                 type: document.getElementById('announcementType').value,
@@ -272,13 +346,15 @@
             } catch (error) {
                 console.error('Error saving announcement:', error);
                 alert('เกิดข้อผิดพลาดในการบันทึกประกาศ');
+            } finally {
+                hideLoading();
             }
         });
 
         // Delete announcement
         async function deleteAnnouncement(id) {
-            if (!confirm('คุณแน่ใจหรือไม่ที่จะลบประกาศนี้?')) return;
-
+             if (!confirm('คุณแน่ใจหรือไม่ที่จะลบประกาศนี้?')) return;
+            showLoading();
             try {
                 await firebase.firestore().collection('systemAnnouncements').doc(id).delete();
                 alert('ลบประกาศสำเร็จ');
@@ -286,8 +362,46 @@
             } catch (error) {
                 console.error('Error deleting announcement:', error);
                 alert('เกิดข้อผิดพลาดในการลบประกาศ');
+            } finally {
+              hideLoading();
             }
         }
+         // อัพเดทชื่อผู้ใช้ที่กำลังใช้งาน
+         firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
+
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
+                    }
+
+                     // โหลดประกาศเมื่อเข้าสู่ระบบสำเร็จ
+                    loadAnnouncements();
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+           // ฟังก์ชันออกจากระบบ
+           function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
+
     </script>
 </body>
+
 </html>

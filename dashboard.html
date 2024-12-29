@@ -68,6 +68,10 @@
             align-items: center;
             gap: 0.5rem;
         }
+        .user-details {
+        display: flex;
+        flex-direction: column;
+    }
 
         .user-avatar {
             width: 32px;
@@ -524,7 +528,13 @@
             alt="Cyfence Logo" class="logo">
         <h1>NT - Cyfence</h1>
         <div class="user-container">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar"></div>
+                <div class="user-details">
             <span id="userDisplayName">Loading...</span>
+            <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+        </div>
+    </div>
             <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
     </div>
@@ -536,7 +546,7 @@
             <div class="announcements-header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div style="display: flex; align-items: center;">
-                        <h1>ประกาศล่าสุด 📢</h1>
+                        <h1>ประกาศข่าวสาร 📢</h1>
                         <button onclick="window.location.href='all-posts.html'" class="view-all-btn">
                             ดูทั้งหมด
                         </button>
@@ -786,11 +796,25 @@
                     const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
                     const userData = userDoc.data();
                     const displayElement = document.getElementById('userDisplayName');
+                    const roleElement = document.getElementById('userRole');
+                    const avatarElement = document.getElementById('userAvatar');
 
                     if (userData?.displayName) {
                         displayElement.textContent = userData.displayName;
                     } else {
                         displayElement.textContent = user.email;
+                    }
+
+                    if (userData?.role) {
+                        roleElement.textContent = `(${userData.role})`;
+                    } else {
+                        roleElement.textContent = '';
+                    }
+
+                    if (userData?.avatar) {
+                        avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
+                    } else {
+                        avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
                     }
 
                     if (userData?.role === 'admin') {
