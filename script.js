@@ -74,7 +74,7 @@ const shiftPattern = [
     ]
 ];
 
-// ฟังก์ชันอัพเดทฟิลเตอร์
+// // ฟังก์ชันอัพเดทฟิลเตอร์
 function updateFilters() {
     const checkboxes = document.querySelectorAll('.shift-checkbox');
     activeFilters = Array.from(checkboxes)
@@ -127,7 +127,7 @@ function initializeSelectors() {
     // ตั้งค่าเริ่มต้น
     const currentMonth = currentDate.getMonth();
     const year = currentDate.getFullYear();
-    
+
     Object.values(selectors).forEach(selector => {
         if (selector.classList.contains('month-select') || selector.id === 'monthSelect') {
             selector.value = currentMonth;
@@ -168,7 +168,6 @@ function createCalendarMonth(year, month) {
     monthHeader.textContent = `${thaiMonths[month]} ${year + 543}`;
     calendarDiv.appendChild(monthHeader);
 
-    // สร้างส่วนหัวปฏิทิน
     const headerDiv = document.createElement('div');
     headerDiv.className = 'calendar-header';
     ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'].forEach(day => {
@@ -228,13 +227,13 @@ function createCalendarMonth(year, month) {
 function toggleTeamMembers(teamColor) {
     const membersDiv = document.getElementById(`${teamColor}-members`);
     const teamCard = membersDiv.closest('.team-card');
-    
+
     // Toggle expanded class on team card
     teamCard.classList.toggle('expanded');
-    
+
     // Toggle show class on members div
     membersDiv.classList.toggle('show');
-    
+
     // Update other team cards if needed
     const allTeamCards = document.querySelectorAll('.team-card');
     allTeamCards.forEach(card => {
@@ -260,13 +259,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         const modal = document.getElementById('teamModal');
         if (event.target == modal) {
             modal.style.display = 'none';
         }
     };
-}); 
+});
 
 async function getUserShift(userId) {
     const today = new Date();
@@ -276,29 +275,33 @@ async function getUserShift(userId) {
 
 async function checkShiftExchanges() {
     if (!firebase.auth().currentUser) return;
-    
-    const userId = firebase.auth().currentUser.uid;
-    const exchanges = await firebase.firestore()
-        .collection('shift_exchanges')
-        .where('exchangeWith', '==', userId)
-        .where('status', '==', 'pending')
-        .get();
-    
-    if (!exchanges.empty) {
-        // แสดง notification หรือแจ้งเตือนในหน้า dashboard
-        const notification = document.createElement('div');
-        notification.className = 'notification notification-pending';
-        notification.innerHTML = `
+    showLoadingOverlay('กำลังตรวจสอบคำขอแลกเวร...');
+    try {
+        const userId = firebase.auth().currentUser.uid;
+        const exchanges = await firebase.firestore()
+            .collection('shift_exchanges')
+            .where('exchangeWith', '==', userId)
+            .where('status', '==', 'pending')
+            .get();
+        if (!exchanges.empty) {
+            // แสดง notification หรือแจ้งเตือนในหน้า dashboard
+            const notification = document.createElement('div');
+            notification.className = 'notification notification-pending';
+            notification.innerHTML = `
             คุณมี ${exchanges.size} คำขอแลกเวรที่รอการตอบรับ 
-            <a href="exchange.html">คลิกเพื่อดูรายละเอียด</a>
-        `;
-        
-        const header = document.querySelector('.header');
-        header.parentNode.insertBefore(notification, header.nextSibling);
+             <a href="exchange.html">คลิกเพื่อดูรายละเอียด</a>
+          `;
+
+            const header = document.querySelector('.header');
+            header.parentNode.insertBefore(notification, header.nextSibling);
+        }
+    } catch (error) {
+        console.error("Error checking shift exchanges:", error);
+    } finally {
+        closeLoadingOverlay();
     }
+
 }
-
-
 // แสดงปฏิทิน
 function renderCalendar() {
     const container = document.getElementById('calendar-container');
@@ -309,10 +312,10 @@ function renderCalendar() {
 function showShiftDetails(shift, time) {
     const modal = document.getElementById('teamModal');
     const teamInfo = teamData[shift.color];
-    
+
     modal.querySelector('.modal-title').textContent = teamInfo.name;
     modal.querySelector('.team-time').innerHTML = `<strong>เวลาทำงาน:</strong> ${time}`;
-    
+
     const detailsHTML = `
         <h4>รายละเอียดทีม</h4>
         <ul>
@@ -321,12 +324,12 @@ function showShiftDetails(shift, time) {
             ${teamInfo.members.map(member => `<li>- ${member}</li>`).join('')}
         </ul>
     `;
-    
+
     modal.querySelector('.team-details').innerHTML = detailsHTML;
     modal.style.display = 'block';
 }
 
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modal = document.getElementById('teamModal');
     if (event.target == modal) {
         modal.style.display = 'none';
@@ -335,14 +338,17 @@ window.onclick = function(event) {
 
 // ฟังก์ชันเปลี่ยนเดือน
 function changeMonth(offset) {
+    showLoadingOverlay('กำลังโหลดปฏิทิน...');
     currentDate.setMonth(currentDate.getMonth() + offset);
     document.getElementById('monthSelect').value = currentDate.getMonth();
     document.getElementById('yearSelect').value = currentDate.getFullYear();
     renderCalendar();
+    closeLoadingOverlay();
 }
 
 // ฟังก์ชัน Export PDF
 async function exportToPDF() {
+    showLoadingOverlay('กำลัง Export PDF...');
     const startMonth = parseInt(document.getElementById('startMonthSelect').value);
     const startYear = parseInt(document.getElementById('startYearSelect').value);
     const endMonth = parseInt(document.getElementById('endMonthSelect').value);
@@ -350,7 +356,8 @@ async function exportToPDF() {
 
     // ตรวจสอบช่วงเวลาที่เลือก
     if (startYear > endYear || (startYear === endYear && startMonth > endMonth)) {
-        alert('กรุณาเลือกช่วงเวลาให้ถูกต้อง');
+        closeLoadingOverlay();
+        showAlertModal('กรุณาเลือกช่วงเวลาให้ถูกต้อง');
         return;
     }
 
@@ -360,22 +367,20 @@ async function exportToPDF() {
     const teamDetailsSection = document.createElement('div');
     teamDetailsSection.innerHTML = `
         <div class="export-header">
-            <h2>ตารางเวรการปฏิบัติงาน</h2>
-            <p>ประจำเดือน ${thaiMonths[startMonth]} - ${thaiMonths[endMonth]} ${startYear + 543}</p>
+          <h2>ตารางเวรการปฏิบัติงาน</h2>
+           <p>ประจำเดือน ${thaiMonths[startMonth]} - ${thaiMonths[endMonth]} ${startYear + 543}</p>
         </div>
-        
-        ${Object.entries(teamData).map(([color, team]) => `
-            <div class="team-section ${color}">
-                <h3>${team.name}</h3>
+         ${Object.entries(teamData).map(([color, team]) => `
+           <div class="team-section ${color}">
+               <h3>${team.name}</h3>
                 <p><strong>หัวหน้าทีม:</strong> ${team.leader}</p>
-                <p><strong>สมาชิกทีม:</strong></p>
-                <ul>
-                    ${team.members.map(member => `<li>${member}</li>`).join('')}
-                </ul>
+               <p><strong>สมาชิกทีม:</strong></p>
+                 <ul>
+                  ${team.members.map(member => `<li>${member}</li>`).join('')}
+                 </ul>
             </div>
-        `).join('')}
+           `).join('')}
     `;
-    
     pdfContainer.appendChild(teamDetailsSection);
 
     let currentYear = startYear;
@@ -384,14 +389,13 @@ async function exportToPDF() {
     // สร้างปฏิทินทุกเดือนในช่วงที่เลือก
     while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
         pdfContainer.appendChild(createCalendarMonth(currentYear, currentMonth));
-        
+
         currentMonth++;
         if (currentMonth > 11) {
             currentMonth = 0;
             currentYear++;
         }
     }
-
     // กำหนดค่าการส่งออก PDF
     const opt = {
         margin: 10,
@@ -403,12 +407,95 @@ async function exportToPDF() {
 
     try {
         await html2pdf().set(opt).from(pdfContainer).save();
+        closeLoadingOverlay();
+        showAlertModal('Export PDF สำเร็จ')
     } catch (error) {
         console.error('เกิดข้อผิดพลาดในการสร้าง PDF:', error);
-        alert('เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง');
+        closeLoadingOverlay();
+        showAlertModal('เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง');
     }
 }
+function printCalendar() {
+    const printWindow = window.open('', '_blank');
+    const startMonth = parseInt(document.getElementById('startMonthSelect').value);
+    const startYear = parseInt(document.getElementById('startYearSelect').value);
+    const endMonth = parseInt(document.getElementById('endMonthSelect').value);
+    const endYear = parseInt(document.getElementById('endYearSelect').value);
+    if (startYear > endYear || (startYear === endYear && startMonth > endMonth)) {
+        alert('กรุณาเลือกช่วงเวลาให้ถูกต้อง');
+        return;
+    }
+    let currentYear = startYear;
+    let currentMonth = startMonth;
 
+    let printContent = `
+         <html>
+            <head>
+               <title>ตารางเวรการปฏิบัติงาน</title>
+                 <style>
+                    body { font-family: 'Noto Sans Thai', sans-serif; margin: 20px; }
+                    .export-header { text-align: center; margin-bottom: 20px; padding: 20px;  background: #f8f9fa; border-radius: 8px; }
+                             .team-section { margin: 20px 0; padding: 15px; border-radius: 8px; }
+                     .calendar { width: 100%; border-collapse: collapse;  }
+                        .calendar-header { display: grid;  grid-template-columns: repeat(7, 1fr);   padding: 0.75rem 0;   text-align: center;   background: #f8f9fa;     border-top-left-radius: 12px;    border-top-right-radius: 12px;   border-bottom: 1px solid #ddd;}
+                          .month-header { text-align: center; font-size: 1.5em; margin-bottom: 10px;  padding: 1.5rem; background: white;    border-top-left-radius: 12px; border-top-right-radius: 12px;}
+                          .calendar-grid {display: grid;  grid-template-columns: repeat(7, 1fr);  text-align: center; }
+                        .calendar-day {padding: 10px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; position: relative;}
+                         .calendar-day:nth-child(7n) {  border-right: none; }
+                        .calendar-day:last-child { border-bottom: none; }
+                        .calendar-day.empty-day { background: #fafafa;  border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; }
+                        .shift { font-size: 0.9em; padding: 0.5rem;  border-radius: 4px; margin: 2px; display: block; }
+                          .shift-red { background-color: rgba(255, 99, 99, 0.2); color: #404040;}
+                           .shift-green { background-color: rgba(75, 192, 75, 0.2);  color: #404040; }
+                         .shift-blue { background-color: rgba(99, 148, 255, 0.2); color: #404040; }
+                          .shift-yellow {background-color: rgba(255, 206, 86, 0.2);  color: #404040; }
+                      </style>
+                  </head>
+                <body>
+                   <div class="pdf-container">
+                        <div class="export-header">
+                              <h2>ตารางเวรการปฏิบัติงาน</h2>
+                              <p>ประจำเดือน ${thaiMonths[startMonth]} - ${thaiMonths[endMonth]} ${startYear + 543}</p>
+                         </div>
+                      ${Object.entries(teamData).map(([color, team]) => `
+                         <div class="team-section ${color}">
+                            <h3>${team.name}</h3>
+                            <p><strong>หัวหน้าทีม:</strong> ${team.leader}</p>
+                            <p><strong>สมาชิกทีม:</strong></p>
+                            <ul>
+                                ${team.members.map(member => `<li>${member}</li>`).join('')}
+                             </ul>
+                         </div>
+                      `).join('')}
+                     `;
+
+    while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
+        printContent += createCalendarMonth(currentYear, currentMonth).outerHTML;
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+    }
+
+    printContent += `
+             </div>
+           </body>
+          </html>
+         `;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+}
+// เริ่มต้นใช้งาน
+document.addEventListener('DOMContentLoaded', () => {
+    initializeSelectors();
+    renderCalendar();
+    checkShiftExchanges(); // เพิ่มการเรียกใช้ฟังก์ชัน
+});
 // เริ่มต้นใช้งาน
 document.addEventListener('DOMContentLoaded', () => {
     initializeSelectors();
