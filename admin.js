@@ -41,8 +41,48 @@ function closeModal() {
     document.getElementById('userForm').reset();
 }
 
+function showLoadingOverlay(message) {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    document.getElementById('loadingMessage').textContent = message;
+}
 
-async function handleUserSubmit(event) {
+function closeLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+// เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+function showAlertModal(message) {
+   document.getElementById('alertMessage').textContent = message;
+    document.getElementById('alertModal').style.display = 'flex';
+}
+
+function closeAlertModal() {
+   document.getElementById('alertModal').style.display = 'none';
+}
+
+
+function showLoading(message) {
+ document.getElementById('loadingScreen').style.display = 'flex';
+ document.getElementById('loadingMessage').textContent = message;
+}
+
+function hideLoading() {
+    document.getElementById('loadingScreen').style.display = 'none';
+}
+
+ async function showAlert(message) {
+    document.getElementById('alertMessage').textContent = message;
+    document.getElementById('alertModal').style.display = 'flex';
+
+    return new Promise(resolve => {
+        document.getElementById('alertModal').onclick = () => {
+        document.getElementById('alertModal').style.display = 'none';
+        resolve();
+    };
+  });
+ }
+
+ async function handleUserSubmit(event) {
     event.preventDefault();
 
     const email = document.getElementById('email').value;
@@ -64,7 +104,7 @@ async function handleUserSubmit(event) {
             return;
         }
 
-        showLoading('กำลังเพิ่มผู้ใช้งาน...');
+        showLoadingOverlay('กำลังเพิ่มผู้ใช้งาน...');
         // สร้าง user ใหม่
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, Math.random().toString(36).slice(-8));
         const userId = userCredential.user.uid;
@@ -78,6 +118,7 @@ async function handleUserSubmit(event) {
             displayName,
             role,
             status,
+            isApproved: false, // เพิ่มบรรทัดนี้
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -87,8 +128,8 @@ async function handleUserSubmit(event) {
 
         closeModal();
         await loadUsers();
-        hideLoading();
-        await showAlert('เพิ่มผู้ใช้งานสำเร็จ และส่งอีเมลตั้งรหัสผ่านแล้ว');
+        closeLoadingOverlay();
+        await showAlertModal('เพิ่มผู้ใช้งานสำเร็จ และส่งอีเมลตั้งรหัสผ่านแล้ว');
 
     } catch (error) {
         console.error('Error adding user:', error);
@@ -107,7 +148,7 @@ async function handleUserSubmit(event) {
             }
             return;
         }
-        await showAlert('เกิดข้อผิดพลาด: ' + error.message);
+        await showAlertModal('เกิดข้อผิดพลาด: ' + error.message);
         
         if (error.code === 'permission-denied') {
             alert('ไม่มีสิทธิ์ในการเพิ่มผู้ใช้ กรุณาล็อกอินใหม่');
@@ -118,7 +159,7 @@ async function handleUserSubmit(event) {
         
         alert('เกิดข้อผิดพลาด: ' + error.message);
     }
-    await showAlert('เกิดข้อผิดพลาด: ' + error.message);
+   await showAlertModal('เกิดข้อผิดพลาด: ' + error.message);
 }
 
 
@@ -132,30 +173,50 @@ async function loadUsers() {
 
         usersSnapshot.forEach(doc => {
             const userData = doc.data();
-            const row = document.createElement('tr');
-
-            const statusDisplay = userData.isApproved ? '<span class="status-badge status-active">อนุมัติแล้ว</span>' : '<span class="status-badge status-pending">รอการอนุมัติ</span>';
-
-            const actionButtons = userData.isApproved
-                ? `<button onclick="editUser('${doc.id}')" class="action-btn edit-btn">แก้ไข</button>
-                   <button onclick="deleteUser('${doc.id}')" class="action-btn delete-btn">ลบ</button>`
-                : `<button onclick="approveUser('${doc.id}')" class="action-btn edit-btn">อนุมัติ</button>
-                   <button onclick="deleteUser('${doc.id}')" class="action-btn delete-btn">ลบ</button>`;
-
-            row.innerHTML = `
-                <td>${userData.email || ''}</td>
-                <td>${userData.displayName || ''}</td>
-                <td>${userData.role || 'user'}</td>
-                <td>${statusDisplay}</td>
-                <td>${actionButtons}</td>
-            `;
-            userTableBody.appendChild(row);
-        });
-        hideLoading();
+                 const row = document.createElement('tr');
+                 row.innerHTML = `
+                      <td>${userData.email}</td>
+                      <td>${userData.displayName}</td>
+                      <td>${userData.role || 'user'}</td>
+                      <td><span class="status-badge status-${userData.status}">${userData.status}</span></td>
+                      <td>
+                          ${userData.isApproved === true ? 
+                              '<span class="status-badge status-active">อนุมัติ</span>' : 
+                              '<span class="status-badge status-pending">รออนุมัติ</span>'}
+                      </td>
+                      <td>
+                          <button onclick="editUser('${doc.id}')" class="action-btn edit-btn">แก้ไข</button>
+                          <button onclick="deleteUser('${doc.id}')" class="action-btn delete-btn">ลบ</button>
+                          ${userData.isApproved === true ? 
+                              `<button onclick="toggleUserApproval('${doc.id}', false)" class="action-btn delete-btn" style="margin-left: 0.5rem;">ไม่อนุมัติ</button>` : 
+                              `<button onclick="toggleUserApproval('${doc.id}', true)" class="action-btn edit-btn" style="margin-left: 0.5rem;">อนุมัติ</button>`
+                           }
+                      </td>
+                  `;
+                  userTableBody.appendChild(row);
+         });
+         hideLoading();
     } catch (error) {
         console.error('Error loading users:', error);
         hideLoading();
         await showAlert('ไม่สามารถโหลดข้อมูลผู้ใช้ได้');
+    }
+}
+
+async function toggleUserApproval(userId, approve) {
+    showLoadingOverlay("กำลังดำเนินการ...");
+    try {
+        await firebase.firestore().collection('users').doc(userId).update({
+            isApproved: approve,
+        });
+        closeLoadingOverlay();
+        loadUsers();
+        showAlertModal(approve ? 'อนุมัติผู้ใช้งานสำเร็จ' : 'ไม่อนุมัติบัญชีผู้ใช้งาน');
+
+   } catch (error) {
+        console.error('Error toggling user approval:', error);
+         closeLoadingOverlay();
+         showAlertModal('เกิดข้อผิดพลาดในการดำเนินการ');
     }
 }
 
