@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,9 +11,6 @@
             --primary-dark: #e5a700;
             --secondary: #404040;
             --accent: #2D2D2D;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
@@ -26,8 +22,7 @@
         }
 
         body {
-            min-height: 100vh;
-            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+            background: #f5f5f5;
         }
 
         .header {
@@ -43,6 +38,12 @@
             margin-right: 2rem;
         }
 
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
         .admin-title {
             font-size: 1.5rem;
             color: var(--secondary);
@@ -50,7 +51,7 @@
             flex-grow: 1;
         }
 
-        .user-container {
+          .user-container {
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -60,17 +61,22 @@
             border-radius: 8px;
         }
 
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
         .nav-btn {
-            background: #f0f0f0;
+             background: #f0f0f0;
             color: var(--secondary);
             border: none;
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
+             transition: all 0.3s;
         }
 
-        .logout-btn {
+         .logout-btn {
             background: #ff4444;
             color: white;
             border: none;
@@ -79,65 +85,51 @@
             cursor: pointer;
         }
 
-        .admin-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
 
-        .admin-card {
+        .filters-container {
             background: white;
-            border-radius: 8px;
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
             box-shadow: var(--shadow);
+             display: flex;
+             flex-wrap: wrap;
+             gap: 1rem;
         }
 
-        .admin-card h2 {
-            color: var(--secondary);
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 0.5rem;
-        }
-
-        .filter-container {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
+         .filter-group {
+                flex: 1 1 200px; /* Allow items to wrap */
+            }
+        
         .filter-group label {
             display: block;
             margin-bottom: 0.5rem;
+            font-weight: 600;
             color: var(--secondary);
-            font-weight: 500;
         }
 
-        .filter-group select,
-        .filter-group input {
+        .filter-group select, .filter-group input {
             width: 100%;
             padding: 0.5rem;
             border: 1px solid #ddd;
             border-radius: 4px;
+             font-size: 0.9rem;
         }
 
         .logs-table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
+             border-radius: 8px;
+               box-shadow: var(--shadow);
         }
 
         .logs-table th,
         .logs-table td {
-            padding: 0.75rem;
+           padding: 0.75rem;
             text-align: left;
             border-bottom: 1px solid #eee;
+              vertical-align: top; /* Align text to the top */
         }
 
         .logs-table th {
@@ -146,508 +138,389 @@
             color: var(--secondary);
         }
 
-        .action-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .action-login { background-color: #d1ecf1; color: #0c5460; }
-        .action-post { background-color: #d4edda; color: #155724; }
-        .action-user { background-color: #fff3cd; color: #856404; }
-        .action-admin { background-color: #f8d7da; color: #721c24; }
-
-        .export-btn {
-            background: var(--primary);
-            color: var(--accent);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        #loadingScreen {
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         .pagination {
             display: flex;
             justify-content: center;
             gap: 0.5rem;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
+               flex-wrap: wrap; /* Allow buttons to wrap */
         }
 
-        .pagination button {
-            padding: 0.5rem 1rem;
+        .page-btn {
+             background: white;
             border: 1px solid #ddd;
-            background: white;
-            cursor: pointer;
+            padding: 0.5rem 1rem;
             border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+           
         }
-
-        .pagination button.active {
+        .page-btn.active {
             background: var(--primary);
             color: var(--accent);
             border-color: var(--primary);
         }
 
-        
+         .anomaly {
+            background: #ffebee;
+            color: #b71c1c;
+            font-weight: bold;
+        }
+         .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
 
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .log-details {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+             max-width: 350px; /* Set your preferred max-width */
+
+        }
     </style>
 </head>
-
 <body>
-    <div id="loadingScreen">
-        <div class="spinner"></div>
-    </div>
-
-    <div id="mainContent" style="display: none">
-        <div class="header">
-            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
-            <h1 class="admin-title">บันทึกการใช้งานระบบ</h1>
-            <div class="user-container">
-                <span class="user-name" id="userDisplayName">Loading...</span>
-                <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
-                <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+     <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p id="loadingMessage">กำลังโหลดข้อมูล...</p>
             </div>
         </div>
-
-        <div class="admin-container">
-            <div class="admin-card">
-                <h2>บันทึกกิจกรรมทั้งหมด</h2>
-                
-                <button onclick="exportLogs()" class="export-btn">ส่งออกข้อมูล (CSV)</button>
-
-                <div class="filter-container">
-                    <div class="filter-group">
-                        <label for="actionType">ประเภทกิจกรรม</label>
-                        <select id="actionType" onchange="filterLogs()">
-                            <option value="">ทั้งหมด</option>
-                            <option value="login">เข้าสู่ระบบ</option>
-                            <option value="post">จัดการโพสต์</option>
-                            <option value="user">จัดการผู้ใช้</option>
-                            <option value="admin">การดำเนินการของแอดมิน</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="dateFrom">ตั้งแต่วันที่</label>
-                        <input type="date" id="dateFrom" onchange="filterLogs()">
-                    </div>
-                    <div class="filter-group">
-                        <label for="dateTo">ถึงวันที่</label>
-                        <input type="date" id="dateTo" onchange="filterLogs()">
-                    </div>
-                    <div class="filter-group">
-                        <label for="searchUser">ค้นหาผู้ใช้</label>
-                        <input type="text" id="searchUser" onkeyup="filterLogs()" placeholder="ชื่อหรืออีเมล">
-                    </div>
-                </div>
-
-                <table class="logs-table">
-                    <thead>
-                        <tr>
-                            <th>วันที่/เวลา</th>
-                            <th>ผู้ใช้งาน</th>
-                            <th>ประเภท</th>
-                            <th>รายละเอียด</th>
-                            <th>IP Address</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logsTableBody">
-                        <!-- ข้อมูลจะถูกเพิ่มด้วย JavaScript -->
-                    </tbody>
-                </table>
-
-                <div class="pagination" id="pagination">
-                    <!-- ปุ่มเปลี่ยนหน้าจะถูกเพิ่มด้วย JavaScript -->
-                </div>
-            </div>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+             alt="Cyfence Logo" class="logo">
+        <h1 class="admin-title">บันทึกการใช้งาน</h1>
+        <div class="user-container">
+            <span class="user-name" id="userDisplayName">Loading...</span>
+            <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
     </div>
 
+    <div class="container">
+        <div class="filters-container">
+            <div class="filter-group">
+                <label for="startDate">จากวันที่</label>
+                <input type="date" id="startDate">
+            </div>
+            <div class="filter-group">
+                <label for="endDate">ถึงวันที่</label>
+                 <input type="date" id="endDate">
+            </div>
+             <div class="filter-group">
+                <label for="userFilter">ผู้ใช้งาน</label>
+                <select id="userFilter">
+                    <option value="">ทั้งหมด</option>
+                    <!-- Options will be added by JavaScript -->
+                </select>
+            </div>
+              <div class="filter-group">
+                <label for="actionFilter">การกระทำ</label>
+                <select id="actionFilter">
+                    <option value="">ทั้งหมด</option>
+                    <option value="login">เข้าสู่ระบบ</option>
+                     <option value="logout">ออกจากระบบ</option>
+                     <option value="page_access">เข้าถึงหน้า</option>
+                    <option value="add_user">เพิ่มผู้ใช้งาน</option>
+                    <option value="delete_user">ลบผู้ใช้งาน</option>
+                    <option value="edit_user">แก้ไขผู้ใช้งาน</option>
+                   <option value="create_post">สร้างประกาศ</option>
+                    <option value="delete_post">ลบประกาศ</option>
+                      <option value="update_following">แก้ไข Following</option>
+                     <option value="access_menu">เข้าเมนู</option>
+                </select>
+            </div>
+              <button onclick="applyFilters()" style=" margin-top: 20px; padding: 10px 20px; background: #FDB813; border: none; border-radius: 4px; color: black; font-weight: 600; cursor: pointer; transition: all 0.3s;">กรองข้อมูล</button>
+           <button onclick="resetFilters()" style=" margin-top: 20px; padding: 10px 20px; background: #ddd; border: none; border-radius: 4px; color: #404040; font-weight: 600; cursor: pointer; transition: all 0.3s;">รีเซ็ต</button>
+        </div>
+
+        <table class="logs-table">
+            <thead>
+                <tr>
+                    <th>เวลา</th>
+                    <th>ผู้ใช้งาน</th>
+                    <th>การกระทำ</th>
+                    <th>รายละเอียด</th>
+                      <th>อุปกรณ์</th>
+                </tr>
+            </thead>
+            <tbody id="logsTableBody">
+                <!-- Logs will be added here -->
+            </tbody>
+        </table>
+
+          <div class="pagination" id="pagination">
+               <!-- Pagination buttons will be added here -->
+        </div>
+    </div>
+    
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="firebase-config.js"></script>
-    <script>
-        let currentUser = null;
-        let allLogs = [];
-        const ITEMS_PER_PAGE = 30;
+        <script src="firebase-config.js"></script>
+        <script>
+         // ตัวแปรสำหรับการแบ่งหน้า
+        const LOGS_PER_PAGE = 15;
         let currentPage = 1;
+        let totalPages = 1;
+        let allLogs = [];
+        let lastVisible = null;
 
-        // เช็คสถานะการล็อกอิน
-        firebase.auth().onAuthStateChanged(async (user) => {
-            if (user) {
-                currentUser = user;
-                const userDoc = await firebase.firestore()
-                    .collection('users')
-                    .doc(user.uid)
-                    .get();
-
-                const userData = userDoc.data();
-                
-                if (userData?.role !== 'admin') {
-                    window.location.href = 'dashboard.html';
-                    return;
-                }
-
-                document.getElementById('userDisplayName').textContent = userData?.displayName || user.email;
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-
-                loadLogs();
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
-
-        async function loadLogs() {
-    try {
-        const logsSnapshot = await firebase.firestore()
-            .collection('logs')
-            .orderBy('timestamp', 'desc')
-            .get();
-
-        // สร้าง Map เพื่อเก็บข้อมูล user
-        let userDataMap = new Map();
-
-        // ดึงข้อมูล logs
-        const logsData = logsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-
-        // รวบรวม userIds ที่ไม่ซ้ำกัน
-        const uniqueUserIds = [...new Set(logsData.map(log => log.userId).filter(id => id))];
-
-        // ดึงข้อมูล users ทั้งหมดในครั้งเดียว
-        const usersSnapshots = await Promise.all(
-            uniqueUserIds.map(userId =>
-                firebase.firestore()
-                    .collection('users')
-                    .doc(userId)
-                    .get()
-            )
-        );
-
-        // เก็บข้อมูล user ลงใน Map
-        usersSnapshots.forEach(doc => {
-            if (doc.exists) {
-                userDataMap.set(doc.id, doc.data());
-            }
-        });
-
-        // เพิ่มข้อมูล user ลงใน logs
-        allLogs = logsData.map(log => ({
-            ...log,
-            userDisplayName: log.userId ? 
-                (userDataMap.get(log.userId)?.displayName || log.userEmail) : 
-                (log.userName || log.userEmail || 'ไม่ระบุผู้ใช้')
-        }));
-
-        filterLogs();
-    } catch (error) {
-        console.error('Error loading logs:', error);
-        alert('เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณาลองใหม่อีกครั้ง');
-    }
-}
-
-        function filterLogs() {
-            const actionType = document.getElementById('actionType').value;
-            const dateFrom = document.getElementById('dateFrom').value;
-            const dateTo = document.getElementById('dateTo').value;
-            const searchUser = document.getElementById('searchUser').value.toLowerCase();
-
-            let filteredLogs = allLogs;
-
-            if (actionType) {
-                filteredLogs = filteredLogs.filter(log => log.actionType === actionType);
-            }
-
-            if (dateFrom) {
-                const fromDate = new Date(dateFrom);
-                filteredLogs = filteredLogs.filter(log => new Date(log.timestamp.toDate()) >= fromDate);
-            }
-
-            if (dateTo) {
-                const toDate = new Date(dateTo);
-                toDate.setHours(23, 59, 59);
-                filteredLogs = filteredLogs.filter(log => new Date(log.timestamp.toDate()) <= toDate);
-            }
-
-            if (searchUser) {
-                filteredLogs = filteredLogs.filter(log => 
-                    log.userEmail.toLowerCase().includes(searchUser) || 
-                    (log.userName && log.userName.toLowerCase().includes(searchUser))
-                );
-            }
-
-            displayLogs(filteredLogs);
-            setupPagination(filteredLogs);
+          function showLoadingOverlay(message) {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('loadingMessage').textContent = message;
         }
 
-        function displayLogs(logs) {
-            const tableBody = document.getElementById('logsTableBody');
-            tableBody.innerHTML = '';
+        function closeLoadingOverlay() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
 
-            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-            const endIndex = startIndex + ITEMS_PER_PAGE;
-            const paginatedLogs = logs.slice(startIndex, endIndex);
+        async function loadUsers() {
+            const userFilter = document.getElementById('userFilter');
+             showLoadingOverlay('กำลังโหลดข้อมูลผู้ใช้...');
+            try {
+                  const usersSnapshot = await db.collection('users').get();
+                usersSnapshot.forEach(doc => {
+                    const userData = doc.data();
+                    const option = document.createElement('option');
+                     option.value = doc.id;
+                     option.text = userData.displayName || userData.email;
+                     userFilter.appendChild(option);
+                });
+            }catch(error) {
+                console.error('Error loading users:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้');
+            } finally {
+                closeLoadingOverlay();
+            }
+        }
 
-            paginatedLogs.forEach(log => {
+          // ฟังชันก์ loadLogs
+        async function loadLogs(page = 1, filters = {}) {
+               showLoadingOverlay('กำลังโหลดข้อมูล Log...');
+             const logsTableBody = document.getElementById('logsTableBody');
+             const startDate = filters.startDate ? new Date(filters.startDate) : null;
+                const endDate = filters.endDate ? new Date(filters.endDate) : null;
+                const userFilter = filters.userFilter || '';
+                const actionFilter = filters.actionFilter || '';
+            try {
+               
+                let query = db.collection('logs').orderBy('timestamp', 'desc');
+                
+                 if (startDate) {
+                    query = query.where('timestamp', '>=', startDate);
+                }
+                 if (endDate) {
+                   const endOfDay = new Date(endDate);
+                  endOfDay.setHours(23, 59, 59, 999);
+                    query = query.where('timestamp', '<=', endOfDay);
+                }
+                if (userFilter) {
+                    query = query.where('userId', '==', userFilter);
+                }
+                 if (actionFilter) {
+                    query = query.where('action', '==', actionFilter);
+                }
+
+                const snapshot = await query.get();
+
+                 allLogs = snapshot.docs;
+                 totalPages = Math.ceil(allLogs.length / LOGS_PER_PAGE);
+                let paginatedDocs = [];
+                if(page===1) {
+                   paginatedDocs = snapshot.docs.slice(0, LOGS_PER_PAGE);
+                }
+                else {
+                    const start = (page - 1) * LOGS_PER_PAGE;
+                  const end = start + LOGS_PER_PAGE;
+                    paginatedDocs = snapshot.docs.slice(start, end);
+                    }
+                logsTableBody.innerHTML = '';
+                
+                 paginatedDocs.forEach(doc => {
+                    const log = doc.data();
+                    const timestamp = log.timestamp ? log.timestamp.toDate() : new Date();
+                     let details = log.details;
+                     if (typeof details === 'object') {
+                        details = JSON.stringify(details, null, 2);
+                    }
+
+
                 const row = document.createElement('tr');
-                
-                const timestamp = log.timestamp.toDate();
-                const formattedDate = timestamp.toLocaleDateString('th-TH', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
+                    row.innerHTML = `
+                        <td style="white-space: nowrap;">${timestamp.toLocaleString()}</td>
+                        <td>${log.userId || 'ไม่ระบุ'}</td>
+                        <td>${log.action || 'ไม่ระบุ'}</td>
+                         <td class="log-details">${details || 'ไม่มี'}</td>
+                          <td style="white-space: nowrap;">${log.userAgent || 'ไม่ระบุ'}</td>
+                       `;
+                 logsTableBody.appendChild(row);
+                     
+                    if (isSuspiciousLog(log)) {
+                           row.classList.add('anomaly');
+                        }
                 });
-
-                row.innerHTML = `
-                    <td>${formattedDate}</td>
-                    <td>${log.userName || log.userEmail}</td>
-                    <td><span class="action-badge action-${log.actionType}">${getActionTypeText(log.actionType)}</span></td>
-                    <td>${log.details}</td>
-                    <td>${log.ipAddress || '-'}</td>
-                `;
-
-                tableBody.appendChild(row);
-            });
-        }
-
-        function getActionTypeText(actionType) {
-            const actionTypes = {
-                login: 'เข้าสู่ระบบ',
-                post: 'จัดการโพสต์',
-                user: 'จัดการผู้ใช้',
-                admin: 'แอดมิน'
-            };
-            return actionTypes[actionType] || actionType;
-        }
-
-        function setupPagination(logs) {
-    const pagination = document.getElementById('pagination');
-    const totalPages = Math.ceil(logs.length / ITEMS_PER_PAGE);
-    
-    pagination.innerHTML = '';
-
-    // Previous button
-    if (totalPages > 1) {
-        const prevButton = document.createElement('button');
-        prevButton.textContent = '←';
-        prevButton.onclick = () => {
-            if (currentPage > 1) {
-                currentPage--;
-                displayLogs(logs);
-                setupPagination(logs);
-            }
-        };
-        pagination.appendChild(prevButton);
-    }
-
-    // Calculate which page numbers to show
-    let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, currentPage + 2);
-
-    // Always show first page
-    if (startPage > 1) {
-        const firstButton = document.createElement('button');
-        firstButton.textContent = '1';
-        firstButton.onclick = () => {
-            currentPage = 1;
-            displayLogs(logs);
-            setupPagination(logs);
-        };
-        pagination.appendChild(firstButton);
-
-        if (startPage > 2) {
-            const ellipsis = document.createElement('span');
-            ellipsis.textContent = '...';
-            ellipsis.style.margin = '0 8px';
-            pagination.appendChild(ellipsis);
-        }
-    }
-
-    // Show page numbers
-    for (let i = startPage; i <= endPage; i++) {
-        const button = document.createElement('button');
-        button.textContent = i;
-        if (i === currentPage) {
-            button.classList.add('active');
-        }
-        button.onclick = () => {
-            currentPage = i;
-            displayLogs(logs);
-            setupPagination(logs);
-        };
-        pagination.appendChild(button);
-    }
-
-    // Always show last page
-    if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-            const ellipsis = document.createElement('span');
-            ellipsis.textContent = '...';
-            ellipsis.style.margin = '0 8px';
-            pagination.appendChild(ellipsis);
-        }
-
-        const lastButton = document.createElement('button');
-        lastButton.textContent = totalPages;
-        lastButton.onclick = () => {
-            currentPage = totalPages;
-            displayLogs(logs);
-            setupPagination(logs);
-        };
-        pagination.appendChild(lastButton);
-    }
-
-    // Next button
-    if (totalPages > 1) {
-        const nextButton = document.createElement('button');
-        nextButton.textContent = '→';
-        nextButton.onclick = () => {
-            if (currentPage < totalPages) {
-                currentPage++;
-                displayLogs(logs);
-                setupPagination(logs);
-            }
-        };
-        pagination.appendChild(nextButton);
-    }
-}
-
-        function exportLogs() {
-            try {
-                const actionType = document.getElementById('actionType').value;
-                const dateFrom = document.getElementById('dateFrom').value;
-                const dateTo = document.getElementById('dateTo').value;
-                const searchUser = document.getElementById('searchUser').value.toLowerCase();
-
-                let filteredLogs = allLogs;
-
-                // Apply filters
-                if (actionType) {
-                    filteredLogs = filteredLogs.filter(log => log.actionType === actionType);
-                }
-                if (dateFrom) {
-                    const fromDate = new Date(dateFrom);
-                    filteredLogs = filteredLogs.filter(log => new Date(log.timestamp.toDate()) >= fromDate);
-                }
-                if (dateTo) {
-                    const toDate = new Date(dateTo);
-                    toDate.setHours(23, 59, 59);
-                    filteredLogs = filteredLogs.filter(log => new Date(log.timestamp.toDate()) <= toDate);
-                }
-                if (searchUser) {
-                    filteredLogs = filteredLogs.filter(log => 
-                        log.userEmail.toLowerCase().includes(searchUser) || 
-                        (log.userName && log.userName.toLowerCase().includes(searchUser))
-                    );
-                }
-
-                // Convert to CSV
-                const headers = ['วันที่/เวลา', 'ผู้ใช้งาน', 'ประเภท', 'รายละเอียด', 'IP Address'];
-                const csvContent = [
-                    headers.join(','),
-                    ...filteredLogs.map(log => {
-                        const timestamp = log.timestamp.toDate().toLocaleString('th-TH');
-                        const user = log.userName || log.userEmail;
-                        const actionType = getActionTypeText(log.actionType);
-                        const details = log.details.replace(/,/g, ';'); // Replace commas in details
-                        const ip = log.ipAddress || '-';
-                        return `${timestamp},${user},${actionType},${details},${ip}`;
-                    })
-                ].join('\n');
-
-                // Create and download file
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
                 
-                link.setAttribute('href', url);
-                link.setAttribute('download', `cyfence-logs-${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-                
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                 currentPage = page;
+                updatePagination();
             } catch (error) {
-                console.error('Error exporting logs:', error);
-                alert('เกิดข้อผิดพลาดในการส่งออกข้อมูล กรุณาลองใหม่อีกครั้ง');
+                  console.error('Error loading logs:', error);
+                alert('เกิดข้อผิดพลาดในการโหลด Log');
+           } finally {
+                closeLoadingOverlay();
             }
         }
+        function isSuspiciousLog(log) {
+              const isLoginLogout = log.action === 'login' || log.action === 'logout';
+           if (isLoginLogout && log.userAgent.includes("headless")) {
+               return true;
+           }
+           
+           const pageAccess = log.action === 'page_access';
+            if(pageAccess && log.details && log.details.includes("admin")){
+               return true;
+           }
 
-        // Function to create a new log entry
-        async function createLog(actionType, details) {
-            try {
-                if (!currentUser) return;
-
-                const userDoc = await firebase.firestore()
-                    .collection('users')
-                    .doc(currentUser.uid)
-                    .get();
-
-                const userData = userDoc.data();
-
-                // Get client IP address (in production, you'd get this from your server)
-                const ipResponse = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipResponse.json();
-
-                const logEntry = {
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    userEmail: currentUser.email,
-                    userName: userData?.displayName,
-                    userId: currentUser.uid,
-                    actionType,
-                    details,
-                    ipAddress: ipData.ip
-                };
-
-                await firebase.firestore().collection('logs').add(logEntry);
-                
-                // Reload logs after creating new entry
-                loadLogs();
-            } catch (error) {
-                console.error('Error creating log:', error);
+           const addUser = log.action === 'add_user';
+             if (addUser && log.userAgent.includes("headless")) {
+               return true;
+           }
+           const deleteUser = log.action === 'delete_user';
+             if (deleteUser && log.userAgent.includes("headless")) {
+               return true;
+           }
+            const editUser = log.action === 'edit_user';
+              if (editUser && log.userAgent.includes("headless")) {
+               return true;
+           }
+             const createPost = log.action === 'create_post';
+            if (createPost && log.userAgent.includes("headless")) {
+                return true;
             }
+             const deletePost = log.action === 'delete_post';
+            if (deletePost && log.userAgent.includes("headless")) {
+               return true;
+           }
+              const updateFollowing = log.action === 'update_following';
+             if (updateFollowing && log.userAgent.includes("headless")) {
+               return true;
+           }
+           const accessMenu = log.action === 'access_menu';
+              if (accessMenu && log.userAgent.includes("headless")) {
+                return true;
+            }
+           return false;
+        }
+       
+         function updatePagination() {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+
+       if (currentPage > 1) {
+           const prevBtn = document.createElement('button');
+           prevBtn.className = 'page-btn';
+            prevBtn.textContent = 'ก่อนหน้า';
+              prevBtn.onclick = () => {
+             loadLogs(currentPage - 1, filters);
+              };
+           pagination.appendChild(prevBtn);
+           }
+         for (let i = 1; i <= totalPages; i++) {
+           const pageBtn = document.createElement('button');
+           pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+             pageBtn.textContent = i;
+            pageBtn.onclick = () => {
+             loadLogs(i, filters);
+         };
+           pagination.appendChild(pageBtn);
+        }
+           if (currentPage < totalPages) {
+             const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+             nextBtn.textContent = 'ถัดไป';
+             nextBtn.onclick = () => {
+             loadLogs(currentPage + 1, filters);
+         };
+              pagination.appendChild(nextBtn);
+             }
+            }
+            let filters = {};
+           function applyFilters() {
+               filters = {
+                   startDate: document.getElementById('startDate').value,
+                   endDate: document.getElementById('endDate').value,
+                   userFilter: document.getElementById('userFilter').value,
+                    actionFilter: document.getElementById('actionFilter').value
+               };
+               loadLogs(1, filters);
+           }
+            function resetFilters() {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('userFilter').value = '';
+            document.getElementById('actionFilter').value = '';
+             loadLogs(1);
         }
 
-        // Function for logging out
-        function logout() {
-            createLog('login', 'ออกจากระบบ')
-                .then(() => {
-                    firebase.auth().signOut()
-                        .then(() => window.location.href = 'login.html')
-                        .catch(error => console.error('Logout error:', error));
-                });
-        }
+            firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
 
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
+                    }
+
+                    loadUsers();
+                      loadLogs();
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            }
+        });
+
+          function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
     </script>
 </body>
 </html>

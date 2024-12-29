@@ -109,6 +109,8 @@ function hideLoading() {
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, Math.random().toString(36).slice(-8));
         const userId = userCredential.user.uid;
 
+         // เพิ่มฟังก์ชันสำหรับบันทึก Log เมื่อเพิ่มผู้ใช้
+         await logActivity(userId, 'add_user', { addedUserEmail: email, addedUserName: displayName, role: role, status: status });
         // ส่งอีเมลรีเซ็ตรหัสผ่าน
         await firebase.auth().sendPasswordResetEmail(email);
 
@@ -121,6 +123,7 @@ function hideLoading() {
             isApproved: false, // เพิ่มบรรทัดนี้
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        
         });
 
         // ล็อกอินกลับเข้าไปด้วยบัญชี admin
@@ -161,6 +164,7 @@ function hideLoading() {
     }
    await showAlertModal('เกิดข้อผิดพลาด: ' + error.message);
 }
+
 
 
 // อัปเดตฟังก์ชัน loadUsers
@@ -239,41 +243,6 @@ async function approveUser(userId) {
     }
 }
 
-// Update loadUsers function
-// async function loadUsers() {
-//     try {
-//         const usersSnapshot = await db.collection('users').get();
-//         const userTableBody = document.getElementById('userTableBody');
-//         userTableBody.innerHTML = '';
-
-//         usersSnapshot.forEach(doc => {
-//             const userData = doc.data();
-//             console.log('User data:', doc.id, userData); // เพิ่ม log เพื่อดูข้อมูล
-            
-//             const row = document.createElement('tr');
-//             const isApproved = userData.isApproved === true;
-            
-//             row.innerHTML = `
-//                 <td>${userData.email || ''}</td>
-//                 <td>${userData.displayName || ''}</td>
-//                 <td>${userData.role || 'user'}</td>
-//                 <td>${isApproved ? 'อนุมัติแล้ว' : 'รอการอนุมัติ'}</td>
-//                 <td>
-//                     ${!isApproved ? 
-//                         `<button onclick="approveUser('${doc.id}')" class="action-btn edit-btn">อนุมัติ</button>` : 
-//                         `<button onclick="editUser('${doc.id}')" class="action-btn edit-btn">แก้ไข</button>`
-//                     }
-//                     <button onclick="deleteUser('${doc.id}')" class="action-btn delete-btn">ลบ</button>
-//                 </td>
-//             `;
-//             userTableBody.appendChild(row);
-//         });
-//     } catch (error) {
-//         console.error('Error in loadUsers:', error);
-//         alert('ไม่สามารถโหลดข้อมูลผู้ใช้ได้');
-//     }
-// }
-
 async function editUser(userId) {
     try {
         const userDoc = await firebase.firestore().collection('users').doc(userId).get();
@@ -338,7 +307,8 @@ async function deleteUser(userId) {
             // 1. ลบผู้ใช้จาก Firestore
             await firebase.firestore().collection('users').doc(userId).delete();
             // 2. ลบผู้ใช้จาก Authentication
-             const user = await firebase.auth().getUser(userId)
+            const user = await firebase.auth().getUser(userId)
+            await logActivity(firebase.auth().currentUser.uid, 'delete_user', { deletedUser: userData.email || userData.displayName || userId});
             if (user) {
                 await firebase.auth().deleteUser(userId);
             }

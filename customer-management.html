@@ -921,6 +921,13 @@
                 }
 
                 // อัพเดท companyTypes
+                await logActivity(firebase.auth().currentUser.uid, 'update_following', {
+                        updatedCustomer: shortName,
+                        updatedFullName: fullName,
+                        updatedType: type,
+                        updatedShift: shift,
+                        updatedCalling: calling
+                   });
                 const typeRef = db.collection('customerManagement').doc('companyTypes');
                 const types = (await typeRef.get()).data() || {};
                 types[shortName] = type;
@@ -1142,6 +1149,13 @@ async function saveEditedCalling(shortName) {
                 const db = firebase.firestore();
                 const batch = db.batch();
 
+                await logActivity(firebase.auth().currentUser.uid, 'update_following', {
+                    addedCustomer: shortName,
+                    addedFullName: fullName,
+                    addedType: type,
+                    addedShift: shift
+                });
+
                 // Update companyTypes
                 const typeRef = db.collection('customerManagement').doc('companyTypes');
                 const updatedTypes = {
@@ -1195,6 +1209,7 @@ async function saveEditedCalling(shortName) {
             }
             showLoadingOverlay('กำลังลบลูกค้า...');
             try {
+                await logActivity(firebase.auth().currentUser.uid, 'update_following', { deletedCustomer: companyName});
                 // ลบจาก companyTypes
                 const updatedTypes = { ...companyTypes };
                 delete updatedTypes[companyName];
@@ -1235,6 +1250,7 @@ async function saveEditedCalling(shortName) {
                 const mappings = (await mappingRef.get()).data() || {};
 
                 mappings[displayName] = replaceName;
+                await logActivity(firebase.auth().currentUser.uid, 'update_following', { addedMappingDisplay: displayName, addedMappingReplace: replaceName });
                 await mappingRef.set(mappings);
 
                 // Clear input fields
@@ -1426,6 +1442,8 @@ async function saveEditedCalling(shortName) {
                     mappings = mappingDoc.data();
                 }
 
+                await logActivity(firebase.auth().currentUser.uid, 'update_following', { bulkImport: true });
+
                 // ประมวลผลแต่ละแถว
                 for (let i = 1; i < rows.length; i++) {  // ข้าม header row
                     const [shortName, fullName, type, shift] = rows[i].split(',').map(item => item.trim());
@@ -1526,6 +1544,8 @@ function closeEditMappingModal() {
                     delete mappings[oldDisplayName];
                   mappings[newDisplayName] = newReplaceName;
                   
+                  await logActivity(firebase.auth().currentUser.uid, 'update_following', { editedMappingDisplay: oldDisplayName, addedMappingReplace: replaceName,newMappingDisplay: newDisplayName });
+
                     await mappingRef.set(mappings);
                 
                   closeEditMappingModal();
@@ -1548,6 +1568,9 @@ function closeEditMappingModal() {
                     const mappings = (await mappingRef.get()).data() || {};
 
                     delete mappings[displayName];
+
+                    await logActivity(firebase.auth().currentUser.uid, 'update_following', { deletedMappingDisplay: displayName});
+                    
                     await mappingRef.set(mappings);
                      showAlertModal('ลบ Mapping สำเร็จ');
                     loadMappingData(); // โหลดข้อมูลใหม่
