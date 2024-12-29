@@ -335,7 +335,13 @@ async function deleteUser(userId) {
     if (confirm('คุณแน่ใจหรือไม่ที่จะลบผู้ใช้งานนี้?')) {
         try {
             showLoading('กำลังลบผู้ใช้งาน...');
+            // 1. ลบผู้ใช้จาก Firestore
             await firebase.firestore().collection('users').doc(userId).delete();
+            // 2. ลบผู้ใช้จาก Authentication
+             const user = await firebase.auth().getUser(userId)
+            if (user) {
+                await firebase.auth().deleteUser(userId);
+            }
             await loadUsers();
             hideLoading();
             await showAlert('ลบผู้ใช้งานสำเร็จ');
