@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
     <style>
         :root {
             --primary: #FDB813;
@@ -174,7 +175,13 @@
             <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
             <h1 class="admin-title">ระบบจัดการ</h1>
             <div class="user-container">
-                <span class="user-info" id="userDisplayName">Loading...</span>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <div class="user-details">
+                <span id="userDisplayName">Loading...</span>
+                <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+            </div>
+        </div>
                 <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
             </div>
         </div>
@@ -250,12 +257,26 @@
     
                         const userData = userDoc.data();
                         const displayElement = document.getElementById('userDisplayName');
-    
+                        const roleElement = document.getElementById('userRole');
+                        const avatarElement = document.getElementById('userAvatar');
+
                         if (userData?.displayName) {
-                            displayElement.textContent = userData.displayName;
-                        } else {
-                            displayElement.textContent = user.email;
-                        }
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
+                    }
+
+                    if (userData?.role) {
+                        roleElement.textContent = `(${userData.role})`;
+                    } else {
+                        roleElement.textContent = '';
+                    }
+
+                    if (userData?.avatar) {
+                        avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
+                    } else {
+                        avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+                    }
     
                         // Add admin button if user has admin role
                     } catch (error) {

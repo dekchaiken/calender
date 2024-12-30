@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Following Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
     <style>
         :root {
             --primary: #FDB813;
@@ -297,7 +298,8 @@
                 grid-template-columns: 1fr;
             }
         }
-         .loading-overlay {
+
+        .loading-overlay {
             display: none;
             position: fixed;
             inset: 0;
@@ -324,7 +326,7 @@
             margin: 0 auto 1rem;
         }
 
-          .alert-message {
+        .alert-message {
             margin: 1rem 0;
             line-height: 1.5;
             color: var(--secondary);
@@ -335,7 +337,8 @@
                 transform: rotate(360deg);
             }
         }
-         .modal {
+
+        .modal {
             display: none;
             position: fixed;
             inset: 0;
@@ -383,6 +386,94 @@
             font-weight: 600;
         }
     </style>
+    <style>
+        .company-group {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+        }
+
+        .company-group-content {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        .company-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background-color: #FDB813;
+            border-radius: 4px;
+            color: #2D2D2D;
+        }
+
+        .company-group-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .select-group-btn {
+            background-color: #2D2D2D;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+
+        .select-group-btn:hover {
+            background-color: #404040;
+            transform: translateY(-1px);
+        }
+
+        .company-checkbox {
+            display: block;
+            padding: 8px;
+            margin: 2px 0;
+            background: #f8f8f8;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            font-size: 13px;
+        }
+
+        .company-checkbox input[type="checkbox"] {
+            margin-right: 8px;
+            width: 14px;
+            height: 14px;
+        }
+
+        .company-checkbox:hover {
+            background: #f0f0f0;
+        }
+
+        .company-group-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .company-group-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .company-group-content::-webkit-scrollbar-thumb {
+            background: #FDB813;
+            border-radius: 4px;
+        }
+
+        .company-group-content::-webkit-scrollbar-thumb:hover {
+            background: #e5a700;
+        }
+    </style>
 </head>
 
 <body>
@@ -390,36 +481,43 @@
         <div class="spinner"></div>
         <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
     </div>
-        <!-- Alert Modal -->
-        <div id="alertModal" class="modal">
-            <div class="modal-content">
-                <h3 id="alertTitle">แจ้งเตือน</h3>
-                <p id="alertMessage" class="alert-message"></p>
-                <div class="modal-buttons">
-                    <button type="button" class="save-btn" onclick="closeAlertModal()">ตกลง</button>
-                </div>
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <h3 id="alertTitle">แจ้งเตือน</h3>
+            <p id="alertMessage" class="alert-message"></p>
+            <div class="modal-buttons">
+                <button type="button" class="save-btn" onclick="closeAlertModal()">ตกลง</button>
             </div>
         </div>
+    </div>
 
-        <!-- Loading Overlay -->
-        <div id="loadingOverlay" class="loading-overlay">
-            <div class="loading-content">
-                <div class="loading-spinner"></div>
-                <p id="loadingMessage">กำลังดำเนินการ...</p>
-            </div>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingMessage">กำลังดำเนินการ...</p>
         </div>
+    </div>
 
     <div id="mainContent" style="display: none">
-         <div class="header">
+        <div class="header">
             <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
                 alt="Cyfence Logo" class="logo">
             <h1>Following Report</h1>
             <div class="user-container">
-                <span class="user-name" id="userDisplayName">Loading...</span>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <div class="user-details">
+                <span id="userDisplayName">Loading...</span>
+                <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+            </div>
+        </div>
                 <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
-                <button id="customerManagementBtn" onclick="window.location.href='customer-management.html'" class="nav-btn" style="display: none;">จัดการลูกค้า</button>
+                <button id="customerManagementBtn" onclick="window.location.href='customer-management.html'"
+                    class="nav-btn" style="display: none;">จัดการลูกค้า</button>
                 <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
-           </div>
+            </div>
         </div>
 
         <div class="container">
@@ -485,100 +583,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        const newStyles = `
-.company-group {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background-color: #fff;
-    border-radius: 8px;
-    border: 1px solid #e5e5e5;
-}
-
-.company-group-content {
-    max-height: 200px;
-    overflow-y: auto;
-    padding-right: 10px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-}
-
-.company-group-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    background-color: #FDB813;
-    border-radius: 4px;
-    color: #2D2D2D;
-}
-
-.company-group-title {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.select-group-btn {
-    background-color: #2D2D2D;
-    color: white;
-    border: none;
-    padding: 4px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 12px;
-}
-
-.select-group-btn:hover {
-    background-color: #404040;
-    transform: translateY(-1px);
-}
-
-.company-checkbox {
-    display: block;
-    padding: 8px;
-    margin: 2px 0;
-    background: #f8f8f8;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-    font-size: 13px;
-}
-    
-.company-checkbox input[type="checkbox"] {
-    margin-right: 8px;
-    width: 14px;
-    height: 14px;
-}
-
-.company-checkbox:hover {
-    background: #f0f0f0;
-}
-
-.company-group-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.company-group-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.company-group-content::-webkit-scrollbar-thumb {
-    background: #FDB813;
-    border-radius: 4px;
-}
-
-.company-group-content::-webkit-scrollbar-thumb:hover {
-    background: #e5a700;
-}
-`;
-
-        const styleSheet = document.createElement("style");
-        styleSheet.textContent = newStyles;
-        document.head.appendChild(styleSheet);
-
-    
         const months = [
             'January', 'February', 'March', 'April',
             'May', 'June', 'July', 'August',
@@ -589,14 +593,14 @@
         let companies = new Set();
         let selectedCompanies = new Set();
 
-         // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+        // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
         function showAlertModal(message) {
-        document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertMessage').textContent = message;
             document.getElementById('alertModal').style.display = 'flex';
         }
 
         function closeAlertModal() {
-        document.getElementById('alertModal').style.display = 'none';
+            document.getElementById('alertModal').style.display = 'none';
         }
 
         function showLoadingOverlay(message) {
@@ -605,10 +609,10 @@
         }
 
         function closeLoadingOverlay() {
-        document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
 
-         function isDataReady() {
+        function isDataReady() {
             return (
                 companyGroups &&
                 Object.keys(companyGroups).length > 0 &&
@@ -619,7 +623,7 @@
         }
 
         function handleFile(file) {
-               if (!isDataReady()) {
+            if (!isDataReady()) {
                 showAlertModal('กรุณารอข้อมูลโหลดให้เสร็จก่อนอัพโหลดไฟล์');
                 return;
             }
@@ -632,7 +636,7 @@
 
         // ฟังก์ชันสำหรับจัดการการค้นหาบริษัท
         document.getElementById('searchCompany').addEventListener('input', function (e) {
-             showLoadingOverlay('กำลังค้นหา...');
+            showLoadingOverlay('กำลังค้นหา...');
             const searchTerm = e.target.value.toLowerCase();
             const checkboxes = document.querySelectorAll('.company-checkbox');
 
@@ -640,30 +644,30 @@
                 const companyName = checkbox.textContent.toLowerCase();
                 checkbox.style.display = companyName.includes(searchTerm) ? '' : 'none';
             });
-                closeLoadingOverlay();
+            closeLoadingOverlay();
         });
 
-          function selectAllCompanies() {
-              showLoadingOverlay('กำลังเลือกบริษัททั้งหมด...');
+        function selectAllCompanies() {
+            showLoadingOverlay('กำลังเลือกบริษัททั้งหมด...');
             const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = true;
                 selectedCompanies.add(checkbox.value);
             });
-              updateAllTemplates();
-             closeLoadingOverlay();
+            updateAllTemplates();
+            closeLoadingOverlay();
         }
-        
+
 
         function deselectAllCompanies() {
-              showLoadingOverlay('กำลังยกเลิกการเลือกบริษัททั้งหมด...');
+            showLoadingOverlay('กำลังยกเลิกการเลือกบริษัททั้งหมด...');
             const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
                 selectedCompanies.delete(checkbox.value);
             });
-              updateAllTemplates();
-             closeLoadingOverlay();
+            updateAllTemplates();
+            closeLoadingOverlay();
         }
 
         function generateTemplate(companyCode, formattedDate, incidents) {
@@ -698,13 +702,14 @@
             const filtersContainer = document.getElementById('companyFilters');
             filtersContainer.innerHTML = '';
 
-             // แปลง companyGroups เป็น Array เพื่อให้สามารถเรียงลำดับได้
+            // แปลง companyGroups เป็น Array เพื่อให้สามารถเรียงลำดับได้
             const sortedGroups = Object.entries(companyGroups)
                 .sort((a, b) => {
                     const numA = parseInt(a[0].replace('Shift ', '')) || Infinity;
                     const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
                     return numA - numB;
                 });
+
 
             sortedGroups.forEach(([groupId, group]) => {
                 console.log(`Processing group ${groupId}:`, group); // Log ข้อมูลแต่ละกลุ่ม
@@ -717,6 +722,9 @@
                     console.warn(`Invalid companies data for ${groupId}:`, companies);
                     return;
                 }
+                // Sort companies in each group alphabetically
+                const sortedCompanies = [...companies].sort((a, b) => a.localeCompare(b, 'th'));
+
 
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'company-group';
@@ -736,13 +744,13 @@
                 const selectGroupBtn = document.createElement('button');
                 selectGroupBtn.textContent = 'Select All';
                 selectGroupBtn.className = 'select-group-btn';
-                selectGroupBtn.onclick = () => selectGroupCompanies(companies);
+                selectGroupBtn.onclick = () => selectGroupCompanies(sortedCompanies);
 
                 const unselectGroupBtn = document.createElement('button');
                 unselectGroupBtn.textContent = 'Unselect All';
                 unselectGroupBtn.className = 'select-group-btn';
                 unselectGroupBtn.style.backgroundColor = '#404040';
-                unselectGroupBtn.onclick = () => unselectGroupCompanies(companies);
+                unselectGroupBtn.onclick = () => unselectGroupCompanies(sortedCompanies);
 
                 buttonContainer.appendChild(selectGroupBtn);
                 buttonContainer.appendChild(unselectGroupBtn);
@@ -753,7 +761,7 @@
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'company-group-content';
 
-                companies.forEach(company => {
+                sortedCompanies.forEach(company => {
                     const label = document.createElement('label');
                     label.className = 'company-checkbox';
 
@@ -762,7 +770,7 @@
                     checkbox.value = company;
                     checkbox.checked = selectedCompanies.has(company);
                     checkbox.addEventListener('change', function () {
-                       showLoadingOverlay('กำลังอัพเดต Template...');
+                        showLoadingOverlay('กำลังอัพเดต Template...');
                         if (this.checked) {
                             selectedCompanies.add(this.value);
                         } else {
@@ -782,8 +790,9 @@
             });
         }
 
+
         function unselectGroupCompanies(groupCompanies) {
-               showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
+            showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
             groupCompanies.forEach(company => {
                 if (companies.has(company)) {
                     selectedCompanies.delete(company);
@@ -791,10 +800,10 @@
                     if (checkbox) checkbox.checked = false;
                 }
             });
-              updateAllTemplates();
-             closeLoadingOverlay();
+            updateAllTemplates();
+            closeLoadingOverlay();
         }
-        
+
         function selectGroupCompanies(groupCompanies) {
             showLoadingOverlay('กำลังเลือกบริษัท...');
             groupCompanies.forEach(company => {
@@ -805,7 +814,7 @@
                 }
             });
             updateAllTemplates();
-             closeLoadingOverlay();
+            closeLoadingOverlay();
         }
 
         const dropZone = document.getElementById('dropZone');
@@ -820,8 +829,8 @@
         dropZone.addEventListener('dragleave', () => {
             dropZone.classList.remove('dragover');
         });
-         dropZone.addEventListener('drop', (e) => {
-             e.preventDefault();
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
             dropZone.classList.remove('dragover');
             const file = e.dataTransfer.files[0];
             handleFileAndLoad(file); // Call the new function
@@ -829,44 +838,44 @@
 
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-             handleFileAndLoad(file); // Call the new function
+            handleFileAndLoad(file); // Call the new function
         });
-           async function handleFileAndLoad(file) {
+        async function handleFileAndLoad(file) {
             showLoadingOverlay('กำลังอ่านไฟล์ Excel...');
-                try {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                         try {
+            try {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                         excelData = XLSX.utils.sheet_to_json(firstSheet);
-                        
-                          // เพิ่มบริษัททั้งหมดจาก companyMappings
-                             companies = new Set([
-                             ...new Set(excelData.map(incident => getCompanyCode(incident.Customer))),
-                                ...new Set(Object.values(companyMappings))
-                            ]);
+
+                        // เพิ่มบริษัททั้งหมดจาก companyMappings
+                        companies = new Set([
+                            ...new Set(excelData.map(incident => getCompanyCode(incident.Customer))),
+                            ...new Set(Object.values(companyMappings))
+                        ]);
                         selectedCompanies = new Set(companies); // เลือกทุกบริษัทเริ่มต้น
-                        
-                           updateCompanyFilters();
-                           updateAllTemplates();
+
+                        updateCompanyFilters();
+                        updateAllTemplates();
 
                         debugDiv.style.display = 'block';
                         debugDiv.innerHTML = `อ่านข้อมูลสำเร็จ: ${excelData.length} รายการ`;
-                        
-                        } catch (error) {
-                         debugDiv.style.display = 'block';
-                          debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
-                        }
-                        closeLoadingOverlay();
-                        };
-                        reader.readAsArrayBuffer(file);
-                        }catch(error){
+
+                    } catch (error) {
+                        debugDiv.style.display = 'block';
+                        debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
+                    }
                     closeLoadingOverlay();
-                    debugDiv.style.display = 'block';
-                          debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
-                }
+                };
+                reader.readAsArrayBuffer(file);
+            } catch (error) {
+                closeLoadingOverlay();
+                debugDiv.style.display = 'block';
+                debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
+            }
         }
 
         function getCompanyCode(customerName) {
@@ -875,15 +884,15 @@
 
         document.getElementById('followDate').addEventListener('change', () => {
             showLoadingOverlay('กำลังอัพเดต Template...');
-              updateAllTemplates();
-              closeLoadingOverlay();
+            updateAllTemplates();
+            closeLoadingOverlay();
         });
-           
+
 
         function updateAllTemplates() {
             const date = document.getElementById('followDate').value;
             if (!date || !excelData) {
-                 document.getElementById('allTemplates').textContent = 'โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...';
+                document.getElementById('allTemplates').textContent = 'โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...';
                 return;
             }
 
@@ -913,32 +922,32 @@
             document.getElementById('allTemplates').textContent = allTemplates || 'กรุณาเลือกบริษัทที่ต้องการดู Template';
         }
 
-         function copyAllTemplates() {
-             showLoadingOverlay('กำลังคัดลอก Template...');
-             const templates = document.getElementById('allTemplates').textContent;
+        function copyAllTemplates() {
+            showLoadingOverlay('กำลังคัดลอก Template...');
+            const templates = document.getElementById('allTemplates').textContent;
             navigator.clipboard.writeText(templates)
-                 .then(() =>{
-                      closeLoadingOverlay();
-                     showAlertModal('คัดลอก Template ทั้งหมดสำเร็จ')
-                  })
+                .then(() => {
+                    closeLoadingOverlay();
+                    showAlertModal('คัดลอก Template ทั้งหมดสำเร็จ')
+                })
                 .catch(err => {
                     closeLoadingOverlay();
-                     showAlertModal('เกิดข้อผิดพลาดในการคัดลอก: ' + err);
+                    showAlertModal('เกิดข้อผิดพลาดในการคัดลอก: ' + err);
                 });
         }
 
-         function exportExcelByCompany() {
-             showLoadingOverlay('กำลัง Export Excel...');
+        function exportExcelByCompany() {
+            showLoadingOverlay('กำลัง Export Excel...');
             if (!excelData || selectedCompanies.size === 0) {
-               closeLoadingOverlay();
-               showAlertModal('กรุณาอัพโหลดไฟล์ Excel และเลือกบริษัทก่อน');
+                closeLoadingOverlay();
+                showAlertModal('กรุณาอัพโหลดไฟล์ Excel และเลือกบริษัทก่อน');
                 return;
             }
 
             const date = document.getElementById('followDate').value;
             if (!date) {
                 closeLoadingOverlay();
-               showAlertModal('กรุณาเลือกวันที่ก่อน Export');
+                showAlertModal('กรุณาเลือกวันที่ก่อน Export');
                 return;
             }
 
@@ -946,8 +955,8 @@
             const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]:checked');
 
             if (checkboxes.length === 0) {
-                 closeLoadingOverlay();
-                 showAlertModal('กรุณาเลือกอย่างน้อย 1 บริษัท');
+                closeLoadingOverlay();
+                showAlertModal('กรุณาเลือกอย่างน้อย 1 บริษัท');
                 return;
             }
 
@@ -980,8 +989,8 @@
 
                 XLSX.writeFile(wb, fileName);
             });
-                closeLoadingOverlay();
-                 showAlertModal('Export Excel สำเร็จ');
+            closeLoadingOverlay();
+            showAlertModal('Export Excel สำเร็จ');
         }
 
         // ฟังก์ชันช่วยจัดรูปแบบวันที่สำหรับชื่อไฟล์
@@ -1014,71 +1023,71 @@
 
         async function loadCustomerData() {
             showLoadingOverlay('กำลังโหลดข้อมูลลูกค้า...');
-    try {
-        const db = firebase.firestore();
-        
-        // โหลด companyGroups และ log ข้อมูลที่ได้
-        const groupsDoc = await db.collection('customerManagement')
-            .doc('companyGroups').get();
-        
-        if (groupsDoc.exists) {
-            const data = groupsDoc.data();
-            console.log('Raw data from Firestore:', data); // ดูข้อมูลดิบที่ได้จาก Firestore
+            try {
+                const db = firebase.firestore();
 
-            // ถ้าข้อมูลมี shifts อยู่แล้ว
-            if (data && data.shifts) {
-                companyGroups = data.shifts;
-            } 
-            // ถ้าข้อมูลเป็น object ที่มี key เป็น Shift 1, Shift 2, etc. โดยตรง
-            else if (data && Object.keys(data).some(key => key.startsWith('Shift'))) {
-                 // แปลง Object เป็น Array ของ [key, value] เพื่อให้สามารถ Sort ได้
-                const sortedEntries = Object.entries(data).sort((a, b) => {
-                  const numA = parseInt(a[0].replace('Shift ', '')) || Infinity;
-                  const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
-                    return numA - numB;
-                });
+                // โหลด companyGroups และ log ข้อมูลที่ได้
+                const groupsDoc = await db.collection('customerManagement')
+                    .doc('companyGroups').get();
 
-                // แปลงกลับเป็น Object หลังจาก Sort แล้ว
-                companyGroups = Object.fromEntries(sortedEntries);
+                if (groupsDoc.exists) {
+                    const data = groupsDoc.data();
+                    console.log('Raw data from Firestore:', data); // ดูข้อมูลดิบที่ได้จาก Firestore
+
+                    // ถ้าข้อมูลมี shifts อยู่แล้ว
+                    if (data && data.shifts) {
+                        companyGroups = data.shifts;
+                    }
+                    // ถ้าข้อมูลเป็น object ที่มี key เป็น Shift 1, Shift 2, etc. โดยตรง
+                    else if (data && Object.keys(data).some(key => key.startsWith('Shift'))) {
+                        // แปลง Object เป็น Array ของ [key, value] เพื่อให้สามารถ Sort ได้
+                        const sortedEntries = Object.entries(data).sort((a, b) => {
+                            const numA = parseInt(a[0].replace('Shift ', '')) || Infinity;
+                            const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
+                            return numA - numB;
+                        });
+
+                        // แปลงกลับเป็น Object หลังจาก Sort แล้ว
+                        companyGroups = Object.fromEntries(sortedEntries);
+                    }
+                    else {
+                        console.warn('No valid shifts data found');
+                        companyGroups = {};
+                    }
+
+                    console.log('Processed companyGroups:', companyGroups); // ดูข้อมูลหลังจัดรูปแบบ
+                }
+
+                // โหลดข้อมูลอื่นๆ เหมือนเดิม
+                const [typesDoc, mappingsDoc, fullNamesDoc] = await Promise.all([
+                    db.collection('customerManagement').doc('companyTypes').get(),
+                    db.collection('customerManagement').doc('companyMappings').get(),
+                    db.collection('customerManagement').doc('companyFullNames').get()
+                ]);
+
+                companyTypes = typesDoc.exists ? typesDoc.data() : {};
+                companyMappings = mappingsDoc.exists ? mappingsDoc.data() : {};
+                companyFullNames = fullNamesDoc.exists ? fullNamesDoc.data() : {};
+
+                console.log('Loaded companyTypes:', companyTypes);
+                console.log('Loaded companyMappings:', companyMappings);
+                console.log('Loaded companyFullNames:', companyFullNames);
+
+                if (Object.keys(companyGroups).length > 0) {
+                    updateCompanyFilters();
+                } else {
+                    document.getElementById('companyFilters').innerHTML =
+                        '<p>ไม่พบข้อมูลบริษัท กรุณาตรวจสอบการตั้งค่าข้อมูลในระบบ</p>';
+                }
+                closeLoadingOverlay();
+
+            } catch (error) {
+                console.error('Error loading customer data:', error);
+                document.getElementById('companyFilters').innerHTML =
+                    '<p>เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณารีเฟรชหน้าเว็บ</p>';
+                closeLoadingOverlay();
             }
-            else {
-                console.warn('No valid shifts data found');
-                companyGroups = {};
-            }
-
-            console.log('Processed companyGroups:', companyGroups); // ดูข้อมูลหลังจัดรูปแบบ
         }
-
-        // โหลดข้อมูลอื่นๆ เหมือนเดิม
-        const [typesDoc, mappingsDoc, fullNamesDoc] = await Promise.all([
-            db.collection('customerManagement').doc('companyTypes').get(),
-            db.collection('customerManagement').doc('companyMappings').get(),
-            db.collection('customerManagement').doc('companyFullNames').get()
-        ]);
-
-        companyTypes = typesDoc.exists ? typesDoc.data() : {};
-        companyMappings = mappingsDoc.exists ? mappingsDoc.data() : {};
-        companyFullNames = fullNamesDoc.exists ? fullNamesDoc.data() : {};
-
-        console.log('Loaded companyTypes:', companyTypes);
-        console.log('Loaded companyMappings:', companyMappings);
-        console.log('Loaded companyFullNames:', companyFullNames);
-
-        if (Object.keys(companyGroups).length > 0) {
-            updateCompanyFilters();
-        } else {
-            document.getElementById('companyFilters').innerHTML = 
-                '<p>ไม่พบข้อมูลบริษัท กรุณาตรวจสอบการตั้งค่าข้อมูลในระบบ</p>';
-        }
-         closeLoadingOverlay();
-        
-    } catch (error) {
-        console.error('Error loading customer data:', error);
-        document.getElementById('companyFilters').innerHTML = 
-            '<p>เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณารีเฟรชหน้าเว็บ</p>';
-          closeLoadingOverlay();
-    }
-}
 
 
     </script>
@@ -1095,6 +1104,8 @@
 
                     const userData = userDoc.data();
                     const displayElement = document.getElementById('userDisplayName');
+                    const roleElement = document.getElementById('userRole');
+                    const avatarElement = document.getElementById('userAvatar');
 
                     if (userData?.displayName) {
                         displayElement.textContent = userData.displayName;
@@ -1102,9 +1113,33 @@
                         displayElement.textContent = user.email;
                     }
 
+                    if (userData?.role) {
+                        roleElement.textContent = `(${userData.role})`;
+                    } else {
+                        roleElement.textContent = '';
+                    }
+
+                    if (userData?.avatar) {
+                        avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
+                    } else {
+                        avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+                    }
+                    
                     if (userData?.role === 'supervisor' || userData?.role === 'admin') {
-                   document.getElementById('customerManagementBtn').style.display = 'inline-block';
-                 }
+                        document.getElementById('customerManagementBtn').style.display = 'inline-block';
+                        const userContainer = document.querySelector('.user-container');
+                        const logoutBtn = document.querySelector('.logout-btn');
+
+                        if (!document.querySelector('.admin-btn')) {
+                            const adminBtn = document.createElement('button');
+                            adminBtn.innerHTML = 'หน้า Admin';
+                            adminBtn.className = 'admin-btn';
+                            adminBtn.onclick = () => window.location.href = 'admin.html';
+                            userContainer.insertBefore(adminBtn, logoutBtn);
+                        }
+                    }
+
+                    
                     // Add admin button if user has admin role
                 } catch (error) {
                     console.error('Error fetching user data:', error);

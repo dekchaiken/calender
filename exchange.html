@@ -728,7 +728,7 @@ document.head.appendChild(style);
                          if (shift.color === myTeam && shift.time === myShiftTime){
                             return {
                                 ...shift,
-                                name: otherShiftData?.name || 'TBD'
+                                name: otherShiftData?.name || 'undefined'
                             }
                          }
                          return shift;
@@ -737,7 +737,7 @@ document.head.appendChild(style);
                          if (shift.color === otherTeam && shift.time === otherShiftTime){
                             return{
                                  ...shift,
-                                name: myShiftData?.name || 'TBD'
+                                name: myShiftData?.name || 'undefined'
                              }
                          }
                        return shift;
@@ -1019,7 +1019,7 @@ function closeDetailsModal() {
              shifts.forEach(day => {
                  const dayPattern = day.map(shift => ({
                      color: shift.teams[0],
-                   name: teamLeaders[shift.teams[0]] || 'TBD',
+                   name: teamLeaders[shift.teams[0]] || 'undefined',
                   time: shift.time
                 }));
                  shiftPattern.push(dayPattern);

@@ -6,10 +6,12 @@
     <title>Cyfence - เข้าสู่ระบบ</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
+         :root {
             --primary: #FDB813;
             --secondary: #404040;
             --accent: #2D2D2D;
+            --gradient-start: #fddb92;
+            --gradient-end: #d1c59b;
         }
         
         * { box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
@@ -20,65 +22,106 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f5f5f5;
+            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+            transition: background 0.3s ease;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="rgba(255,255,255,0.03)"/%3E%3C/svg%3E');
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: -1;
         }
         
         .login-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 450px;
             margin: 20px;
-            border-left: 4px solid var(--primary);
+            border-left: 5px solid var(--primary);
+            transform: translateY(-10px);
+            opacity: 0;
+            animation: slideUp 0.5s ease forwards 0.2s;
+        }
+        
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
         
         .logo {
             max-width: 200px;
             display: block;
-            margin: 0 auto 2rem;
+            margin: 0 auto 2.5rem;
+            transition: transform 0.3s ease;
         }
         
-        h2 { 
+         .logo:hover {
+              transform: scale(1.05);
+        }
+        
+        h2 {
             text-align: center;
             color: var(--secondary);
             margin-bottom: 2rem;
+            transition: color 0.3s ease;
         }
         
-        .form-group { margin-bottom: 1.5rem; }
+        h2:hover {
+            color: var(--primary);
+        }
+        
+        .form-group { margin-bottom: 1.75rem; }
         
         input {
             width: 100%;
-            padding: 0.75rem;
+            padding: 1rem;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 1rem;
-            transition: all 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: #fdfdfd;
+            color: var(--secondary);
+        }
+        
+        input::placeholder{
+            color: #aaa;
         }
         
         input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(253,184,19,0.2);
+            box-shadow: 0 0 0 3px rgba(253,184,19,0.15);
         }
         
         button {
             width: 100%;
-            padding: 0.75rem;
+            padding: 1rem;
             background-color: var(--primary);
             color: var(--accent);
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(253,184,19,0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(253,184,19,0.25);
         }
         
         .info-text {
@@ -86,31 +129,135 @@
             text-align: center;
             color: #666;
         }
+         .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #555;
+         }
+
+         .remember-me input[type="checkbox"] {
+             width: auto;
+             margin-right: 0.5rem;
+             cursor: pointer;
+        }
         
         #message {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            border-radius: 4px;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
             text-align: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.4s ease;
         }
         
-        .error { background: #FFE8E8; color: #D63031; }
-        .success { background: #E8F5E9; color: #2ECC71; }
+        #message.show{
+            opacity: 1;
+            transform: translateY(0);
+        }
         
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary);
+        .error { background: #ffe8e8; color: #D63031; border: 1px solid #ffa1a1; }
+        .success { background: #e8f5e9; color: #2ecc71; border: 1px solid #b8f2c0; }
+        
+          .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1.5rem auto;
+            flex-direction: column;
+        }
+        
+        .loading-spinner {
+              width: 40px;
+            height: 40px;
+             border: 5px solid rgba(253,184,19,0.2);
+              border-top: 5px solid var(--primary);
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            margin: 1rem auto;
-            display: none;
+           animation: spin 1.1s linear infinite;
+           display: none;
         }
-        
+         .loading-text {
+            margin-top: 0.5rem;
+            color: var(--secondary);
+             display: none;
+             font-weight: 500;
+         }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+         @media (max-width: 480px) {
+            .login-container {
+               padding: 2rem;
+                margin: 15px;
+            }
+            .logo{
+                max-width: 160px;
+            }
+            input,button{
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+             
+        }
+
+         .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+         .modal-overlay.active {
+             display: flex;
+             opacity: 1;
+         }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+             transform: translateY(-30px);
+             opacity: 0;
+              transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+          .modal-overlay.active .modal-content{
+              transform: translateY(0);
+               opacity: 1;
+          }
+        .modal-content p {
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+
+        .modal-button {
+           padding: 0.75rem 1.25rem;
+            background-color: var(--primary);
+             color: var(--accent);
+            border: none;
+            border-radius: 6px;
+           font-size: 1rem;
+           cursor: pointer;
+          transition: all 0.3s;
+            font-weight: 600;
+        }
+          .modal-button:hover {
+              transform: translateY(-2px);
+               box-shadow: 0 4px 10px rgba(253,184,19,0.2);
+          }
     </style>
 </head>
 <body>
@@ -118,26 +265,39 @@
         <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
         <div id="loginForm">
             <h2>เข้าสู่ระบบ</h2>
-            <div class="form-group">
+             <div class="form-group">
                 <input type="email" id="loginEmail" required placeholder="อีเมล">
             </div>
             <div class="form-group">
                 <input type="password" id="loginPassword" required placeholder="รหัสผ่าน">
             </div>
+              <div class="remember-me">
+                  <input type="checkbox" id="rememberMe">
+                   <label for="rememberMe">จำรหัสผ่าน</label>
+              </div>
             <button onclick="handleLogin()">เข้าสู่ระบบ</button>
-            <button onclick="window.location.href='register.html'" style="background-color: #f0f0f0; margin-top: 1rem;">สมัครสมาชิก</button>
+            <button onclick="showRegisterModal()" style="background-color: #f0f0f0; margin-top: 1rem;">สมัครสมาชิก</button>
         </div>
         <div id="message"></div>
-        <div class="spinner"></div>
+         <div class="loading-container">
+            <div class="loading-spinner" id="spinner"></div>
+             <div class="loading-text" id="loadingText">กำลังเข้าสู่ระบบ...</div>
+         </div>
     </div>
+     <div class="modal-overlay" id="registerModal">
+        <div class="modal-content">
+            <p>กรุณาติดต่อผู้ดูแลระบบ<br>เพื่อขอสิทธิ์การเข้าใช้งานระบบ กรุณาติดต่อผู้ดูแลระบบโดยตรง</p>
+            <button class="modal-button" onclick="closeRegisterModal()">ตกลง</button>
+         </div>
+     </div>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
     <script>
-        firebase.initializeApp({
-            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+         firebase.initializeApp({
+             apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
             authDomain: "cyfencedevbyken.firebaseapp.com",
             projectId: "cyfencedevbyken",
             storageBucket: "cyfencedevbyken.appspot.com",
@@ -147,37 +307,91 @@
         
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const rememberMeCheckbox = document.getElementById('rememberMe');
+        const loadingSpinner = document.getElementById('spinner');
+        const loadingText = document.getElementById('loadingText');
+        const registerModal = document.getElementById('registerModal');
+          // Function to encode string
+         function encodeString(str) {
+            try {
+               return btoa(unescape(encodeURIComponent(str)));
+           } catch (e) {
+            return null;
+           }
+       }
+          // Function to decode string
+        function decodeString(str) {
+            try {
+             return decodeURIComponent(escape(atob(str)));
+            } catch (e) {
+             return null;
+             }
+        }
+
+
+        // Load saved credentials on page load
+        window.onload = function() {
+             const savedEmail = localStorage.getItem('savedEmail');
+             const savedPassword = localStorage.getItem('savedPassword');
+                if (savedEmail && savedPassword){
+                    document.getElementById('loginEmail').value = decodeString(savedEmail);
+                    document.getElementById('loginPassword').value = decodeString(savedPassword);
+                 rememberMeCheckbox.checked = true;
+              }
+        };
         
         auth.onAuthStateChanged(user => {
             if (user) window.location.href = 'dashboard.html';
         });
         
-        async function handleLogin() {
+       async function handleLogin() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            const rememberMe = rememberMeCheckbox.checked;
             
             if (!email || !password) {
                 showMessage('กรุณากรอกอีเมลและรหัสผ่าน', 'error');
                 return;
             }
-            
-            document.querySelector('.spinner').style.display = 'block';
+
+            loadingSpinner.style.display = 'block';
+            loadingText.style.display = 'block';
+        
+          if (rememberMe) {
+                localStorage.setItem('savedEmail', encodeString(email));
+                localStorage.setItem('savedPassword', encodeString(password));
+              } else{
+                  localStorage.removeItem('savedEmail')
+                  localStorage.removeItem('savedPassword')
+              }
             
             try {
                 await auth.signInWithEmailAndPassword(email, password);
                 showMessage('เข้าสู่ระบบสำเร็จ กำลังนำคุณไปยังหน้าหลัก...', 'success');
-                setTimeout(() => window.location.href = 'dashboard.html', 1500);
+                 setTimeout(() => window.location.href = 'dashboard.html', 1500);
             } catch (error) {
                 showMessage('อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'error');
             }
-            
-            document.querySelector('.spinner').style.display = 'none';
+            loadingSpinner.style.display = 'none';
+             loadingText.style.display = 'none';
         }
         
         function showMessage(text, type) {
             const msg = document.getElementById('message');
             msg.textContent = text;
             msg.className = type;
+            msg.classList.add('show');
+            
+            setTimeout(() => {
+                msg.classList.remove('show');
+            }, 3000);
+        }
+
+        function showRegisterModal() {
+             registerModal.classList.add('active');
+        }
+        function closeRegisterModal() {
+            registerModal.classList.remove('active');
         }
         
         document.addEventListener('keypress', e => {

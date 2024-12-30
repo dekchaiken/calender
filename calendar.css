@@ -1,0 +1,554 @@
+/* Theme Colors */
+:root {
+    --primary: #FDB813;      /* NT Yellow */
+    --secondary: #404040;    /* Dark Gray */
+    --accent: #2D2D2D;      /* Deeper Gray */
+    --text-primary: #2D2D2D;
+    --text-secondary: #000000;
+    --background: #F5F5F5;
+    --border-color: #E5E5E5;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Noto Sans Thai', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+
+.header-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.logo {
+    height: 40px;
+    margin-right: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.user-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+    padding: 0.5rem 1rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: #ddd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #666;
+}
+
+.user-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.logout-btn,
+.admin-btn,
+.nav-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.logout-btn:hover,
+.admin-btn:hover,
+.nav-btn:hover {
+    background: #cc0000;
+    transform: translateY(-2px);
+}
+
+.logout-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.nav-btn {
+    padding: 0.5rem 1rem;
+    background: #f0f0f0;
+    color: #404040;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-btn:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.export-btn {
+    background: #FDB813;
+    color: #2D2D2D;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.export-btn:hover {
+    background: #e5a700;
+    transform: translateY(-2px);
+}
+
+#loadingScreen {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #FDB813;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.team-card {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.team-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-card.red {
+    background: linear-gradient(135deg, rgba(255, 99, 99, 0.1), rgba(255, 99, 99, 0.2));
+
+}
+
+.team-card.green {
+    background: linear-gradient(135deg, rgba(75, 192, 75, 0.1), rgba(75, 192, 75, 0.2));
+}
+
+.team-card.blue {
+    background: linear-gradient(135deg, rgba(99, 148, 255, 0.1), rgba(99, 148, 255, 0.2));
+}
+
+.team-card.yellow {
+    background: linear-gradient(135deg, rgba(255, 206, 86, 0.1), rgba(255, 206, 86, 0.2));
+}
+
+.team-leader,
+.team-members {
+    margin-top: 0.5rem;
+}
+
+.expand-icon {
+    font-size: 1.2rem;
+    color: #666;
+    transition: transform 0.3s;
+}
+
+.team-card.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+.controls,
+.filters-container,
+.export-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.date-range {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.shift-filters {
+    display: flex;
+    gap: 1rem;
+}
+
+.shift-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    background: #0056b3;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-title {
+    margin: 0 0 20px 0;
+    color: #2D2D2D;
+    font-size: 1.5em;
+    font-weight: 600;
+    padding-right: 25px;
+}
+
+.team-time {
+    background-color: #f8f9fa;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-size: 1.1em;
+    color: #2D2D2D;
+}
+
+.team-details {
+    margin-top: 20px;
+}
+
+.team-details h4 {
+    color: #2D2D2D;
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+}
+
+.team-details ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.team-details li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.team-details li:last-child {
+    border-bottom: none;
+}
+
+.close-modal {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: #666;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-modal:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.export-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.team-section {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-top: 2rem;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 0.75rem 0;
+    text-align: center;
+    background: #f8f9fa;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.month-header {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    padding: 1.5rem;
+    background: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+}
+
+.calendar-day {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+    position: relative;
+}
+
+.calendar-day:nth-child(7n) {
+    border-right: none;
+}
+
+.calendar-day:last-child {
+    border-bottom: none;
+}
+
+.calendar-day.empty-day {
+    background: #fafafa;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+.shift {
+    font-size: 0.9em;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: 2px;
+    display: block;
+}
+
+.shift-red {
+    background-color: rgba(255, 99, 99, 0.2);
+    color: #404040;
+}
+
+.shift-green {
+    background-color: rgba(75, 192, 75, 0.2);
+    color: #404040;
+}
+
+.shift-blue {
+    background-color: rgba(99, 148, 255, 0.2);
+    color: #404040;
+}
+
+.shift-yellow {
+    background-color: rgba(255, 206, 86, 0.2);
+    color: #404040;
+}
+
+.loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #FDB813;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+.alert-message {
+    margin: 1rem 0;
+    line-height: 1.5;
+    color: #404040;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #404040;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+.save-btn {
+    background: #FDB813;
+    color: #2D2D2D;
+}
+
+.cancel-btn {
+    background: #f0f0f0;
+    color: #404040;
+}
+
+.save-btn,
+.cancel-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}

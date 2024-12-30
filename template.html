@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Template Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
     <style>
         :root {
             --primary: #FDB813;
@@ -268,7 +269,13 @@
             alt="Cyfence Logo" class="logo">
         <h1>Template Management</h1>
         <div class="user-container">
-            <span class="user-name" id="userDisplayName">Loading...</span>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar"></div>
+                <div class="user-details">
+            <span id="userDisplayName">Loading...</span>
+            <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+                </div>
+        </div>
             <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
             <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
@@ -511,13 +518,11 @@ Event Subtype: ${data.eventSubtype}
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
                 try {
-                    const userDoc = await firebase.firestore()
-                        .collection('users')
-                        .doc(user.uid)
-                        .get();
-
+                    const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
                     const userData = userDoc.data();
                     const displayElement = document.getElementById('userDisplayName');
+                    const roleElement = document.getElementById('userRole');
+                    const avatarElement = document.getElementById('userAvatar');
 
                     if (userData?.displayName) {
                         displayElement.textContent = userData.displayName;
@@ -525,7 +530,30 @@ Event Subtype: ${data.eventSubtype}
                         displayElement.textContent = user.email;
                     }
 
-                    // Add admin button if user has admin role
+                    if (userData?.role) {
+                        roleElement.textContent = `(${userData.role})`;
+                    } else {
+                        roleElement.textContent = '';
+                    }
+
+                    if (userData?.avatar) {
+                        avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
+                    } else {
+                        avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+                    }
+
+                    if (userData?.role === 'admin') {
+                        const userContainer = document.querySelector('.user-container');
+                        const logoutBtn = document.querySelector('.logout-btn');
+
+                        if (!document.querySelector('.admin-btn')) {
+                            const adminBtn = document.createElement('button');
+                            adminBtn.innerHTML = 'หน้า Admin';
+                            adminBtn.className = 'admin-btn';
+                            adminBtn.onclick = () => window.location.href = 'admin.html';
+                            userContainer.insertBefore(adminBtn, logoutBtn);
+                        }
+                    }
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                 }

@@ -215,7 +215,7 @@ async function generateShiftPattern() {
   shifts.forEach((day) => {
     const dayPattern = day.map((shift) => ({
       color: shift.teams[0],
-      name: teamLeaders[shift.teams[0]] || "TBD",
+      name: teamLeaders[shift.teams[0]] || "undefined",
       time: shift.time,
     }));
     shiftPattern.push(dayPattern);
@@ -329,7 +329,6 @@ function updateCalendarUI(teamData) {
     // Update calendar view
     renderCalendar();
 }
-
 
 function toggleTeamMembers(teamColor) {
   const membersDiv = document.getElementById(`${teamColor}-members`);
@@ -450,17 +449,17 @@ window.onclick = function (event) {
 
 // ฟังก์ชันเปลี่ยนเดือน (เก็บไว้เหมือนเดิม)
 function changeMonth(offset) {
-  showLoadingOverlay("กำลังโหลดปฏิทิน...");
-  currentDate.setMonth(currentDate.getMonth() + offset);
-  document.getElementById("monthSelect").value = currentDate.getMonth();
-  document.getElementById("yearSelect").value = currentDate.getFullYear();
-  renderCalendar();
-  closeLoadingOverlay();
-}
+    showLoadingOverlay("กำลังโหลดปฏิทิน...");
+    currentDate.setMonth(currentDate.getMonth() + offset);
+    document.getElementById("monthSelect").value = currentDate.getMonth();
+    document.getElementById("yearSelect").value = currentDate.getFullYear();
+    renderCalendar();
+     closeLoadingOverlay();
+  }
 
 // ฟังก์ชัน Export PDF (ปรับใช้ข้อมูลจาก Firestore)
 async function exportToPDF() {
-  showLoadingOverlay("กำลัง Export PDF...");
+    showLoadingOverlay("กำลัง Export PDF...");
   const startMonth = parseInt(
     document.getElementById("startMonthSelect").value
   );
@@ -470,7 +469,7 @@ async function exportToPDF() {
 
   // ตรวจสอบช่วงเวลาที่เลือก
   if (startYear > endYear || (startYear === endYear && startMonth > endMonth)) {
-    closeLoadingOverlay();
+     closeLoadingOverlay();
     showAlertModal("กรุณาเลือกช่วงเวลาให้ถูกต้อง");
     return;
   }
@@ -531,11 +530,11 @@ async function exportToPDF() {
   try {
     await html2pdf().set(opt).from(pdfContainer).save();
     closeLoadingOverlay();
-    showAlertModal("Export PDF สำเร็จ");
+     showAlertModal("Export PDF สำเร็จ");
   } catch (error) {
     console.error("เกิดข้อผิดพลาดในการสร้าง PDF:", error);
     closeLoadingOverlay();
-    showAlertModal("เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง");
+     showAlertModal("เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง");
   }
 }
 // ฟังก์ชัน Print
@@ -627,6 +626,25 @@ function printCalendar() {
   printWindow.print();
   printWindow.close();
 }
+
+  function showLoadingOverlay(message) {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    document.getElementById('loadingMessage').textContent = message;
+}
+  function closeLoadingOverlay() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
+  // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+  function showAlertModal(message) {
+      document.getElementById('alertMessage').textContent = message;
+      document.getElementById('alertModal').style.display = 'flex';
+  }
+
+  function closeAlertModal() {
+      document.getElementById('alertModal').style.display = 'none';
+  }
+
+
 // เริ่มต้นใช้งาน (ปรับให้ดึงข้อมูลจาก Firestore)
 document.addEventListener('DOMContentLoaded', async () => {
     initializeSelectors();
@@ -645,3 +663,20 @@ document.addEventListener('DOMContentLoaded', async () => {
        }
     checkShiftExchanges();
 });
+  
+async function initializeCalendarData() {
+            try {
+                // Load team data and shift pattern
+                const teamData = await loadTeamData();
+                const shiftPattern = await generateShiftPattern();
+    
+                // Update UI with new data
+                
+                 return { teamData, shiftPattern };
+    
+            } catch (error) {
+                console.error('Error initializing calendar data:', error);
+                 showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+                 return null
+            }
+        }

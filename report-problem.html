@@ -110,6 +110,37 @@
         .back-btn:hover {
             background: #ccc;
         }
+          .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
     </style>
 </head>
@@ -121,6 +152,12 @@
         <h1>แจ้งปัญหา</h1>
         <button onclick="window.location.href='dashboard.html'" class="back-btn">กลับ</button>
     </div>
+     <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p id="loadingMessage">กำลังดำเนินการ...</p>
+            </div>
+        </div>
     <div class="report-container">
         <form id="reportForm">
             <div class="form-group">
@@ -139,9 +176,19 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingMessage = document.getElementById('loadingMessage');
+
+    function showLoading(message = 'กำลังดำเนินการ...') {
+        loadingMessage.textContent = message;
+        loadingOverlay.style.display = 'flex';
+    }
+    function hideLoading() {
+        loadingOverlay.style.display = 'none';
+    }
     document.getElementById('reportForm').addEventListener('submit', function(event) {
         event.preventDefault();
-
+        showLoading('กำลังส่งรายงาน...');
         const title = document.getElementById('title').value;
         const description = document.getElementById('description').value;
         const currentUser = firebase.auth().currentUser;
@@ -165,6 +212,8 @@
         }).catch((error) => {
             console.error('Error adding report: ', error);
             alert('เกิดข้อผิดพลาดในการส่งรายงาน กรุณาลองใหม่อีกครั้ง');
+        }).finally(()=>{
+            hideLoading();
         });
     });
     </script>
