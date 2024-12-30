@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - แจ้งปัญหา</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Noto Sans Thai', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .report-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: 'Noto Sans Thai', sans-serif;
+        }
+
+        textarea {
+            height: 150px;
+        }
+
+        button {
+            background: var(--primary);
+            color: var(--accent);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            width: 100%;
+            position: fixed;
+            top: 0;
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+        }
+        
+        .back-btn {
+            background: #ddd;
+            color: #2D2D2D;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: auto;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background: #ccc;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo"
+            class="logo">
+        <h1>แจ้งปัญหา</h1>
+        <button onclick="window.location.href='dashboard.html'" class="back-btn">กลับ</button>
+    </div>
+    <div class="report-container">
+        <form id="reportForm">
+            <div class="form-group">
+                <label for="title">หัวข้อปัญหา:</label>
+                <input type="text" id="title" required>
+            </div>
+            <div class="form-group">
+                <label for="description">รายละเอียดปัญหา:</label>
+                <textarea id="description" required></textarea>
+            </div>
+            <button type="submit">ส่งรายงาน</button>
+        </form>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+    document.getElementById('reportForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const currentUser = firebase.auth().currentUser;
+    
+        if (!currentUser) {
+            alert('โปรดเข้าสู่ระบบก่อนทำการแจ้งปัญหา');
+            window.location.href = 'login.html';
+            return;
+        }
+        firebase.firestore().collection('bugReports').add({
+            title: title,
+            description: description,
+            userId: currentUser.uid,
+            userEmail: currentUser.email,
+            status: 'open',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            alert('ส่งรายงานปัญหาสำเร็จ');
+            document.getElementById('reportForm').reset(); // Clear the form
+            window.location.href = 'dashboard.html'; // Redirect to dashboard
+        }).catch((error) => {
+            console.error('Error adding report: ', error);
+            alert('เกิดข้อผิดพลาดในการส่งรายงาน กรุณาลองใหม่อีกครั้ง');
+        });
+    });
+    </script>
+</body>
+</html>
