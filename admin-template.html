@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - ระบบจัดการ Template</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+         :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Noto Sans Thai', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+        }
+          .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .template-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .template-item {
+            background: #f8f8f8;
+            padding: 1rem;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .btn-danger {
+            background: #ff4444;
+            color: white;
+        }
+        .search-box {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+          .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        .alert-message {
+            margin: 1rem 0;
+            line-height: 1.5;
+            color: var(--secondary);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .variable-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .variable-button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f8f8f8;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .variable-button:hover {
+            background-color: #eee;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            color: var(--secondary);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .form-group input,
+        .form-group textarea,
+         .form-group select{
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .save-btn {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .cancel-btn {
+            background: #f0f0f0;
+            color: var(--secondary);
+        }
+
+        .save-btn,
+        .cancel-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+       .customer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.25rem;
+        }
+        .customer-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem;
+        }
+         .customer-item input {
+            margin: 0;
+           width: auto;
+        }
+    </style>
+</head>
+
+<body>
+     <div id="loadingScreen">
+        <div class="spinner"></div>
+        <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
+    </div>
+    
+         <!-- Alert Modal -->
+         <div id="alertModal" class="modal">
+            <div class="modal-content">
+                <h3 id="alertTitle">แจ้งเตือน</h3>
+                <p id="alertMessage" class="alert-message"></p>
+                <div class="modal-buttons">
+                    <button type="button" class="save-btn" onclick="closeAlertModal()">ตกลง</button>
+                </div>
+            </div>
+        </div>
+
+    <!-- Loading Overlay -->
+      <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p id="loadingMessageOverlay">กำลังดำเนินการ...</p>
+            </div>
+        </div>
+    <div id="mainContent" style="display: none;">
+        <div class="header">
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+                alt="Cyfence Logo" class="logo">
+            <h1>Template Management</h1>
+             <div class="user-container">
+                    <span class="user-info" id="userDisplayName">Loading...</span>
+                    <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
+                    <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="tabs">
+                 <button class="tab active" onclick="showTab('allTemplate')"
+                    style="margin-top: 1rem; padding: 0.75rem 2rem; font-weight: 600;">ข้อมูลทั้งหมดของ Template</button>
+                <button class="tab" onclick="showTab('templates')"
+                    style="margin-top: 1rem; padding: 0.75rem 2rem; font-weight: 600;">จัดการ Template</button>
+            </div>
+
+           <div id="allTemplate" class="tab-content">
+                <div class="card">
+                    <h2>ข้อมูลทั้งหมดของ Template</h2>
+                    <input type="text" class="search-box" placeholder="ค้นหาข้อมูล Template..."
+                        oninput="searchAllTemplateInfo(this.value)">
+                         <div style="overflow-x: auto;">
+                           <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                            <thead>
+                                <tr style="background-color: #f8f9fa;">
+                                     <th
+                                        style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">
+                                        Template ID</th>
+                                    <th
+                                        style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">
+                                        ชื่อ Template</th>
+                                    <th
+                                        style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">
+                                        Fields</th>
+                                    <th
+                                        style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">
+                                         Template</th>
+                                        <th
+                                        style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">
+                                         ลูกค้า</th>
+                                    <th
+                                        style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">
+                                        เมนูจัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allTemplateInfo">
+                                <!-- ข้อมูลจะถูกเพิ่มด้วย JavaScript -->
+                            </tbody>
+                        </table>
+                         </div>
+                </div>
+            </div>
+
+
+            <div id="templates" class="tab-content" style="display: none;">
+                <div class="card">
+                   <h2>เพิ่ม Template ใหม่</h2>
+                   <div class="form-group">
+                       <label style="font-weight: 600; margin-bottom: 0.5rem;">Template ID</label>
+                       <input type="text" class="form-control" id="templateId" placeholder="เช่น vpn_guessing"
+                           style="padding: 0.75rem; border: 2px solid #eee; transition: border-color 0.3s ease;">
+                   </div>
+                   <div class="form-group">
+                       <label style="font-weight: 600; margin-bottom: 0.5rem;">ชื่อ Template</label>
+                       <input type="text" class="form-control" id="templateName"
+                           placeholder="เช่น VPN Password Guessing Detect to Firewall Hostname"
+                           style="padding: 0.75rem; border: 2px solid #eee; transition: border-color 0.3s ease;">
+                   </div>
+                     <div class="form-group">
+                       <label style="font-weight: 600; margin-bottom: 0.5rem;">ลูกค้า</label>
+                       <div class="customer-list" id="customerList">
+                       </div>
+                      </div>
+                      <div class="form-group">
+                        <label style="font-weight: 600; margin-bottom: 0.5rem;">ตัวแปร</label>
+                        <div id="variableList">
+                        </div>
+                        <div id="variableSelector" class="variable-selector">
+                            <!-- ตัวแปรจะถูกเพิ่มที่นี่ -->
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <input type="text" id="newVariableInput" class="form-control"
+                                placeholder="เพิ่มตัวแปรใหม่">
+                            <input type="text" id="newVariableDescription" class="form-control"
+                                placeholder="คำอธิบายตัวแปร">
+                            <select id="newVariableType" class="form-control">
+                                <option value="text">Text</option>
+                                <option value="select">Select</option>
+                                <option value="number">Number</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="addNewVariable()">เพิ่ม</button>
+                        </div>
+                         <div style="margin-top: 0.5rem;">
+                                <button class="btn btn-primary" onclick="manageVariables()">จัดการตัวแปร</button>
+                        </div>
+                    </div>
+
+                   <div class="form-group">
+                       <label style="font-weight: 600; margin-bottom: 0.5rem;">Template</label>
+                        <textarea id="templateContent" class="form-control" rows="8"
+                           placeholder="เช่น ดำเนินการเปิดเคส ${data.caseId} ${data.customerName} Rule VPN Password Guessing Detect to Firewall Hostname: ${data.deviceName} "
+                           style="padding: 0.75rem; border: 2px solid #eee; transition: border-color 0.3s ease;"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="addTemplate()"
+                       style="margin-top: 1rem; padding: 0.75rem 2rem; font-weight: 600;">เพิ่ม Template</button>
+               </div>
+           </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase initialization (ใช้ config เดิมจากไฟล์ following.html)
+          firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+        });
+
+        // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+        function showAlertModal(message) {
+            document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alertModal').style.display = 'none';
+        }
+
+            function showLoadingOverlay(message) {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+             document.getElementById('loadingMessageOverlay').textContent = message;
+        }
+
+         function closeLoadingOverlay() {
+           document.getElementById('loadingOverlay').style.display = 'none';
+        }
+         let availableVariables = [];
+        let variableDescriptions = {};
+         let variableTypes = {};
+        
+         async function loadAllVariables() {
+                try {
+                     const db = firebase.firestore();
+                   const variablesSnapshot = await db.collection('variables').get();
+
+                    availableVariables = [];
+                    variableDescriptions = {};
+                     variableTypes = {};
+
+                      variablesSnapshot.forEach(doc => {
+                        const variableData = doc.data();
+                           availableVariables.push(doc.id);
+                            variableDescriptions[doc.id] = variableData.description;
+                             variableTypes[doc.id] = variableData.type;
+                     });
+                    loadVariableSelector();
+                } catch (error) {
+                     console.error('Error loading all variables:', error);
+                }
+         }
+
+        function loadCustomerList() {
+             const customerList = document.getElementById('customerList');
+            customerList.innerHTML = ''; // Clear previous list
+            firebase.firestore().collection('customerManagement').doc('companyMappings').get()
+            .then(doc => {
+                 if (doc.exists) {
+                   const mappings = doc.data();
+                    const customerNames = Object.values(mappings).sort(); // Get sorted customer names
+                    customerNames.forEach(shortName => {
+                        const customerItem = document.createElement('div');
+                         customerItem.className = 'customer-item';
+                         const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = shortName;
+                        checkbox.id = `customer-${shortName}`;
+                         const label = document.createElement('label');
+                        label.htmlFor = `customer-${shortName}`;
+                         label.textContent = shortName;
+                        customerItem.appendChild(checkbox);
+                         customerItem.appendChild(label);
+                         customerList.appendChild(customerItem);
+                     });
+                 }
+              });
+        }
+        function loadVariableSelector() {
+            const variableSelector = document.getElementById('variableSelector');
+            const variableList = document.getElementById('variableList');
+           if(variableSelector){
+            variableSelector.innerHTML = ''; // Clear previous buttons
+                availableVariables.forEach(variable => {
+                    const button = document.createElement('button');
+                    button.textContent = `\${data.${variable}}`;
+                        button.className = 'variable-button';
+                        button.title = variableDescriptions[variable] || 'No description provided';
+                        button.onclick = () => insertVariable(button.textContent);
+                        variableSelector.appendChild(button);
+                 });
+              }
+             if (variableList) {
+                variableList.innerHTML = ''; // Clear previous list
+                availableVariables.forEach(variable => {
+                   const variableItem = document.createElement('div');
+                        variableItem.className = 'variable-item';
+                    const variableName = document.createElement('span');
+                      variableName.textContent = variable;
+                     variableName.style.fontWeight = 'bold';
+                     const variableDesc = document.createElement('span');
+                      variableDesc.textContent = `: ${variableDescriptions[variable] || 'No description'}`;
+                       const variableType = document.createElement('span');
+                        variableType.textContent = ` (${variableTypes[variable] || 'text'})`;
+                     variableItem.appendChild(variableName);
+                     variableItem.appendChild(variableDesc);
+                     variableItem.appendChild(variableType)
+                     variableList.appendChild(variableItem);
+                });
+            }
+         }
+          function insertVariable(variable) {
+            const templateContent = document.getElementById('templateContent');
+             const cursorPosition = templateContent.selectionStart;
+             const textBefore = templateContent.value.substring(0, cursorPosition);
+            const textAfter = templateContent.value.substring(templateContent.selectionEnd);
+             templateContent.value = textBefore + variable + textAfter;
+           templateContent.selectionStart = templateContent.selectionEnd = cursorPosition + variable.length;
+           templateContent.focus();
+         }
+
+         async function addNewVariable() {
+                const newVariableInput = document.getElementById('newVariableInput');
+            const newVariable = newVariableInput.value.trim();
+                 const newVariableDescriptionInput = document.getElementById('newVariableDescription');
+                 const newVariableDescription = newVariableDescriptionInput.value.trim();
+                   const newVariableTypeSelect = document.getElementById('newVariableType');
+                 const newVariableType = newVariableTypeSelect.value;
+                 if (newVariable && !availableVariables.includes(newVariable)) {
+                try {
+                         const db = firebase.firestore();
+                       await db.collection('variables').doc(newVariable).set({
+                            description: newVariableDescription,
+                            type: newVariableType,
+                        });
+                     availableVariables.push(newVariable);
+                    variableDescriptions[newVariable] = newVariableDescription;
+                    variableTypes[newVariable] = newVariableType
+                       loadVariableSelector();
+                        newVariableInput.value = '';
+                     newVariableDescriptionInput.value = '';
+                      showAlertModal('เพิ่มตัวแปรสำเร็จ')
+                     } catch (error) {
+                        console.error('Error adding variable:', error);
+                         showAlertModal('เกิดข้อผิดพลาดในการเพิ่มตัวแปร')
+                     }
+                    }
+          }
+
+          
+
+          async function loadAllTemplateInfo() {
+               showLoadingOverlay('กำลังโหลดข้อมูล Template...');
+             try {
+                const db = firebase.firestore();
+
+                // ดึงข้อมูลทั้งหมดจาก Firestore
+                const templatesSnapshot = await db.collection('templates').get();
+                const allTemplates = [];
+
+                templatesSnapshot.forEach(doc => {
+                    const templateData = doc.data();
+                    allTemplates.push({
+                        id: doc.id,
+                        name: templateData.name,
+                        fields: templateData.fields.join(', '),
+                        template: templateData.template,
+                        customers: templateData.customers ? templateData.customers.join(', ') : 'all',
+                    });
+                });
+
+                // แสดงข้อมูลในตาราง
+                const tbody = document.getElementById('allTemplateInfo');
+                tbody.innerHTML = allTemplates.map(template => `
+            <tr style="border-bottom: 1px solid #dee2e6;">
+                <td style="padding: 1rem;">${template.id}</td>
+                <td style="padding: 1rem;">${template.name}</td>
+                <td style="padding: 1rem;">${template.fields}</td>
+                 <td style="padding: 1rem; max-width: 300px; word-wrap: break-word; white-space: pre-wrap;">${template.template}</td>
+                   <td style="padding: 1rem;">${template.customers}</td>
+                 <td style="padding: 1rem; text-align: center;">
+                    <button onclick="editTemplateInfo('${template.id}', '${template.name}', '${template.fields}', '${template.template}', '${template.customers}')" 
+                            class="btn btn-primary" 
+                            style="margin-right: 0.5rem; padding: 0.5rem 1rem;">
+                        แก้ไข
+                    </button>
+                     <button onclick="deleteTemplate('${template.id}')" 
+                            class="btn btn-danger" 
+                            style="padding: 0.5rem 1rem;">
+                        ลบ
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+            } catch (error) {
+                console.error('Error loading all template info:', error);
+                 showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล Template');
+            }finally {
+               closeLoadingOverlay();
+            }
+        }
+         async function editTemplateInfo(id, name, fields, template, customers) {
+             const modalHtml = `
+            <div id="editTemplateModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <h2 style="margin-bottom: 1.5rem; color: #2D2D2D;">แก้ไขข้อมูล Template</h2>
+                    
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Template ID</label>
+                         <input type="text" id="editTemplateId" value="${id}" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">ชื่อ Template</label>
+                        <input type="text" id="editTemplateName" value="${name}" class="form-control">
+                    </div>
+                     <div class="form-group">
+                     <label style="font-weight: 600; margin-bottom: 0.5rem;">ลูกค้า</label>
+                     <div class="customer-list" id="editCustomerList"></div>
+                  </div>
+                     <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Template</label>
+                         <textarea id="editTemplateContent" class="form-control" rows="8">${template}</textarea>
+                    </div>
+                       <div class="form-group">
+                     <label style="font-weight: 600; margin-bottom: 0.5rem;">ตัวแปร</label>
+                         <div id="editVariableSelector" class="variable-selector">
+                        </div>
+                    <div style="margin-top: 0.5rem;">
+                         <input type="text" id="newVariableInput" class="form-control" placeholder="เพิ่มตัวแปรใหม่">
+                         <input type="text" id="newVariableDescription" class="form-control" placeholder="คำอธิบายตัวแปร">
+                         <button class="btn btn-primary" onclick="addNewVariable()">เพิ่ม</button>
+                    </div>
+                 </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                        <button onclick="closeEditTemplateModal()" class="btn" style="padding: 0.75rem 1.5rem;">ยกเลิก</button>
+                         <button onclick="saveEditedTemplate('${id}')" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">บันทึก</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        
+            // เพิ่ม modal เข้าไปใน DOM
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+               loadVariableManagementList()
+            }
+
+            function loadVariableManagementList(){
+             const variableManagementList = document.getElementById('variableManagementList');
+               variableManagementList.innerHTML = '';
+                   availableVariables.forEach(variable => {
+                        const variableItem = document.createElement('div');
+                         variableItem.style.display = 'flex';
+                          variableItem.style.alignItems = 'center';
+                         variableItem.style.justifyContent = 'space-between';
+                         variableItem.style.padding = '0.5rem';
+                        const variableName = document.createElement('span');
+                         variableName.style.fontWeight = 'bold'
+                          variableName.textContent = variable;
+                        const variableDesc = document.createElement('span');
+                       variableDesc.textContent = `: ${variableDescriptions[variable] || 'No description'}`;
+                        const variableType = document.createElement('span');
+                         variableType.textContent = ` (${variableTypes[variable] || 'text'})`;
+                         const buttonDelete = document.createElement('button');
+                        buttonDelete.innerHTML = 'ลบ';
+                       buttonDelete.className = 'btn btn-danger';
+                      buttonDelete.style.marginLeft = '1rem'
+                      buttonDelete.style.padding = '0.5rem 1rem';
+                         buttonDelete.onclick = () => deleteVariable(variable)
+                     variableItem.appendChild(variableName);
+                      variableItem.appendChild(variableDesc);
+                       variableItem.appendChild(variableType);
+                     variableItem.appendChild(buttonDelete)
+                     variableManagementList.appendChild(variableItem);
+                  });
+           }
+
+           async function deleteVariable(variable) {
+                  if (confirm(`ต้องการลบตัวแปร ${variable} ใช่หรือไม่?`)) {
+                    try {
+                        const db = firebase.firestore();
+                        await db.collection('variables').doc(variable).delete();
+                            loadAllVariables()
+                            loadVariableManagementList()
+                        showAlertModal('ลบตัวแปรสำเร็จ');
+                    } catch (error) {
+                        console.error('Error deleting variable:', error);
+                         showAlertModal('เกิดข้อผิดพลาดในการลบตัวแปร');
+                    }
+                 }
+            }
+
+            function closeManageVariablesModal() {
+                const modal = document.getElementById('manageVariablesModal');
+                    if (modal) {
+                      modal.remove();
+                   }
+            }
+
+            function loadCustomerListForEdit(customers) {
+                const customerList = document.getElementById('editCustomerList');
+                customerList.innerHTML = ''; // Clear previous list
+                  firebase.firestore().collection('customerManagement').doc('companyMappings').get()
+                    .then(doc => {
+                         if (doc.exists) {
+                            const mappings = doc.data();
+                            const customerNames = Object.values(mappings).sort(); // Get sorted customer names
+                            customerNames.forEach(shortName => {
+                                const customerItem = document.createElement('div');
+                                customerItem.className = 'customer-item';
+                                const checkbox = document.createElement('input');
+                                checkbox.type = 'checkbox';
+                                checkbox.value = shortName;
+                                checkbox.id = `edit-customer-${shortName}`;
+                                 if (customers.includes(shortName) || customers === 'all') {
+                                      checkbox.checked = true;
+                                    }
+                                const label = document.createElement('label');
+                                label.htmlFor = `edit-customer-${shortName}`;
+                                label.textContent = shortName;
+                                customerItem.appendChild(checkbox);
+                                 customerItem.appendChild(label);
+                                customerList.appendChild(customerItem);
+                             });
+                        }
+                   });
+           }
+        
+              function loadEditVariableSelector(fields) {
+                    const variableSelector = document.getElementById('editVariableSelector');
+                     variableSelector.innerHTML = ''; // Clear previous buttons
+                         availableVariables = fields.split(',').filter(Boolean);
+                        console.log(availableVariables)
+
+                      availableVariables.forEach(variable => {
+                          const button = document.createElement('button');
+                        button.textContent = `\${data.${variable}}`;
+                           button.className = 'variable-button';
+                        button.onclick = () => insertVariable(button.textContent);
+                          variableSelector.appendChild(button);
+                      });
+                }
+         // ฟังก์ชันปิด modal
+         function closeEditTemplateModal() {
+                const modal = document.getElementById('editTemplateModal');
+                    if (modal) {
+                      modal.remove();
+                   }
+            }
+
+        async function saveEditedTemplate(templateId) {
+               showLoadingOverlay('กำลังบันทึก Template...');
+              try {
+                    const newName = document.getElementById('editTemplateName').value.trim();
+                    const newTemplate = document.getElementById('editTemplateContent').value.trim();
+                     const customerCheckboxes = document.querySelectorAll('#editCustomerList input[type="checkbox"]:checked');
+                 const selectedCustomers = Array.from(customerCheckboxes).map(checkbox => checkbox.value);
+                 console.log(selectedCustomers)
+
+                     if (!newName || !newTemplate) {
+                        showAlertModal('กรุณากรอกข้อมูลให้ครบถ้วน');
+                        return;
+                    }
+
+                 const db = firebase.firestore();
+                    const templateRef = db.collection('templates').doc(templateId);
+
+                     await logActivity(firebase.auth().currentUser.uid, 'update_template', {
+                            editedTemplateId: templateId,
+                            editedTemplateName: newName,
+                            editedTemplateContent: newTemplate,
+                            editedTemplateCustomers: selectedCustomers,
+                    });
+                    await templateRef.update({
+                        name: newName,
+                         template: newTemplate,
+                         customers: selectedCustomers,
+                         fields: availableVariables
+                    });
+                      closeEditTemplateModal();
+                      loadAllTemplateInfo();
+                       closeLoadingOverlay();
+                        showAlertModal('แก้ไข Template สำเร็จ');
+                }catch(error){
+                  console.error('Error updating template:', error);
+                   closeLoadingOverlay();
+                     showAlertModal('เกิดข้อผิดพลาดในการแก้ไข Template');
+                }
+        }
+
+           async function deleteTemplate(templateId) {
+                  if (confirm(`ต้องการลบ Template ${templateId} ใช่หรือไม่?`)) {
+                    try {
+                        const db = firebase.firestore();
+                          await logActivity(firebase.auth().currentUser.uid, 'delete_template', { deletedTemplateId: templateId });
+                        await db.collection('templates').doc(templateId).delete();
+                        loadAllTemplateInfo();
+                        showAlertModal('ลบ Template สำเร็จ');
+                    } catch (error) {
+                        console.error('Error deleting template:', error);
+                         showAlertModal('เกิดข้อผิดพลาดในการลบ Template');
+                    }
+                 }
+            }
+
+        function searchAllTemplateInfo(searchText) {
+             const rows = document.querySelectorAll('#allTemplateInfo tr');
+            searchText = searchText.toLowerCase();
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchText) ? '' : 'none';
+            });
+        }
+
+          // เพิ่ม Template ใหม่
+          async function addTemplate() {
+               showLoadingOverlay('กำลังเพิ่ม Template...');
+             try {
+                const templateId = document.getElementById('templateId').value.trim();
+                const templateName = document.getElementById('templateName').value.trim();
+                const templateContent = document.getElementById('templateContent').value.trim();
+                const customerCheckboxes = document.querySelectorAll('#customerList input[type="checkbox"]:checked');
+                 const selectedCustomers = Array.from(customerCheckboxes).map(checkbox => checkbox.value);
+                 console.log(selectedCustomers)
+
+                 if (!templateId || !templateName || !templateContent) {
+                   showAlertModal('กรุณากรอกข้อมูลให้ครบถ้วน');
+                    return;
+                  }
+                const db = firebase.firestore();
+                 await logActivity(firebase.auth().currentUser.uid, 'add_template', {
+                    addedTemplateId: templateId,
+                     addedTemplateName: templateName,
+                      addedTemplateContent: templateContent,
+                      addedTemplateCustomers: selectedCustomers,
+                });
+
+                await db.collection('templates').doc(templateId).set({
+                    name: templateName,
+                     template: templateContent,
+                     customers: selectedCustomers,
+                     fields: availableVariables,
+                      variableDescriptions: variableDescriptions,
+                     variableTypes: variableTypes
+                   });
+
+
+                document.getElementById('templateId').value = '';
+                document.getElementById('templateName').value = '';
+                document.getElementById('templateContent').value = '';
+                 closeLoadingOverlay();
+                  showAlertModal('เพิ่ม Template สำเร็จ');
+                 loadAllTemplateInfo();
+
+            } catch (error) {
+                console.error('Error adding template:', error);
+                closeLoadingOverlay();
+                showAlertModal('เกิดข้อผิดพลาดในการเพิ่ม Template');
+            }
+        }
+         const originalShowTab = window.showTab;
+        window.showTab = function (tabName) {
+          document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+          document.getElementById(tabName).style.display = 'block';
+
+          document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+          event.target.classList.add('active');
+          if (tabName === 'allTemplate') {
+              document.getElementById('loadingScreen').style.display = 'flex'; // Show loading
+                document.getElementById('loadingMessage').textContent = 'กำลังโหลดข้อมูล Template...'; // Set loading message
+                 loadAllTemplateInfo().finally(() => { // Load data
+                    document.getElementById('loadingScreen').style.display = 'none'; // Hide loading
+                });
+            }
+        };
+
+         // ฟังก์ชัน logout
+         function logout() {
+             firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
+
+          // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
+          firebase.auth().onAuthStateChanged(async (user) => {
+             if (user) {
+                try {
+                     const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                         displayElement.textContent = user.email;
+                    }
+                      loadCustomerList();
+                     await loadAllVariables();
+                      // Trigger initial load and show allTemplate
+                       document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+                       document.getElementById('allTemplate').style.display = 'block';
+                        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                       document.querySelector('.tab[onclick="showTab(\'allTemplate\')"]').classList.add('active');
+                      document.getElementById('loadingScreen').style.display = 'flex';
+                      document.getElementById('loadingMessage').textContent = 'กำลังโหลดข้อมูล Template...';
+                       loadAllTemplateInfo().finally(() => {
+                           document.getElementById('loadingScreen').style.display = 'none';
+                     });
+                      document.getElementById('mainContent').style.display = 'block';
+                } catch (error) {
+                   console.error('Error fetching user data:', error);
+                }
+            } else {
+                 window.location.href = 'login.html';
+            }
+        });
+          // Function to log activity
+        async function logActivity(userId, action, details) {
+            try {
+                const activityLogRef = firebase.firestore().collection('activityLogs');
+                await activityLogRef.add({
+                    userId: userId,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    action: action,
+                     details: details,
+                });
+            } catch (error) {
+                console.error('Error logging activity:', error);
+            }
+        }
+    </script>
+    <script src="auth.js"></script>
+</body>
+
+</html>
