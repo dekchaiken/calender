@@ -53,6 +53,7 @@
         body {
             min-height: 100vh;
             background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+            overflow-x: hidden;
         }
 
         .user-container {
@@ -509,10 +510,10 @@
                 <div class="user-info">
                     <div class="user-avatar" id="userAvatar"></div>
                     <div class="user-details">
-                <span id="userDisplayName">Loading...</span>
-                <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
-            </div>
-        </div>
+                        <span id="userDisplayName">Loading...</span>
+                        <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+                    </div>
+                </div>
                 <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
                 <button id="customerManagementBtn" onclick="window.location.href='customer-management.html'"
                     class="nav-btn" style="display: none;">จัดการลูกค้า</button>
@@ -698,10 +699,10 @@
             return template;
         }
 
-        function updateCompanyFilters() {
+         function updateCompanyFilters() {
             const filtersContainer = document.getElementById('companyFilters');
             filtersContainer.innerHTML = '';
-
+        
             // แปลง companyGroups เป็น Array เพื่อให้สามารถเรียงลำดับได้
             const sortedGroups = Object.entries(companyGroups)
                 .sort((a, b) => {
@@ -709,66 +710,66 @@
                     const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
                     return numA - numB;
                 });
-
-
+        
+        
             sortedGroups.forEach(([groupId, group]) => {
                 console.log(`Processing group ${groupId}:`, group); // Log ข้อมูลแต่ละกลุ่ม
-
+        
                 // ถ้า group เป็น array โดยตรง (กรณีที่ไม่มี name)
                 const companies = Array.isArray(group) ? group : group.companies;
                 const groupName = Array.isArray(group) ? groupId : (group.name || groupId);
-
+        
                 if (!companies || !Array.isArray(companies)) {
                     console.warn(`Invalid companies data for ${groupId}:`, companies);
                     return;
                 }
                 // Sort companies in each group alphabetically
                 const sortedCompanies = [...companies].sort((a, b) => a.localeCompare(b, 'th'));
-
-
+        
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'company-group';
-
+        
                 const header = document.createElement('div');
                 header.className = 'company-group-header';
-
+        
                 const groupTitle = document.createElement('h3');
                 groupTitle.className = 'company-group-title';
                 groupTitle.textContent = groupName;
                 header.appendChild(groupTitle);
-
+        
                 const buttonContainer = document.createElement('div');
                 buttonContainer.style.display = 'flex';
                 buttonContainer.style.gap = '8px';
-
+        
                 const selectGroupBtn = document.createElement('button');
                 selectGroupBtn.textContent = 'Select All';
                 selectGroupBtn.className = 'select-group-btn';
                 selectGroupBtn.onclick = () => selectGroupCompanies(sortedCompanies);
-
+        
                 const unselectGroupBtn = document.createElement('button');
                 unselectGroupBtn.textContent = 'Unselect All';
                 unselectGroupBtn.className = 'select-group-btn';
                 unselectGroupBtn.style.backgroundColor = '#404040';
                 unselectGroupBtn.onclick = () => unselectGroupCompanies(sortedCompanies);
-
+        
                 buttonContainer.appendChild(selectGroupBtn);
                 buttonContainer.appendChild(unselectGroupBtn);
                 header.appendChild(buttonContainer);
-
+        
                 groupDiv.appendChild(header);
-
+        
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'company-group-content';
-
+        
                 sortedCompanies.forEach(company => {
                     const label = document.createElement('label');
                     label.className = 'company-checkbox';
-
+        
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.value = company;
-                    checkbox.checked = selectedCompanies.has(company);
+                   checkbox.checked = false; // Set initial state to unselected
+
                     checkbox.addEventListener('change', function () {
                         showLoadingOverlay('กำลังอัพเดต Template...');
                         if (this.checked) {
@@ -779,17 +780,16 @@
                         updateAllTemplates();
                         closeLoadingOverlay();
                     });
-
+        
                     label.appendChild(checkbox);
                     label.appendChild(document.createTextNode(company));
                     contentDiv.appendChild(label);
                 });
-
+        
                 groupDiv.appendChild(contentDiv);
                 filtersContainer.appendChild(groupDiv);
             });
         }
-
 
         function unselectGroupCompanies(groupCompanies) {
             showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
@@ -856,7 +856,7 @@
                             ...new Set(excelData.map(incident => getCompanyCode(incident.Customer))),
                             ...new Set(Object.values(companyMappings))
                         ]);
-                        selectedCompanies = new Set(companies); // เลือกทุกบริษัทเริ่มต้น
+                        selectedCompanies.clear(); // Clear initially selected companies.
 
                         updateCompanyFilters();
                         updateAllTemplates();
