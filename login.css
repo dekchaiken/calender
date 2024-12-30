@@ -1,0 +1,316 @@
+:root {
+    --primary: #FDB813;
+    --secondary: #404040;
+    --accent: #2D2D2D;
+    --gradient-start: #fddb92;
+    --gradient-end: #d1c59b;
+    --light-gray: #f7f7f7;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --transition-duration: 0.3s; /* Custom transition duration */
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Noto Sans Thai', sans-serif;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+    transition: background var(--transition-duration) ease;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="rgba(255,255,255,0.03)"/%3E%3C/svg%3E');
+    background-size: 200px;
+    background-blend-mode: overlay;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 450px;
+    margin: 20px;
+    border-top: 5px solid var(--primary);
+    transform: translateY(-10px);
+    opacity: 0;
+    animation: slideUp 0.5s ease forwards 0.2s;
+    position: relative;
+}
+
+@keyframes slideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.logo {
+    max-width: 200px;
+    display: block;
+    margin: 0 auto 2.5rem;
+    transition: transform var(--transition-duration) ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+h2 {
+    text-align: center;
+    color: var(--secondary);
+    margin-bottom: 2rem;
+    transition: color var(--transition-duration) ease;
+    position: relative;
+}
+
+h2:hover {
+    color: var(--primary);
+}
+h2::before,
+h2::after {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 2px;
+    background-color: var(--primary);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+      transition: all var(--transition-duration) ease;
+}
+
+h2::before {
+    left: 0;
+    opacity: 0;
+    transform: translateY(-50%) translateX(-20px);
+}
+
+h2::after {
+    right: 0;
+     opacity: 0;
+    transform: translateY(-50%) translateX(20px);
+}
+h2:hover::before,
+h2:hover::after{
+     opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+
+.form-group {
+    margin-bottom: 1.75rem;
+    position: relative;
+}
+
+input {
+    width: 100%;
+    padding: 1rem;
+    padding-left: 2.5rem;  /* เพิ่ม padding-left ที่นี่ */
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color var(--transition-duration), box-shadow var(--transition-duration);
+    background-color: var(--light-gray);
+    color: var(--secondary);
+  }
+
+input::placeholder {
+    color: #aaa;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(253, 184, 19, 0.15);
+}
+
+.form-group i{
+    position: absolute;
+    left: 1rem; 
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ccc;
+    pointer-events: none;
+    transition: color var(--transition-duration);
+}
+
+input:focus + i,
+input:not(:placeholder-shown) + i {
+    color: var(--primary);
+}
+
+button {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--primary);
+    color: var(--accent);
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-duration);
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(253, 184, 19, 0.25);
+}
+
+.info-text {
+    margin-top: 1rem;
+    text-align: center;
+    color: #666;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #555;
+}
+
+.remember-me input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+#message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.4s ease;
+}
+
+#message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.error {
+    background: #ffe8e8;
+    color: #D63031;
+    border: 1px solid #ffa1a1;
+}
+
+.success {
+    background: #e8f5e9;
+    color: #2ecc71;
+    border: 1px solid #b8f2c0;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5rem auto;
+    flex-direction: column;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 5px solid rgba(253, 184, 19, 0.2);
+    border-top: 5px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1.1s linear infinite;
+    display: none;
+}
+
+.loading-text {
+    margin-top: 0.5rem;
+    color: var(--secondary);
+    display: none;
+    font-weight: 500;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 2rem;
+        margin: 15px;
+    }
+      .logo{
+        max-width: 160px;
+    }
+    input,
+    button {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity var(--transition-duration) ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    transform: translateY(-30px);
+    opacity: 0;
+    transition: transform var(--transition-duration) ease, opacity var(--transition-duration) ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal-content p {
+    margin-bottom: 1.5rem;
+    color: #555;
+}
+
+.modal-button {
+    padding: 0.75rem 1.25rem;
+    background-color: var(--primary);
+    color: var(--accent);
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-duration);
+    font-weight: 600;
+}
+
+.modal-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(253, 184, 19, 0.2);
+}

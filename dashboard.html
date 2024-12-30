@@ -7,6 +7,7 @@
     <title>Cyfence - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -23,11 +24,13 @@
             <div class="user-info">
                 <div class="user-avatar" id="userAvatar"></div>
                 <div class="user-details">
-            <span id="userDisplayName">Loading...</span>
-            <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
-        </div>
-    </div>
-            <button onclick="showLogoutModal()" class="logout-btn">ออกจากระบบ</button>
+                    <span id="userDisplayName">Loading...</span>
+                    <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+                </div>
+            </div>
+            <button onclick="showLogoutModal()" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                 ออกจากระบบ</button>
         </div>
     </div>
 
@@ -60,19 +63,19 @@
                 <h2>ตารางเวร</h2>
             </div>
             <div class="menu-card" onclick="window.location.href='template.html'">
-                <div class="menu-icon">📝</div>
+                 <div class="menu-icon">📝</div>
                 <h2>จัดการ Template</h2>
             </div>
             <div class="menu-card" onclick="window.location.href='following.html'">
-                <div class="menu-icon">📊</div>
+                 <div class="menu-icon">📊</div>
                 <h2>ติดตามงาน</h2>
             </div>
             <div class="menu-card" onclick="window.location.href='exchange.html'">
-                <div class="menu-icon">🔄</div>
+                 <div class="menu-icon">🔄</div>
                 <h2>แลกเปลี่ยนเวร</h2>
             </div>
             <div class="menu-card" onclick="window.location.href='report-problem.html'">
-                <div class="menu-icon">⚠️</div>
+                 <div class="menu-icon">⚠️</div>
                 <h2>แจ้งปัญหา</h2>
             </div>
         </div>
@@ -103,10 +106,9 @@
         <a href="about.html" style="margin-right: 1rem;">เกี่ยวกับเรา</a>
         <a href="faq.html">คำถามที่พบบ่อย</a>
     </footer>
-    <footer style="text-align: center; padding: 1rem; background: #f0f0f0; color: #666; font-size: 0.9rem;">
+     <footer style="text-align: center; padding: 1rem; background: #f0f0f0; color: #666; font-size: 0.9rem;">
         หมายเหตุ: ข้อมูลทั้งหมดในระบบนี้ได้รับการปกป้องด้วยมาตรการรักษาความปลอดภัยขั้นสูงสุด
     </footer>
-    
       <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
