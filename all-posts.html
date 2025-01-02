@@ -12,6 +12,14 @@
             --primary-dark: #e5a700;
             --secondary: #404040;
             --accent: #2D2D2D;
+            --light-gray: #f7f7f7;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --gradient-start: #fddb92;
+            --gradient-end: #d1c59b;
+            --text-color: #333;
+            /* เพิ่มตัวแปรสำหรับสีตัวอักษร */
+            --background-color: #f5f5f5;
+            /* เพิ่มตัวแปรสำหรับสีพื้นหลัง */
         }
 
         * {
@@ -21,8 +29,89 @@
             padding: 0;
         }
 
+        .loading-spinner {
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(253, 184, 19, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1.1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         body {
-            background: #f5f5f5;
+            background: var(--background-color);
+            /* ใช้ตัวแปรสีพื้นหลัง */
+            color: var(--text-color);
+            /* ใช้ตัวแปรสีตัวอักษร */
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            color: var(--secondary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(204, 0, 0, 0.2);
+        }
+
+        .logout-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
         }
 
         .header {
@@ -30,7 +119,8 @@
             align-items: center;
             padding: 1rem 2rem;
             background: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s;
         }
 
         .logo {
@@ -86,6 +176,49 @@
             max-width: calc(100% - 60px);
             /* ให้พื้นที่สำหรับปุ่มลบ */
             margin-right: 1rem;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1.2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+            transition: color 0.3s;
         }
 
         .post-meta {
@@ -236,18 +369,27 @@
 </head>
 
 <body>
+    <div id="loadingScreen">
+        <div class="spinner"></div>
+        <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
+    </div>
+    <div id="mainContent" style="display: none"></div>
     <div class="header">
         <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
             alt="Cyfence Logo" class="logo">
         <h1>ประกาศทั้งหมด</h1>
+        <div class="user-container">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar"></div>
+            </div>
+            <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
+            <button id="customerManagementBtn" onclick="window.location.href='customer-management.html'" class="nav-btn"
+                style="display: none;">จัดการลูกค้า</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+        </div>
     </div>
 
     <div class="main-content">
-        <div style="margin-bottom: 1rem;">
-            <button onclick="window.location.href='dashboard.html'" class="back-btn">
-                กลับไปหน้าหลัก
-            </button>
-        </div>
 
         <div class="posts-container" id="posts-container">
             <!-- โพสต์จะถูกเพิ่มที่นี่ด้วย JavaScript -->
@@ -549,7 +691,8 @@
                 alert('เกิดข้อผิดพลาดในการลบประกาศ');
             }
         }
-
+    </script>
+    <script>
         // ตรวจสอบการล็อกอินและโหลดโพสต์
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
@@ -557,8 +700,33 @@
             } else {
                 window.location.href = 'login.html';
             }
+
+            const userData = userDoc.data();
+            const displayElement = document.getElementById('userDisplayName');
+            const roleElement = document.getElementById('userRole');
+            const avatarElement = document.getElementById('userAvatar');
+
+            if (userData?.displayName) {
+                displayElement.textContent = userData.displayName;
+            } else {
+                displayElement.textContent = user.email;
+            }
+
+            if (userData?.role) {
+                roleElement.textContent = `(${userData.role})`;
+            } else {
+                roleElement.textContent = '';
+            }
+
+            if (userData?.avatar) {
+                avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
+            } else {
+                avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+            }
+            
         });
     </script>
+    <script src="auth.js"></script>
 </body>
 
 </html>
