@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,7 @@
             --warning: #ffc107;
             --danger: #dc3545;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            font-size: 10px;
         }
 
         * {
@@ -171,20 +173,21 @@
         <div id="loadingMessage">กำลังตรวจสอบสิทธิ์...</div>
     </div>
     <div id="mainContent" style="display: none"></div>
-        <div class="header">
-            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
-            <h1 class="admin-title">ระบบจัดการ</h1>
-            <div class="user-container">
-                <div class="user-info">
-                    <div class="user-avatar" id="userAvatar"></div>
-                    <div class="user-details">
-                <span id="userDisplayName">Loading...</span>
-                <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+    <div class="header">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
+        <h1 class="admin-title">ระบบจัดการ</h1>
+        <div class="user-container">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar"></div>
+                <div class="user-details">
+                    <span id="userDisplayName">Loading...</span>
+                    <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+                </div>
             </div>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
-                <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
-            </div>
-        </div>
+    </div>
 
     <div class="container">
         <div class="menu-grid">
@@ -225,7 +228,7 @@
             </div>
 
             <div class="menu-card" onclick="window.location.href='team-management.html'">
-                <div class="menu-icon">📢</div>
+                <div class="menu-icon">🏘️</div>
                 <h2 class="menu-title">Shift Management</h2>
                 <p class="menu-description">จัดการข้อมูลของ Shift</p>
             </div>
@@ -234,7 +237,13 @@
                 <div class="menu-icon">⚠️</div>
                 <h2 class="menu-title">จัดการรายงานปัญหา</h2>
                 <p class="menu-description">ดูและจัดการรายงานปัญหา</p>
-             </div>
+            </div>
+
+            <div class="menu-card" onclick="window.location.href='admin_exchange.html'">
+                <div class="menu-icon">🔄</div>
+                <h2 class="menu-title">จัดการการสลับเวร</h2>
+                <p class="menu-description">ดูและจัดการการสลับเวร</p>
+            </div>
 
             <div class="menu-card" onclick="window.location.href='dashboard.html'">
                 <div class="menu-icon">🏠</div>
@@ -244,29 +253,29 @@
         </div>
     </div>
 
-    
+
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-        <script src="firebase-config.js"></script>
-        <script src="admin.js"></script>
-        <script>
-            // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
-            firebase.auth().onAuthStateChanged(async (user) => {
-                if (user) {
-                    try {
-                        const userDoc = await firebase.firestore()
-                            .collection('users')
-                            .doc(user.uid)
-                            .get();
-    
-                        const userData = userDoc.data();
-                        const displayElement = document.getElementById('userDisplayName');
-                        const roleElement = document.getElementById('userRole');
-                        const avatarElement = document.getElementById('userAvatar');
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
 
-                        if (userData?.displayName) {
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+                    const roleElement = document.getElementById('userRole');
+                    const avatarElement = document.getElementById('userAvatar');
+
+                    if (userData?.displayName) {
                         displayElement.textContent = userData.displayName;
                     } else {
                         displayElement.textContent = user.email;
@@ -283,19 +292,20 @@
                     } else {
                         avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
                     }
-    
-                        // Add admin button if user has admin role
-                    } catch (error) {
-                        console.error('Error fetching user data:', error);
-                    }
+
+                    // Add admin button if user has admin role
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
                 }
-            });
-    
-            function logout() {
-                firebase.auth().signOut()
-                    .then(() => window.location.href = 'login.html')
-                    .catch(error => console.error('Logout error:', error));
             }
-        </script>
+        });
+
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
+    </script>
 </body>
+
 </html>

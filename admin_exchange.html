@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyfence - Shift Exchange</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            --primary: #FDB813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2D2D2D;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --gray: #f0f0f0;
+            --light-gray: #fafafa;
+            font-size: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Noto Sans Thai', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .nav-btn,
+        .logout-btn,
+        .admin-btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn {
+            background: #f0f0f0;
+            color: var(--secondary);
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+        }
+
+        .exchange-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .exchange-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .exchange-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .request-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .request-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+            background: var(--light-gray);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .request-item:last-child {
+            border-bottom: none;
+        }
+
+        .request-info {
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 70%;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .accept-btn {
+            background: var(--primary);
+            color: var(--accent);
+            margin-right: 0.5rem;
+        }
+
+        .reject-btn {
+            background: #ff4444;
+            color: white;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            color: var(--secondary);
+        }
+
+        .modal-title {
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none;
+        }
+
+        .shift-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .shift-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.50rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .save-btn,
+        .cancel-btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 10px;
+        }
+
+        .save-btn {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .cancel-btn {
+            background: #f0f0f0;
+            color: var(--secondary);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            /* Enable horizontal scrolling on smaller screens */
+        }
+
+        .request-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .request-table th,
+        .request-table td {
+            padding: 0.75rem;
+            border: 1px solid #eee;
+            text-align: left;
+        }
+
+        .request-table th {
+            background: #f0f0f0;
+            font-weight: 600;
+        }
+
+        .request-table td {
+            vertical-align: top;
+        }
+
+        .action-btn-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        .alert-message {
+            margin: 1rem 0;
+            line-height: 1.5;
+            color: var(--secondary);
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loadingScreen">
+        <div class="spinner"></div>
+        <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
+    </div>
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <h3 id="alertTitle">แจ้งเตือน</h3>
+            <p id="alertMessage" class="alert-message"></p>
+            <div class="modal-buttons">
+                <button type="button" class="save-btn" onclick="closeAlertModal()">ตกลง</button>
+            </div>
+        </div>
+    </div>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingMessageOverlay">กำลังดำเนินการ...</p>
+        </div>
+    </div>
+    <div id="mainContent" style="display: none">
+        <div class="header">
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+                alt="Cyfence Logo" class="logo">
+            <div class="user-container">
+                <span id="userDisplayName">Loading...</span>
+                <button onclick="window.location.href='calendar.html'" class="nav-btn">ตารางเวร</button>
+                <button onclick="window.location.href='dashboard.html'" class="nav-btn">หน้าหลัก</button>
+                <button onclick="window.location.href='exchange.html'" class="nav-btn">สลับเวร</button>
+                <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+            </div>
+        </div>
+        <div class="container">
+            <div class="exchange-section">
+                <div class="exchange-header">
+                    <h2 class="exchange-title">คำขอสลับเวรทั้งหมด (Admin)</h2>
+                </div>
+                <div class="table-container">
+                    <table class="request-table" id="exchange-requests">
+                        <thead>
+                            <tr>
+                                <th>ผู้ขอ</th>
+                                <th>ผู้รับสลับ</th>
+                                <th>เวรของคุณ</th>
+                                <th>เวรที่จะสลับด้วย</th>
+                                <th>เหตุผล</th>
+                                <th>สถานะ</th>
+                                <th>การกระทำ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="detailsModal" class="modal">
+            <div class="modal-content">
+                <h3 class="modal-title">รายละเอียดการสลับเวร</h3>
+                <div id="exchangeDetails"></div>
+                <div class="modal-buttons">
+                    <button class="cancel-btn" onclick="closeDetailsModal()">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase configuration
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+        });
+
+        const db = firebase.firestore();
+        let currentUser = null;
+
+        function showLoadingOverlay(message) {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('loadingMessageOverlay').textContent = message;
+        }
+
+        function closeLoadingOverlay() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        function showAlertModal(message) {
+            document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alertModal').style.display = 'none';
+        }
+        // Authentication check
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                if (userData?.role === 'admin') {
+                    document.getElementById('userDisplayName').textContent = userData?.displayName || user.email;
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+
+                    loadExchangeRequests();
+                } else {
+                    window.location.href = 'exchange.html'
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+        async function loadExchangeRequests() {
+            showLoadingOverlay('กำลังโหลดคำขอสลับเวร...');
+            try {
+                const snapshot = await db.collection('shift_exchanges').get();
+                const requestTableBody = document.querySelector('#exchange-requests tbody');
+                if (!requestTableBody) return;
+                requestTableBody.innerHTML = '';
+                if (snapshot.empty) {
+                    requestTableBody.innerHTML = `<tr><td colspan="7">ไม่มีคำขอสลับเวร</td></tr>`;
+                    return;
+                }
+                const requests = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                for (const request of requests) {
+                    const userDoc = await db.collection('users').doc(request.requestBy).get();
+                    const userData = userDoc.data();
+                    const userExchange = await db.collection('users').doc(request.exchangeWith).get();
+                    const userExchangeData = userExchange.data();
+
+                    const row = document.createElement('tr');
+                    const actionsHtml = `
+        <div class="action-btn-container">
+            <button class="action-btn nav-btn" onclick="showExchangeDetails('${request.id}')">ดูรายละเอียด</button>
+            <button class="action-btn delete-btn" onclick="deleteExchangeRequest('${request.id}')">ลบ</button>
+        </div>
+    `;
+                    row.innerHTML = `
+                     <td>${userData?.displayName || userData?.email || 'Unknown User'}</td>
+                      <td>${userExchangeData?.displayName || userExchangeData?.email || 'Unknown User'}</td>
+                      <td>${request.myShift}</td>
+                     <td>${request.otherTime}</td>
+                     <td>${request.reason}</td>
+                    <td>${request.status}</td>
+                    <td>${actionsHtml}</td>
+                `;
+                    requestTableBody.appendChild(row);
+                }
+            } catch (error) {
+                console.error("Error loading shift exchanges:", error);
+                showAlertModal('เกิดข้อผิดพลาดในการโหลดคำขอสลับเวร');
+            } finally {
+                closeLoadingOverlay();
+            }
+        }
+        async function deleteExchangeRequest(exchangeId) {
+            showLoadingOverlay('กำลังลบคำขอ...');
+            try {
+                const isConfirmed = confirm(`คุณต้องการลบคำขอสลับเวรนี้หรือไม่?`);
+                if (!isConfirmed) {
+                    closeLoadingOverlay()
+                    return;
+                }
+                await db.collection('shift_exchanges').doc(exchangeId).delete();
+                await loadExchangeRequests();
+                showAlertModal('ลบคำขอสลับเวรสำเร็จ');
+            } catch (error) {
+                console.error("Error delete shift exchange:", error);
+                showAlertModal('เกิดข้อผิดพลาดในการลบคำขอสลับเวร');
+            } finally {
+                closeLoadingOverlay();
+            }
+        }
+        function showExchangeDetails(exchangeId) {
+            const detailsModal = document.getElementById('detailsModal');
+            if (!detailsModal) return;
+            detailsModal.style.display = 'flex';
+            loadExchangeDetails(exchangeId);
+        }
+
+        async function loadExchangeDetails(exchangeId) {
+            showLoadingOverlay('กำลังโหลดข้อมูล...');
+            try {
+                const exchangeDoc = await db.collection('shift_exchanges').doc(exchangeId).get();
+                const exchangeData = exchangeDoc.data();
+
+                const requestByDoc = await db.collection('users').doc(exchangeData.requestBy).get();
+                const requestByData = requestByDoc.data();
+
+                const exchangeWithDoc = await db.collection('users').doc(exchangeData.exchangeWith).get();
+                const exchangeWithData = exchangeWithDoc.data();
+
+                const detailsHtml = `
+            <div class="exchange-details">
+                <p><strong>สถานะ:</strong> ${exchangeData.status}</p>
+                <p><strong>ผู้ขอ:</strong> ${requestByData?.displayName || requestByData?.email}</p>
+                 <p><strong>ผู้รับสลับ:</strong> ${exchangeWithData?.displayName || exchangeWithData?.email}</p>
+                <p><strong>เวรของผู้ขอ:</strong> ${exchangeData.myShift}</p>
+                <p><strong>เวรที่จะสลับด้วย:</strong> ${exchangeData.otherTime}</p>
+                <p><strong>เหตุผล:</strong> ${exchangeData.reason}</p>
+               ${exchangeData.confirmedAt ? `<p><strong>ยืนยันเมื่อ:</strong> ${new Date(exchangeData.confirmedAt.toDate()).toLocaleString()}</p>` : ''}
+                ${exchangeData.agreement ? `<p><strong>ข้อตกลง:</strong> ${exchangeData.agreement}</p>` : ''}
+            </div>
+        `;
+
+                document.getElementById('exchangeDetails').innerHTML = detailsHtml;
+            } catch (error) {
+                console.error("Error loading exchange details:", error);
+                showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            } finally {
+                closeLoadingOverlay();
+            }
+        }
+        function closeDetailsModal() {
+            const detailsModal = document.getElementById('detailsModal');
+            if (!detailsModal) return;
+            detailsModal.style.display = 'none'
+        }
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = 'login.html';
+            });
+        }
+        window.onclick = function (event) {
+            const detailModal = document.getElementById('detailsModal')
+            if (event.target === detailModal) {
+                closeDetailsModal()
+            }
+        }
+    </script>
+</body>
+
+</html>

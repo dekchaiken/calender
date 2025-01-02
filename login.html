@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - เข้าสู่ระบบ</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="login.css">
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
     <div class="login-container">
-        <!-- <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo"> -->
         <div id="loginForm">
             <h2>เข้าสู่ระบบ</h2>
-             <div class="form-group">
+            <div class="form-group">
                 <input type="email" id="loginEmail" required placeholder="อีเมล">
                 <i class="fas fa-envelope"></i>
             </div>
@@ -21,84 +24,85 @@
                 <input type="password" id="loginPassword" required placeholder="รหัสผ่าน">
                 <i class="fas fa-lock"></i>
             </div>
-              <div class="remember-me">
-                  <input type="checkbox" id="rememberMe">
-                   <label for="rememberMe">จำรหัสผ่าน</label>
-              </div>
+            <div class="remember-me">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">จำรหัสผ่าน</label>
+            </div>
             <button onclick="handleLogin()">เข้าสู่ระบบ</button>
-            <button onclick="showRegisterModal()" style="background-color: #f0f0f0; margin-top: 1rem;">สมัครสมาชิก</button>
+            <button onclick="showRegisterModal()"
+                style="background-color: #f0f0f0; margin-top: 1rem;">สมัครสมาชิก</button>
         </div>
         <div id="message"></div>
-         <div class="loading-container">
+        <div class="loading-container">
             <div class="loading-spinner" id="spinner"></div>
-             <div class="loading-text" id="loadingText">กำลังเข้าสู่ระบบ...</div>
-         </div>
+            <div class="loading-text" id="loadingText">กำลังเข้าสู่ระบบ...</div>
+        </div>
     </div>
-     <div class="modal-overlay" id="registerModal">
+    <div class="modal-overlay" id="registerModal">
         <div class="modal-content">
             <p>กรุณาติดต่อผู้ดูแลระบบ<br>เพื่อขอสิทธิ์การเข้าใช้งานระบบ</p>
             <button class="modal-button" onclick="closeRegisterModal()">ตกลง</button>
-         </div>
-     </div>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
+
     <script>
-         firebase.initializeApp({
-             apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
             authDomain: "cyfencedevbyken.firebaseapp.com",
             projectId: "cyfencedevbyken",
             storageBucket: "cyfencedevbyken.appspot.com",
             messagingSenderId: "632813871756",
             appId: "1:632813871756:web:57d674643f258ddd2e11a9"
         });
-        
+
         const auth = firebase.auth();
         const db = firebase.firestore();
         const rememberMeCheckbox = document.getElementById('rememberMe');
         const loadingSpinner = document.getElementById('spinner');
         const loadingText = document.getElementById('loadingText');
         const registerModal = document.getElementById('registerModal');
-          // Function to encode string
-         function encodeString(str) {
+        // Function to encode string
+        function encodeString(str) {
             try {
-               return btoa(unescape(encodeURIComponent(str)));
-           } catch (e) {
-            return null;
-           }
-       }
-          // Function to decode string
+                return btoa(unescape(encodeURIComponent(str)));
+            } catch (e) {
+                return null;
+            }
+        }
+        // Function to decode string
         function decodeString(str) {
             try {
-             return decodeURIComponent(escape(atob(str)));
+                return decodeURIComponent(escape(atob(str)));
             } catch (e) {
-             return null;
-             }
+                return null;
+            }
         }
 
 
         // Load saved credentials on page load
-        window.onload = function() {
-             const savedEmail = localStorage.getItem('savedEmail');
-             const savedPassword = localStorage.getItem('savedPassword');
-                if (savedEmail && savedPassword){
-                    document.getElementById('loginEmail').value = decodeString(savedEmail);
-                    document.getElementById('loginPassword').value = decodeString(savedPassword);
-                 rememberMeCheckbox.checked = true;
-              }
+        window.onload = function () {
+            const savedEmail = localStorage.getItem('savedEmail');
+            const savedPassword = localStorage.getItem('savedPassword');
+            if (savedEmail && savedPassword) {
+                document.getElementById('loginEmail').value = decodeString(savedEmail);
+                document.getElementById('loginPassword').value = decodeString(savedPassword);
+                rememberMeCheckbox.checked = true;
+            }
         };
-        
+
         auth.onAuthStateChanged(user => {
             if (user) window.location.href = 'dashboard.html';
         });
-        
-       async function handleLogin() {
+
+        async function handleLogin() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             const rememberMe = rememberMeCheckbox.checked;
-            
+
             if (!email || !password) {
                 showMessage('กรุณากรอกอีเมลและรหัสผ่าน', 'error');
                 return;
@@ -106,47 +110,48 @@
 
             loadingSpinner.style.display = 'block';
             loadingText.style.display = 'block';
-        
-          if (rememberMe) {
+
+            if (rememberMe) {
                 localStorage.setItem('savedEmail', encodeString(email));
                 localStorage.setItem('savedPassword', encodeString(password));
-              } else{
-                  localStorage.removeItem('savedEmail')
-                  localStorage.removeItem('savedPassword')
-              }
-            
+            } else {
+                localStorage.removeItem('savedEmail')
+                localStorage.removeItem('savedPassword')
+            }
+
             try {
                 await auth.signInWithEmailAndPassword(email, password);
                 showMessage('เข้าสู่ระบบสำเร็จ กำลังนำคุณไปยังหน้าหลัก...', 'success');
-                 setTimeout(() => window.location.href = 'dashboard.html', 1500);
+                setTimeout(() => window.location.href = 'dashboard.html', 1500);
             } catch (error) {
                 showMessage('อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'error');
             }
             loadingSpinner.style.display = 'none';
-             loadingText.style.display = 'none';
+            loadingText.style.display = 'none';
         }
-        
+
         function showMessage(text, type) {
             const msg = document.getElementById('message');
             msg.textContent = text;
             msg.className = type;
             msg.classList.add('show');
-            
+
             setTimeout(() => {
                 msg.classList.remove('show');
             }, 3000);
         }
 
         function showRegisterModal() {
-             registerModal.classList.add('active');
+            registerModal.classList.add('active');
         }
         function closeRegisterModal() {
             registerModal.classList.remove('active');
         }
-        
+
         document.addEventListener('keypress', e => {
             if (e.key === 'Enter') handleLogin();
         });
     </script>
 </body>
+
 </html>

@@ -5,8 +5,11 @@
     --gradient-start: #fddb92;
     --gradient-end: #d1c59b;
     --light-gray: #f7f7f7;
+     --light-border: #eee;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --transition-duration: 0.3s; /* Custom transition duration */
+    --transition-duration: 0.3s;
+    --success-color: #2ecc71; /* สีเขียวสำหรับสถานะสำเร็จ */
+    --error-color: #e74c3c;   /* สีแดงสำหรับสถานะข้อผิดพลาด */
 }
 
 * {
@@ -40,6 +43,7 @@ body {
     opacity: 0;
     animation: slideUp 0.5s ease forwards 0.2s;
     position: relative;
+    overflow: hidden; /* Add overflow hidden */
 }
 
 @keyframes slideUp {
@@ -71,6 +75,7 @@ h2 {
 h2:hover {
     color: var(--primary);
 }
+
 h2::before,
 h2::after {
     content: '';
@@ -81,7 +86,7 @@ h2::after {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-      transition: all var(--transition-duration) ease;
+    transition: all var(--transition-duration) ease;
 }
 
 h2::before {
@@ -92,15 +97,15 @@ h2::before {
 
 h2::after {
     right: 0;
-     opacity: 0;
+    opacity: 0;
     transform: translateY(-50%) translateX(20px);
 }
+
 h2:hover::before,
-h2:hover::after{
-     opacity: 1;
+h2:hover::after {
+    opacity: 1;
     transform: translateY(-50%) translateX(0);
 }
-
 
 .form-group {
     margin-bottom: 1.75rem;
@@ -110,28 +115,29 @@ h2:hover::after{
 input {
     width: 100%;
     padding: 1rem;
-    padding-left: 2.5rem;  /* เพิ่ม padding-left ที่นี่ */
-    border: 1px solid #ddd;
+    padding-left: 2.5rem;
+    border: 1px solid var(--light-border);
     border-radius: 6px;
     font-size: 1rem;
     transition: border-color var(--transition-duration), box-shadow var(--transition-duration);
     background-color: var(--light-gray);
     color: var(--secondary);
-  }
+    outline: none; /* Remove default focus outline */
+}
 
 input::placeholder {
     color: #aaa;
 }
 
+/* Custom input focus */
 input:focus {
-    outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(253, 184, 19, 0.15);
 }
 
 .form-group i{
     position: absolute;
-    left: 1rem; 
+    left: 1rem;
     top: 50%;
     transform: translateY(-50%);
     color: #ccc;
@@ -181,7 +187,7 @@ button:hover {
     margin-right: 0.5rem;
     cursor: pointer;
 }
-
+/* Message Area */
 #message {
     margin-top: 1.5rem;
     padding: 1rem;
@@ -196,17 +202,17 @@ button:hover {
     opacity: 1;
     transform: translateY(0);
 }
-
-.error {
-    background: #ffe8e8;
-    color: #D63031;
-    border: 1px solid #ffa1a1;
+/* Message Area Background */
+#message.error {
+    background: rgba(var(--error-color), 0.1);
+    color: var(--error-color);
+    border: 1px solid rgba(var(--error-color), 0.3);
 }
 
-.success {
-    background: #e8f5e9;
-    color: #2ecc71;
-    border: 1px solid #b8f2c0;
+#message.success {
+    background: rgba(var(--success-color), 0.1);
+    color: var(--success-color);
+    border: 1px solid rgba(var(--success-color), 0.3);
 }
 
 .loading-container {
@@ -254,7 +260,7 @@ button:hover {
         font-size: 0.9rem;
     }
 }
-
+/* Modal Overlay */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -274,7 +280,7 @@ button:hover {
     display: flex;
     opacity: 1;
 }
-
+/* Modal Content */
 .modal-content {
     background-color: white;
     padding: 2rem;
@@ -292,12 +298,12 @@ button:hover {
     transform: translateY(0);
     opacity: 1;
 }
-
+/* Modal Text */
 .modal-content p {
     margin-bottom: 1.5rem;
     color: #555;
 }
-
+/* Modal Button */
 .modal-button {
     padding: 0.75rem 1.25rem;
     background-color: var(--primary);
@@ -313,4 +319,19 @@ button:hover {
 .modal-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(253, 184, 19, 0.2);
+}
+/* เพิ่มตัวกั้นด้านล่าง form เพื่อใช้ในการแสดงผล transition ของ Background */
+.form-area-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%; /* ให้ครอบคลุมพื้นที่ทั้งหมด */
+    z-index: -1; /* ให้อยู่ด้านหลัง */
+    background: linear-gradient(to bottom, transparent 50%, rgba(255, 255, 255, 0.9));
+    pointer-events: none; /* Disable interaction with overlay */
+    transition: background var(--transition-duration) ease;
+}
+.form-area-overlay.active {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0.9));
 }

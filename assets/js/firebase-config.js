@@ -16,21 +16,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-async function logActivity(userId, action, details) {
-  try {
-      const activityLogRef = db.collection('logs');
-      await activityLogRef.add({
-          userId: userId,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          action: action,
-          details: details,
-          userAgent: navigator.userAgent
-      });
-  } catch (error) {
-      console.error('Error logging activity:', error);
-  }
-}
-
 // Export for use in other files
 window.auth = auth;
 window.db = db;

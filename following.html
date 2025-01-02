@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Following Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/components.css">
     <style>
         :root {
             --primary: #FDB813;
@@ -13,6 +14,7 @@
             --secondary: #404040;
             --accent: #2D2D2D;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            font-size: 10px;
         }
 
         * {
@@ -492,7 +494,6 @@
         <div class="spinner"></div>
         <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
     </div>
-    <!-- Alert Modal -->
     <div id="alertModal" class="modal">
         <div class="modal-content">
             <h3 id="alertTitle">แจ้งเตือน</h3>
@@ -574,13 +575,12 @@
                     <button onclick="exportExcelByCompany()" class="btn btn-primary">Export Excel แยกตามบริษัท</button>
                 </div>
                 <div id="companyFilters" class="company-filters">
-                    <!-- Company checkboxes will be dynamically added here -->
                 </div>
             </div>
 
             <div class="card">
                 <h2>Template สำหรับบริษัทที่เลือก</h2>
-                 <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
+                <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
                     <input type="radio" id="lineTemplate" name="templateType" value="line" checked>
                     <label for="lineTemplate" style="cursor: pointer;">Line Template</label>
                     <input type="radio" id="emailTemplate" name="templateType" value="email">
@@ -686,6 +686,14 @@
 
         function generateTemplate(companyCode, formattedDate, incidents, templateType = 'line') {
             const isHospital = companyTypes[companyCode] === 'hospital';
+
+            // If no incidents and it's email template, return empty string
+            if (incidents.length === 0) {
+                if (templateType === 'email') {
+                    return '';
+                }
+            }
+
             let template = '';
 
             if (templateType === 'line') {
@@ -714,17 +722,18 @@
                     incidents.forEach((incident, idx) => {
                         template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
                     });
-                    template += `\n\nหากดำเนินการตรวจสอบแก้ไขเสร็จเรียบร้อยแล้ว รบกวนแจ้งปิด Incidents ด้วยครับ\nรายละเอียดเพิ่มเติมตามเอกสารแนบ\n\nBest regard,\nSecurity Analyst`;
+                    template += `\n\nหากดำเนินการตรวจสอบแก้ไขเสร็จเรียบร้อยแล้ว รบกวนแจ้งปิด Incidents ด้วยครับ\nรายละเอียดเพิ่มเติมตามเอกสารแนบ\n\nBest regard,\nSecurity Analyst \n`;
+                    template += `====================================================\n`;
                 }
             }
 
             return template;
         }
 
-         function updateCompanyFilters() {
+        function updateCompanyFilters() {
             const filtersContainer = document.getElementById('companyFilters');
             filtersContainer.innerHTML = '';
-        
+
             // แปลง companyGroups เป็น Array เพื่อให้สามารถเรียงลำดับได้
             const sortedGroups = Object.entries(companyGroups)
                 .sort((a, b) => {
@@ -732,65 +741,65 @@
                     const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
                     return numA - numB;
                 });
-        
-        
+
+
             sortedGroups.forEach(([groupId, group]) => {
                 console.log(`Processing group ${groupId}:`, group); // Log ข้อมูลแต่ละกลุ่ม
-        
+
                 // ถ้า group เป็น array โดยตรง (กรณีที่ไม่มี name)
                 const companies = Array.isArray(group) ? group : group.companies;
                 const groupName = Array.isArray(group) ? groupId : (group.name || groupId);
-        
+
                 if (!companies || !Array.isArray(companies)) {
                     console.warn(`Invalid companies data for ${groupId}:`, companies);
                     return;
                 }
                 // Sort companies in each group alphabetically
                 const sortedCompanies = [...companies].sort((a, b) => a.localeCompare(b, 'th'));
-        
+
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'company-group';
-        
+
                 const header = document.createElement('div');
                 header.className = 'company-group-header';
-        
+
                 const groupTitle = document.createElement('h3');
                 groupTitle.className = 'company-group-title';
                 groupTitle.textContent = groupName;
                 header.appendChild(groupTitle);
-        
+
                 const buttonContainer = document.createElement('div');
                 buttonContainer.style.display = 'flex';
                 buttonContainer.style.gap = '8px';
-                
+
                 const selectGroupBtn = document.createElement('button');
                 selectGroupBtn.textContent = 'Select All';
                 selectGroupBtn.className = 'select-group-btn';
                 selectGroupBtn.onclick = () => selectGroupCompanies(sortedCompanies);
-        
+
                 const unselectGroupBtn = document.createElement('button');
                 unselectGroupBtn.textContent = 'Unselect All';
                 unselectGroupBtn.className = 'select-group-btn';
                 unselectGroupBtn.style.backgroundColor = '#404040';
                 unselectGroupBtn.onclick = () => unselectGroupCompanies(sortedCompanies);
-        
+
                 buttonContainer.appendChild(selectGroupBtn);
                 buttonContainer.appendChild(unselectGroupBtn);
                 header.appendChild(buttonContainer);
-        
+
                 groupDiv.appendChild(header);
-        
+
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'company-group-content';
-        
+
                 sortedCompanies.forEach(company => {
                     const label = document.createElement('label');
                     label.className = 'company-checkbox';
-        
+
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.value = company;
-                   checkbox.checked = false; // Set initial state to unselected
+                    checkbox.checked = false; // Set initial state to unselected
 
                     checkbox.addEventListener('change', function () {
                         showLoadingOverlay('กำลังอัพเดต Template...');
@@ -802,12 +811,12 @@
                         updateAllTemplates();
                         closeLoadingOverlay();
                     });
-        
+
                     label.appendChild(checkbox);
                     label.appendChild(document.createTextNode(company));
                     contentDiv.appendChild(label);
                 });
-        
+
                 groupDiv.appendChild(contentDiv);
                 filtersContainer.appendChild(groupDiv);
             });
@@ -909,6 +918,21 @@
             updateAllTemplates();
             closeLoadingOverlay();
         });
+        document.getElementById('lineTemplate').addEventListener('change', function () {
+            if (this.checked) {
+                showLoadingOverlay('กำลังอัพเดต Template...');
+                updateAllTemplates();
+                closeLoadingOverlay();
+            }
+        });
+
+        document.getElementById('emailTemplate').addEventListener('change', function () {
+            if (this.checked) {
+                showLoadingOverlay('กำลังอัพเดต Template...');
+                updateAllTemplates();
+                closeLoadingOverlay();
+            }
+        });
 
 
         function updateAllTemplates() {
@@ -920,39 +944,34 @@
 
             const formattedDate = formatDateToEng(date);
             let allTemplates = '';
-
             const selectedTemplateType = document.querySelector('input[name="templateType"]:checked').value;
-
-            // กรองเฉพาะบริษัทที่ถูกเลือกจาก checkbox
             const selectedCompaniesArray = Array.from(selectedCompanies).sort();
 
-            selectedCompaniesArray.forEach((companyCode, index) => {
-                const checkbox = document.querySelector(`input[type="checkbox"][value="${companyCode}"]`);
-
-                // สร้าง template เฉพาะบริษัทที่ถูกเลือกใน checkbox
-                if (checkbox && checkbox.checked) {
-                    if (index > 0) {
-                        allTemplates += '\n\n' + '='.repeat(50) + '\n\n';
-                    }
-
+            // Generate templates for each selected company
+            const templates = selectedCompaniesArray
+                .filter(companyCode => {
+                    const checkbox = document.querySelector(`input[type="checkbox"][value="${companyCode}"]`);
+                    return checkbox && checkbox.checked;
+                })
+                .map(companyCode => {
                     const incidents = excelData.filter(incident =>
                         getCompanyCode(incident.Customer) === companyCode
                     );
+                    const template = generateTemplate(companyCode, formattedDate, incidents, selectedTemplateType);
+                    return template;
+                })
+                .filter(template => template.trim() !== ''); // Remove empty templates
 
-                    allTemplates += generateTemplate(companyCode, formattedDate, incidents, selectedTemplateType);
-                }
-            });
+            // Join templates differently based on template type
+            if (selectedTemplateType === 'line') {
+                allTemplates = templates.join('\n\n' + '='.repeat(50) + '\n\n');
+            } else {
+                // For email template, just join with double newline, no separators
+                allTemplates = templates.join('\n\n');
+            }
 
             document.getElementById('allTemplates').textContent = allTemplates || 'กรุณาเลือกบริษัทที่ต้องการดู Template';
         }
-        // Event listener for radio button change
-        document.querySelectorAll('input[name="templateType"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                showLoadingOverlay('กำลังอัพเดต Template...');
-                updateAllTemplates();
-                closeLoadingOverlay();
-            });
-        });
 
         function copyAllTemplates() {
             showLoadingOverlay('กำลังคัดลอก Template...');
@@ -1156,7 +1175,7 @@
                     } else {
                         avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
                     }
-                    
+
                     if (userData?.role === 'supervisor' || userData?.role === 'admin') {
                         document.getElementById('customerManagementBtn').style.display = 'inline-block';
                         const userContainer = document.querySelector('.user-container');
@@ -1171,7 +1190,7 @@
                         }
                     }
 
-                    
+
                     // Add admin button if user has admin role
                 } catch (error) {
                     console.error('Error fetching user data:', error);

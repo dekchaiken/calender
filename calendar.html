@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cyfence - Shift schedule</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="assets/css/styles.css"
+    <link rel="stylesheet" href="assets/css/components.css">
 </head>
 
 <body>
@@ -15,7 +16,6 @@
         <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
     </div>
 
-    <!-- Alert Modal -->
     <div id="alertModal" class="modal">
         <div class="modal-content">
             <h3 id="alertTitle">แจ้งเตือน</h3>
@@ -26,7 +26,6 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-content">
             <div class="loading-spinner"></div>
@@ -39,22 +38,25 @@
             <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
                 alt="Cyfence Logo" class="logo">
             <div class="user-container">
-                <span id="userDisplayName">Loading...</span>
-                <button onclick="window.location.href='dashboard.html'" class="nav-btn">หน้าหลัก</button>
-                <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
-            </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <div class="user-details">
+                        <span id="userDisplayName">Loading...</span>
+                        <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+                    </div>
+                </div>
+            <button onclick="window.location.href='dashboard.html'" class="nav-btn">หน้าหลัก</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
+    </div>
 
         <div class="container">
             <div class="team-info">
-                <!-- Red Team -->
                 <div class="team-card red" onclick="toggleTeamMembers('red')">
                     <h3>Shift A (Red Team)</h3>
                     <div class="team-leader" id="red-team-leader">
-                        <!-- Leader will be populated by JavaScript -->
                     </div>
                     <div class="team-members" id="red-members">
-                        <!-- Members will be populated by JavaScript -->
                     </div>
                     <div class="expand-icon">▼</div>
                 </div>
@@ -96,7 +98,7 @@
                 </div>
             </div>
 
-            
+
 
             <div class="controls">
                 <button onclick="changeMonth(-1)" class="nav-btn">← เดือนก่อนหน้า</button>
@@ -180,7 +182,7 @@
                     const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
                     const userData = userDoc.data();
                     const displayElement = document.getElementById('userDisplayName');
-    
+
                     if (userData?.displayName) {
                         displayElement.textContent = userData.displayName;
                     } else {

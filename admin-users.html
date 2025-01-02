@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - User Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="assets/css/components.css">
     <style>
         :root {
             --primary: #FDB813;
@@ -395,12 +395,16 @@
                 alt="Cyfence Logo" class="logo">
             <h1 class="admin-title">จัดการระบบ</h1>
             <div class="user-container">
-                <span class="user-name" id="userDisplayName">Loading...</span>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <div class="user-details">
+                        <span class="user-name" id="userDisplayName">Loading...</span>
+                    </div>
+                </div>
                 <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
                 <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
             </div>
         </div>
-        <!-- Alert Modal -->
         <div id="alertModal" class="modal">
             <div class="modal-content">
                 <h3 id="alertTitle">แจ้งเตือน</h3>
@@ -411,7 +415,6 @@
             </div>
         </div>
 
-        <!-- Loading Overlay -->
         <div id="loadingOverlay" class="loading-overlay">
             <div class="loading-content">
                 <div class="loading-spinner"></div>
@@ -429,12 +432,11 @@
                             <th>ชื่อผู้ใช้</th>
                             <th>บทบาท</th>
                             <th>สถานะ</th>
-                            <th>อนุมัติ</th>  
+                            <th>อนุมัติ</th>
                             <th>การดำเนินการ</th>
                         </tr>
                     </thead>
                     <tbody id="userTableBody">
-                        <!-- ข้อมูลผู้ใช้จะถูกเพิ่มที่นี่ด้วย JavaScript -->
                     </tbody>
                 </table>
             </div>

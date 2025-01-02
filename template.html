@@ -6,14 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Template Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="assets/css/components.css">
     <style>
         :root {
             --primary: #FDB813;
-            --primary-dark: #e5a700;
+            /* NT Yellow */
             --secondary: #404040;
+            /* Dark Gray */
             --accent: #2D2D2D;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            /* Deeper Gray */
+            --text-primary: #2D2D2D;
+            --text-secondary: #000000;
+            --background: #F5F5F5;
+            --border-color: #E5E5E5;
+            font-size: 10px;
         }
 
         * {
@@ -104,6 +110,17 @@
             color: var(--secondary);
             border: none;
             padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn,
+        .admin-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s;
@@ -299,7 +316,7 @@
         <div id="templateForm" class="card" style="display: none;">
             <h2>รายละเอียด Template</h2>
             <div class="template-form">
-                <div id="templateInputs"></div> <!-- Add this element -->
+                <div id="templateInputs"></div>
                 <input type="text" id="caseId" placeholder="Case ID (IRXXXXXXXX)">
                 <input type="text" id="sourceIp" placeholder="Source IP">
                 <input type="text" id="destIp" placeholder="Destination IP">
@@ -404,48 +421,48 @@
                 document.getElementById('templateForm').style.display = 'none';
             }
             function loadTemplate() {
-    const selectedCase = document.getElementById('caseSelect').value;
-    const templateForm = document.getElementById('templateForm');
-    const templateInputs = document.getElementById('templateInputs');
-    templateInputs.innerHTML = '';
-    if (selectedCase) {
-        templateForm.style.display = 'block';
-        // Load template from Firestore
-        if(templates[selectedCase]) {
-            const fields = templates[selectedCase].fields;
-            const variableDescriptions = templates[selectedCase].variableDescriptions || {}; // Use an empty object as default for variableDescriptions
-            const variableTypes = templates[selectedCase].variableTypes || {}; // Use an empty object as default for variableTypes
-            fields.forEach(field => {
-                const label = document.createElement('label');
-                  label.textContent = variableDescriptions && variableDescriptions[field] ? variableDescriptions[field] : field; // Check if variableDescriptions[field] exists before accessing it
+                const selectedCase = document.getElementById('caseSelect').value;
+                const templateForm = document.getElementById('templateForm');
+                const templateInputs = document.getElementById('templateInputs');
+                templateInputs.innerHTML = '';
+                if (selectedCase) {
+                    templateForm.style.display = 'block';
+                    // Load template from Firestore
+                    if (templates[selectedCase]) {
+                        const fields = templates[selectedCase].fields;
+                        const variableDescriptions = templates[selectedCase].variableDescriptions || {}; // Use an empty object as default for variableDescriptions
+                        const variableTypes = templates[selectedCase].variableTypes || {}; // Use an empty object as default for variableTypes
+                        fields.forEach(field => {
+                            const label = document.createElement('label');
+                            label.textContent = variableDescriptions && variableDescriptions[field] ? variableDescriptions[field] : field; // Check if variableDescriptions[field] exists before accessing it
 
-                let input;
-                if (variableTypes[field] === 'select') {
-                    input = document.createElement('select');
-                    input.innerHTML = `<option value="">-- เลือก --</option>`; // Default option
-                } else {
-                    input = document.createElement('input');
-                    input.type = variableTypes[field] || 'text';
-                }
-                input.id = field;
-                input.placeholder = field;
-                templateInputs.appendChild(label);
-                templateInputs.appendChild(input);
+                            let input;
+                            if (variableTypes[field] === 'select') {
+                                input = document.createElement('select');
+                                input.innerHTML = `<option value="">-- เลือก --</option>`; // Default option
+                            } else {
+                                input = document.createElement('input');
+                                input.type = variableTypes[field] || 'text';
+                            }
+                            input.id = field;
+                            input.placeholder = field;
+                            templateInputs.appendChild(label);
+                            templateInputs.appendChild(input);
 
-            });
-            const eventSubtypeSelect = document.createElement('select');
-            eventSubtypeSelect.id = 'eventSubtype';
-            eventSubtypeSelect.innerHTML = `
+                        });
+                        const eventSubtypeSelect = document.createElement('select');
+                        eventSubtypeSelect.id = 'eventSubtype';
+                        eventSubtypeSelect.innerHTML = `
             <option value="failure">Failure</option>
             <option value="success">Success</option>
             `;
-            templateInputs.appendChild(eventSubtypeSelect);
-        }
-        updatePreview();
-    } else {
-        templateForm.style.display = 'none';
-    }
-}
+                        templateInputs.appendChild(eventSubtypeSelect);
+                    }
+                    updatePreview();
+                } else {
+                    templateForm.style.display = 'none';
+                }
+            }
 
             let csvData = null; // Store the parsed CSV data
 
@@ -495,29 +512,29 @@
                 validateFields(selectedCase);
             }
             function updatePreviewWithCSVData(csvRow) {
-    const selectedCase = document.getElementById('caseSelect').value;
-     const selectedCustomer = document.getElementById('customerSelect').value;
+                const selectedCase = document.getElementById('caseSelect').value;
+                const selectedCustomer = document.getElementById('customerSelect').value;
 
-    if (!selectedCase || !templates[selectedCase]) return;
+                if (!selectedCase || !templates[selectedCase]) return;
 
-     const data = {
-        customerName: selectedCustomer,
-     };
+                const data = {
+                    customerName: selectedCustomer,
+                };
 
-    templates[selectedCase].fields.forEach(field => {
-         const element = document.getElementById(field); // Find the input field for the current field
-        if (element) {
-            element.value = csvRow[field] || ''; // Populate the field
-            data[field] = element.value; // Store the value in data
-        } else {
-          data[field] = csvRow[field] || '';
-        }
-        });
-      data['eventSubtype'] =  document.getElementById('eventSubtype')?.value || 'failure'
-     const template = templates[selectedCase].template(data);
-    document.getElementById('templatePreview').innerText = template;
-    validateFields(selectedCase);
-}
+                templates[selectedCase].fields.forEach(field => {
+                    const element = document.getElementById(field); // Find the input field for the current field
+                    if (element) {
+                        element.value = csvRow[field] || ''; // Populate the field
+                        data[field] = element.value; // Store the value in data
+                    } else {
+                        data[field] = csvRow[field] || '';
+                    }
+                });
+                data['eventSubtype'] = document.getElementById('eventSubtype')?.value || 'failure'
+                const template = templates[selectedCase].template(data);
+                document.getElementById('templatePreview').innerText = template;
+                validateFields(selectedCase);
+            }
 
             function validateFields(selectedCase) {
                 if (!selectedCase || !templates[selectedCase]) return;

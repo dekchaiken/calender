@@ -360,7 +360,6 @@
         <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
     </div>
 
-    <!-- Alert Modal -->
     <div id="alertModal" class="modal">
         <div class="modal-content">
             <h3 id="alertTitle">แจ้งเตือน</h3>
@@ -371,7 +370,6 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-content">
             <div class="loading-spinner"></div>
@@ -429,7 +427,6 @@
                                 </tr>
                             </thead>
                             <tbody id="allTemplateInfo">
-                                <!-- ข้อมูลจะถูกเพิ่มด้วย JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -461,7 +458,6 @@
                         <div id="variableList">
                         </div>
                         <div id="variableSelector" class="variable-selector">
-                            <!-- ตัวแปรจะถูกเพิ่มที่นี่ -->
                         </div>
                         <div style="margin-top: 0.5rem;">
                             <input type="text" id="newVariableInput" class="form-control" placeholder="เพิ่มตัวแปรใหม่">
@@ -495,7 +491,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script>
-        // Firebase initialization (ใช้ config เดิมจากไฟล์ following.html)
+        // Firebase initialization
         firebase.initializeApp({
             apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
             authDomain: "cyfencedevbyken.firebaseapp.com",
@@ -528,93 +524,93 @@
         let variableTypes = {};
 
         async function loadAllVariables() {
-                try {
-                     const db = firebase.firestore();
-                   const variablesSnapshot = await db.collection('variables').get();
+            try {
+                const db = firebase.firestore();
+                const variablesSnapshot = await db.collection('variables').get();
 
-                    availableVariables = [];
-                    variableDescriptions = {};
-                     variableTypes = {};
+                availableVariables = [];
+                variableDescriptions = {};
+                variableTypes = {};
 
-                      variablesSnapshot.forEach(doc => {
-                        const variableData = doc.data();
-                           availableVariables.push(doc.id);
-                            variableDescriptions[doc.id] = variableData.description;
-                             variableTypes[doc.id] = variableData.type;
-                     });
-                    loadVariableSelector();
-                } catch (error) {
-                     console.error('Error loading all variables:', error);
-                }
-         }
+                variablesSnapshot.forEach(doc => {
+                    const variableData = doc.data();
+                    availableVariables.push(doc.id);
+                    variableDescriptions[doc.id] = variableData.description;
+                    variableTypes[doc.id] = variableData.type;
+                });
+                loadVariableSelector();
+            } catch (error) {
+                console.error('Error loading all variables:', error);
+            }
+        }
 
         function loadCustomerList() {
-             const customerList = document.getElementById('customerList');
+            const customerList = document.getElementById('customerList');
             customerList.innerHTML = ''; // Clear previous list
             firebase.firestore().collection('customerManagement').doc('companyMappings').get()
-            .then(doc => {
-                 if (doc.exists) {
-                   const mappings = doc.data();
-                    const customerNames = Object.values(mappings).sort(); // Get sorted customer names
-                    customerNames.forEach(shortName => {
-                        const customerItem = document.createElement('div');
-                         customerItem.className = 'customer-item';
-                         const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.value = shortName;
-                        checkbox.id = `customer-${shortName}`;
-                         const label = document.createElement('label');
-                        label.htmlFor = `customer-${shortName}`;
-                         label.textContent = shortName;
-                        customerItem.appendChild(checkbox);
-                         customerItem.appendChild(label);
-                         customerList.appendChild(customerItem);
-                     });
-                 }
-              });
+                .then(doc => {
+                    if (doc.exists) {
+                        const mappings = doc.data();
+                        const customerNames = Object.values(mappings).sort(); // Get sorted customer names
+                        customerNames.forEach(shortName => {
+                            const customerItem = document.createElement('div');
+                            customerItem.className = 'customer-item';
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.value = shortName;
+                            checkbox.id = `customer-${shortName}`;
+                            const label = document.createElement('label');
+                            label.htmlFor = `customer-${shortName}`;
+                            label.textContent = shortName;
+                            customerItem.appendChild(checkbox);
+                            customerItem.appendChild(label);
+                            customerList.appendChild(customerItem);
+                        });
+                    }
+                });
         }
         function loadVariableSelector() {
             const variableSelector = document.getElementById('variableSelector');
             const variableList = document.getElementById('variableList');
-           if(variableSelector){
-            variableSelector.innerHTML = ''; // Clear previous buttons
+            if (variableSelector) {
+                variableSelector.innerHTML = ''; // Clear previous buttons
                 availableVariables.forEach(variable => {
                     const button = document.createElement('button');
                     button.textContent = `\${data.${variable}}`;
-                        button.className = 'variable-button';
-                        button.title = variableDescriptions[variable] || 'No description provided';
-                        button.onclick = () => insertVariable(button.textContent);
-                        variableSelector.appendChild(button);
-                 });
-              }
-             if (variableList) {
-                variableList.innerHTML = ''; // Clear previous list
-                availableVariables.forEach(variable => {
-                   const variableItem = document.createElement('div');
-                        variableItem.className = 'variable-item';
-                    const variableName = document.createElement('span');
-                      variableName.textContent = variable;
-                     variableName.style.fontWeight = 'bold';
-                     const variableDesc = document.createElement('span');
-                      variableDesc.textContent = `: ${variableDescriptions[variable] || 'No description'}`;
-                       const variableType = document.createElement('span');
-                        variableType.textContent = ` (${variableTypes[variable] || 'text'})`;
-                     variableItem.appendChild(variableName);
-                     variableItem.appendChild(variableDesc);
-                     variableItem.appendChild(variableType)
-                     variableList.appendChild(variableItem);
+                    button.className = 'variable-button';
+                    button.title = variableDescriptions[variable] || 'No description provided';
+                    button.onclick = () => insertVariable(button.textContent);
+                    variableSelector.appendChild(button);
                 });
             }
-         }
-         function insertVariable(variable) {
+            if (variableList) {
+                variableList.innerHTML = ''; // Clear previous list
+                availableVariables.forEach(variable => {
+                    const variableItem = document.createElement('div');
+                    variableItem.className = 'variable-item';
+                    const variableName = document.createElement('span');
+                    variableName.textContent = variable;
+                    variableName.style.fontWeight = 'bold';
+                    const variableDesc = document.createElement('span');
+                    variableDesc.textContent = `: ${variableDescriptions[variable] || 'No description'}`;
+                    const variableType = document.createElement('span');
+                    variableType.textContent = ` (${variableTypes[variable] || 'text'})`;
+                    variableItem.appendChild(variableName);
+                    variableItem.appendChild(variableDesc);
+                    variableItem.appendChild(variableType)
+                    variableList.appendChild(variableItem);
+                });
+            }
+        }
+        function insertVariable(variable) {
             const templateContent = document.getElementById('templateContent');
-             const cursorPosition = templateContent.selectionStart;
-             const textBefore = templateContent.value.substring(0, cursorPosition);
+            const cursorPosition = templateContent.selectionStart;
+            const textBefore = templateContent.value.substring(0, cursorPosition);
             const textAfter = templateContent.value.substring(templateContent.selectionEnd);
-             templateContent.value = textBefore + variable + textAfter;
-           templateContent.selectionStart = templateContent.selectionEnd = cursorPosition + variable.length;
-           templateContent.focus();
-         }
+            templateContent.value = textBefore + variable + textAfter;
+            templateContent.selectionStart = templateContent.selectionEnd = cursorPosition + variable.length;
+            templateContent.focus();
+        }
 
         function createModal(modalHtml) {
             const modal = document.createElement('div');
@@ -625,45 +621,45 @@
 
         function removeModal(modal) {
             if (modal) {
-                 modal.remove();
+                modal.remove();
             }
-       }
+        }
 
-       async function addNewVariable() {
-                const newVariableInput = document.getElementById('newVariableInput');
+        async function addNewVariable() {
+            const newVariableInput = document.getElementById('newVariableInput');
             const newVariable = newVariableInput.value.trim();
-                 const newVariableDescriptionInput = document.getElementById('newVariableDescription');
-                 const newVariableDescription = newVariableDescriptionInput.value.trim();
-                   const newVariableTypeSelect = document.getElementById('newVariableType');
-                 const newVariableType = newVariableTypeSelect.value;
-                 if (newVariable && !availableVariables.includes(newVariable)) {
+            const newVariableDescriptionInput = document.getElementById('newVariableDescription');
+            const newVariableDescription = newVariableDescriptionInput.value.trim();
+            const newVariableTypeSelect = document.getElementById('newVariableType');
+            const newVariableType = newVariableTypeSelect.value;
+            if (newVariable && !availableVariables.includes(newVariable)) {
                 try {
-                         const db = firebase.firestore();
-                       await db.collection('variables').doc(newVariable).set({
-                            description: newVariableDescription,
-                            type: newVariableType,
-                        });
-                     availableVariables.push(newVariable);
+                    const db = firebase.firestore();
+                    await db.collection('variables').doc(newVariable).set({
+                        description: newVariableDescription,
+                        type: newVariableType,
+                    });
+                    availableVariables.push(newVariable);
                     variableDescriptions[newVariable] = newVariableDescription;
                     variableTypes[newVariable] = newVariableType
-                      loadVariableSelector();
-                      newVariableInput.value = '';
-                     newVariableDescriptionInput.value = '';
-                      showAlertModal('เพิ่มตัวแปรสำเร็จ')
-                     } catch (error) {
-                        console.error('Error adding variable:', error);
-                         showAlertModal('เกิดข้อผิดพลาดในการเพิ่มตัวแปร')
-                     }
-                    } else if (availableVariables.includes(newVariable)) {
-                        showAlertModal('ชื่อตัวแปรนี้มีอยู่แล้ว')
-                  }
-          }
+                    loadVariableSelector();
+                    newVariableInput.value = '';
+                    newVariableDescriptionInput.value = '';
+                    showAlertModal('เพิ่มตัวแปรสำเร็จ')
+                } catch (error) {
+                    console.error('Error adding variable:', error);
+                    showAlertModal('เกิดข้อผิดพลาดในการเพิ่มตัวแปร')
+                }
+            } else if (availableVariables.includes(newVariable)) {
+                showAlertModal('ชื่อตัวแปรนี้มีอยู่แล้ว')
+            }
+        }
 
 
 
-          async function loadAllTemplateInfo() {
-               showLoadingOverlay('กำลังโหลดข้อมูล Template...');
-             try {
+        async function loadAllTemplateInfo() {
+            showLoadingOverlay('กำลังโหลดข้อมูล Template...');
+            try {
                 const db = firebase.firestore();
 
                 // ดึงข้อมูลทั้งหมดจาก Firestore
@@ -677,7 +673,7 @@
                         name: templateData.name,
                         fields: templateData.fields.join(', '),
                         template: templateData.template,
-                         customers: templateData.customers ? templateData.customers.join(', ') : 'all',
+                        customers: templateData.customers ? templateData.customers.join(', ') : 'all',
                     });
                 });
 
@@ -707,9 +703,9 @@
 
             } catch (error) {
                 console.error('Error loading all template info:', error);
-                 showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล Template');
-            }finally {
-               closeLoadingOverlay();
+                showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล Template');
+            } finally {
+                closeLoadingOverlay();
             }
         }
         async function editTemplateInfo(id, name, fields, template, customers) {
@@ -758,57 +754,57 @@
                 </div>
             </div>
         `;
-         const modal = createModal(modalHtml);
+            const modal = createModal(modalHtml);
             loadVariableManagementList()
             loadCustomerListForEdit(customers.split(','));
             loadEditVariableSelector(fields.split(','));
         }
 
-        function loadVariableManagementList(){
-             const variableManagementList = document.getElementById('variableManagementList');
-               variableManagementList.innerHTML = '';
-                   availableVariables.forEach(variable => {
-                        const variableItem = document.createElement('div');
-                         variableItem.style.display = 'flex';
-                          variableItem.style.alignItems = 'center';
-                         variableItem.style.justifyContent = 'space-between';
-                         variableItem.style.padding = '0.5rem';
-                        const variableName = document.createElement('span');
-                         variableName.style.fontWeight = 'bold'
-                          variableName.textContent = variable;
-                        const variableDesc = document.createElement('span');
-                       variableDesc.textContent = `: ${variableDescriptions[variable] || 'No description'}`;
-                        const variableType = document.createElement('span');
-                         variableType.textContent = ` (${variableTypes[variable] || 'text'})`;
-                         const buttonDelete = document.createElement('button');
-                        buttonDelete.innerHTML = 'ลบ';
-                       buttonDelete.className = 'btn btn-danger';
-                      buttonDelete.style.marginLeft = '1rem'
-                      buttonDelete.style.padding = '0.5rem 1rem';
-                         buttonDelete.onclick = () => deleteVariable(variable)
-                     variableItem.appendChild(variableName);
-                      variableItem.appendChild(variableDesc);
-                       variableItem.appendChild(variableType);
-                     variableItem.appendChild(buttonDelete)
-                     variableManagementList.appendChild(variableItem);
-                  });
-           }
+        function loadVariableManagementList() {
+            const variableManagementList = document.getElementById('variableManagementList');
+            variableManagementList.innerHTML = '';
+            availableVariables.forEach(variable => {
+                const variableItem = document.createElement('div');
+                variableItem.style.display = 'flex';
+                variableItem.style.alignItems = 'center';
+                variableItem.style.justifyContent = 'space-between';
+                variableItem.style.padding = '0.5rem';
+                const variableName = document.createElement('span');
+                variableName.style.fontWeight = 'bold'
+                variableName.textContent = variable;
+                const variableDesc = document.createElement('span');
+                variableDesc.textContent = `: ${variableDescriptions[variable] || 'No description'}`;
+                const variableType = document.createElement('span');
+                variableType.textContent = ` (${variableTypes[variable] || 'text'})`;
+                const buttonDelete = document.createElement('button');
+                buttonDelete.innerHTML = 'ลบ';
+                buttonDelete.className = 'btn btn-danger';
+                buttonDelete.style.marginLeft = '1rem'
+                buttonDelete.style.padding = '0.5rem 1rem';
+                buttonDelete.onclick = () => deleteVariable(variable)
+                variableItem.appendChild(variableName);
+                variableItem.appendChild(variableDesc);
+                variableItem.appendChild(variableType);
+                variableItem.appendChild(buttonDelete)
+                variableManagementList.appendChild(variableItem);
+            });
+        }
 
-           async function deleteVariable(variable) {
-                  if (confirm(`ต้องการลบตัวแปร ${variable} ใช่หรือไม่?`)) {
-                    try {
-                        const db = firebase.firestore();
-                        await db.collection('variables').doc(variable).delete();
-                            loadAllVariables()
-                             loadVariableSelector()
-                             loadVariableManagementList()
-                        showAlertModal('ลบตัวแปรสำเร็จ');
-                    } catch (error) {
-                        console.error('Error deleting variable:', error);
-                         showAlertModal('เกิดข้อผิดพลาดในการลบตัวแปร');
-                    }
-                 }
+        async function deleteVariable(variable) {
+            if (confirm(`ต้องการลบตัวแปร ${variable} ใช่หรือไม่?`)) {
+                try {
+                    const db = firebase.firestore();
+                    await db.collection('variables').doc(variable).delete();
+                    loadAllVariables()
+                    loadVariableSelector()
+                    loadVariableManagementList()
+                    showAlertModal('ลบตัวแปรสำเร็จ');
+                } catch (error) {
+                    console.error('Error deleting variable:', error);
+                    showAlertModal('เกิดข้อผิดพลาดในการลบตัวแปร');
+                }
             }
+        }
 
         function closeManageVariablesModal() {
             const modal = document.getElementById('manageVariablesModal');
@@ -886,21 +882,21 @@
         }
 
         function loadEditVariableSelector(fields) {
-       const variableSelector = document.getElementById('editVariableSelector');
+            const variableSelector = document.getElementById('editVariableSelector');
             variableSelector.innerHTML = ''; // Clear previous buttons
-                availableVariables = fields
-              availableVariables.forEach(variable => {
-                 const button = document.createElement('button');
+            availableVariables = fields
+            availableVariables.forEach(variable => {
+                const button = document.createElement('button');
                 button.textContent = `\${data.${variable}}`;
-                  button.className = 'variable-button';
-                 button.onclick = () => insertVariable(button.textContent);
-               variableSelector.appendChild(button);
-             });
-    }
+                button.className = 'variable-button';
+                button.onclick = () => insertVariable(button.textContent);
+                variableSelector.appendChild(button);
+            });
+        }
         // ฟังก์ชันปิด modal
         function closeEditTemplateModal() {
             removeModal(document.getElementById('editTemplateModal'));
-         }
+        }
 
         async function saveEditedTemplate(templateId) {
             showLoadingOverlay('กำลังบันทึก Template...');

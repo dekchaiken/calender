@@ -262,7 +262,6 @@
         <div class="admin-card">
             <h2>ประกาศทั้งหมด</h2>
             <div class="announcement-list" id="announcementsList">
-                <!-- ประกาศจะถูกแสดงที่นี่ -->
             </div>
         </div>
     </div>
@@ -323,7 +322,7 @@
                 console.error('Error loading announcements:', error);
                 alert('เกิดข้อผิดพลาดในการโหลดประกาศ');
             } finally {
-              hideLoading();
+                hideLoading();
             }
         }
 
@@ -354,7 +353,7 @@
 
         // Delete announcement
         async function deleteAnnouncement(id) {
-             if (!confirm('คุณแน่ใจหรือไม่ที่จะลบประกาศนี้?')) return;
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะลบประกาศนี้?')) return;
             showLoading();
             try {
                 await firebase.firestore().collection('systemAnnouncements').doc(id).delete();
@@ -364,11 +363,11 @@
                 console.error('Error deleting announcement:', error);
                 alert('เกิดข้อผิดพลาดในการลบประกาศ');
             } finally {
-              hideLoading();
+                hideLoading();
             }
         }
-         // อัพเดทชื่อผู้ใช้ที่กำลังใช้งาน
-         firebase.auth().onAuthStateChanged(async (user) => {
+        // อัพเดทชื่อผู้ใช้ที่กำลังใช้งาน
+        firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
                 try {
                     const userDoc = await firebase.firestore()
@@ -385,7 +384,7 @@
                         displayElement.textContent = user.email;
                     }
 
-                     // โหลดประกาศเมื่อเข้าสู่ระบบสำเร็จ
+                    // โหลดประกาศเมื่อเข้าสู่ระบบสำเร็จ
                     loadAnnouncements();
                 } catch (error) {
                     console.error('Error fetching user data:', error);
@@ -395,8 +394,8 @@
             }
         });
 
-           // ฟังก์ชันออกจากระบบ
-           function logout() {
+        // ฟังก์ชันออกจากระบบ
+        function logout() {
             firebase.auth().signOut()
                 .then(() => window.location.href = 'login.html')
                 .catch(error => console.error('Logout error:', error));

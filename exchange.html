@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Shift Exchange</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
-       <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="assets/css/components.css">
     <style>
         :root {
             --primary: #FDB813;
@@ -14,8 +21,9 @@
             --secondary: #404040;
             --accent: #2D2D2D;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-             --gray: #f0f0f0;
-              --light-gray: #fafafa;
+            --gray: #f0f0f0;
+            --light-gray: #fafafa;
+            font-size: 10px;
         }
 
         * {
@@ -34,7 +42,8 @@
             margin: 2rem auto;
             padding: 0 1rem;
         }
-         .header {
+
+        .header {
             display: flex;
             align-items: center;
             padding: 1rem 2rem;
@@ -47,6 +56,7 @@
             margin-right: 2rem;
             transition: transform 0.3s ease;
         }
+
         .user-container {
             display: flex;
             align-items: center;
@@ -74,7 +84,8 @@
             font-weight: bold;
             color: #666;
         }
-         .nav-btn,
+
+        .nav-btn,
         .logout-btn,
         .admin-btn {
             padding: 8px 16px;
@@ -93,13 +104,15 @@
             background: #ff4444;
             color: white;
         }
-         .exchange-section {
+
+        .exchange-section {
             background: white;
             border-radius: 8px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
         }
+
         .exchange-header {
             display: flex;
             justify-content: space-between;
@@ -111,33 +124,37 @@
             font-size: 1.25rem;
             font-weight: 600;
         }
-         .request-list {
-             list-style: none;
+
+        .request-list {
+            list-style: none;
             margin: 0;
             padding: 0;
         }
-         .request-item {
+
+        .request-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem;
             border-bottom: 1px solid #eee;
-             background: var(--light-gray);
-             border-radius: 8px;
-               margin-bottom: 10px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
 
         .request-item:last-child {
             border-bottom: none;
         }
+
         .request-info {
             display: flex;
             align-items: flex-start;
             flex-direction: column;
             gap: 0.5rem;
-             width: 70%;
+            width: 70%;
         }
-         .action-btn {
+
+        .action-btn {
             padding: 6px 12px;
             border-radius: 4px;
             border: none;
@@ -155,24 +172,28 @@
             background: #ff4444;
             color: white;
         }
+
         /* Modal styles */
-          .modal {
+        .modal {
             display: none;
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
+            overflow-y: auto;
         }
-       
+
         .modal-content {
             background: white;
             padding: 2rem;
             border-radius: 8px;
             width: 100%;
-            max-width: 500px;
+            max-width: 700px;
+            position: relative;
         }
-         .modal-content h3 {
+
+        .modal-content h3 {
             margin-top: 0;
             color: var(--secondary);
         }
@@ -194,24 +215,26 @@
 
         .form-group input,
         .form-group select,
-         .form-group textarea {
+        .form-group textarea {
             width: 100%;
             padding: 0.5rem;
             border: 1px solid #ddd;
             border-radius: 4px;
             resize: none;
         }
+
         .shift-list {
-             list-style: none;
+            list-style: none;
             margin: 0;
             padding: 0;
-         }
+        }
+
         .shift-item {
-             display: flex;
+            display: flex;
             justify-content: space-between;
-             align-items: center;
+            align-items: center;
             padding: 0.50rem;
-             border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #eee;
         }
 
         .modal-buttons {
@@ -228,6 +251,7 @@
             border: none;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 10px;
         }
 
         .save-btn {
@@ -241,35 +265,34 @@
         }
 
         .table-container {
-    overflow-x: auto; /* Enable horizontal scrolling on smaller screens */
-}
+            overflow-x: auto;
+            /* Enable horizontal scrolling on smaller screens */
+        }
 
-.request-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
+        .request-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
 
-.request-table th,
-.request-table td {
-    padding: 0.75rem;
-    border: 1px solid #eee;
-    text-align: left;
-}
+        .request-table th,
+        .request-table td {
+            padding: 0.75rem;
+            border: 1px solid #eee;
+            text-align: left;
+        }
 
-.request-table th {
-    background: #f0f0f0;
-    font-weight: 600;
-}
-.request-table td {
-  vertical-align: top;
-}
-.action-btn-container{
-  display: flex;
-   gap:0.5rem;
-}
+        .request-table th {
+            background: #f0f0f0;
+            font-weight: 600;
+        }
 
-          #loadingScreen {
+        .action-btn-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #loadingScreen {
             position: fixed;
             inset: 0;
             background: rgba(255, 255, 255, 0.9);
@@ -295,6 +318,7 @@
                 transform: rotate(360deg);
             }
         }
+
         .loading-overlay {
             display: none;
             position: fixed;
@@ -321,13 +345,134 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
-         .alert-message {
+
+        .alert-message {
             margin: 1rem 0;
             line-height: 1.5;
-             color: var(--secondary);
+            color: var(--secondary);
         }
-        </style>
+
+        /* Calendar Styles */
+        .calendar {
+            width: 100%;
+            max-width: 300px;
+            /* ลดขนาดปฏิทิน */
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            table-layout: fixed;
+            /* Add this to make cell equal width */
+        }
+
+        .calendar th,
+        .calendar td {
+            padding: 5px;
+            text-align: center;
+            border: 1px solid #eee;
+            width: calc(100% / 7);
+            /* Add this to make cell equal width */
+            height: 35px;
+            /* Add this to make cell equal height */
+        }
+
+        .calendar th {
+            background: #f0f0f0;
+        }
+
+        .calendar td.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .calendar td:hover {
+            background: #eee;
+            cursor: pointer;
+        }
+
+        .calendar-container {
+            display: flex;
+            flex-wrap: wrap;
+            /* Allows items to wrap to the next line on smaller screens */
+            gap: 20px;
+            margin-bottom: 20px;
+            justify-content: center;
+            /* Center the calendars */
+        }
+
+        .calendar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: calc(50% - 10px);
+            /* Occupy 50% of the container width with a small gap */
+            min-width: 300px;
+        }
+
+        .calendar-wrapper h4 {
+            margin-bottom: 10px
+        }
+
+        .shift-times {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-width: 300px;
+        }
+
+        .shift-times.other {
+            margin-top: 0
+        }
+
+        .shift-time-item {
+            margin-bottom: 5px;
+            padding: 5px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .shift-time-item:hover {
+            background: var(--primary);
+            color: white
+        }
+
+        .shift-time-item.active {
+            background: var(--primary);
+            color: white
+        }
+
+        .form-group {
+            margin-bottom: 1rem
+        }
+
+        #exchangeWith {
+            width: 100%;
+            /* Make dropdown take full width */
+            margin-bottom: 10px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #aaa;
+        }
+
+        .close-modal-btn:hover {
+            color: var(--accent)
+        }
+    </style>
 </head>
+
 <body>
     <div id="loadingScreen">
         <div class="spinner"></div>
@@ -353,9 +498,14 @@
             <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
                 alt="Cyfence Logo" class="logo">
             <div class="user-container">
-                <span id="userDisplayName">Loading...</span>
-                 <button onclick="window.location.href='calendar.html'" class="nav-btn">ตารางเวร</button>
-                 <button onclick="window.location.href='dashboard.html'" class="nav-btn">หน้าหลัก</button>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <div class="user-details">
+                        <span id="userDisplayName">Loading...</span>
+                    </div>
+                </div>
+                <button onclick="window.location.href='calendar.html'" class="nav-btn">ตารางเวร</button>
+                <button onclick="window.location.href='dashboard.html'" class="nav-btn">หน้าหลัก</button>
                 <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
             </div>
         </div>
@@ -373,222 +523,254 @@
                                 <th>ผู้รับสลับ</th>
                                 <th>เวรของคุณ</th>
                                 <th>เวรที่จะสลับด้วย</th>
-                                 <th>เหตุผล</th>
-                                  <th>สถานะ</th>
+                                <th>เหตุผล</th>
+                                <th>สถานะ</th>
                                 <th>การกระทำ</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Request list will be populated by JavaScript -->
                         </tbody>
                     </table>
-                    <!-- Request list will be populated by JavaScript -->
+                </div>
             </div>
         </div>
-    </div>
-    <div id="requestModal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title">ขอสลับเวร</h3>
-            <form id="requestForm">
-              <div class="form-group">
-                  <label>เวรของคุณ (เลือกจากรายการ)</label>
-                     <ul class="shift-list" id="my-shift-list">
-                     </ul>
-                </div>
-                 <div class="form-group">
-                     <label for="myExchangeShift">เลือกเวรของคุณที่ต้องการสลับ</label>
-                     <select id="myExchangeShift" required>
-                         <option value="">เลือกเวรที่ต้องการสลับ</option>
-                     </select>
-                 </div>
-               <div class="form-group">
-                  <label for="exchangeWith">เลือกผู้ที่จะสลับเวรด้วย</label>
-                  <select id="exchangeWith" required>
-                    <option value="">เลือกผู้ใช้...</option>
-                  </select>
-               </div>
-               <div class="form-group">
-                  <label>เวรของคนที่จะสลับด้วย (เลือกจากรายการ)</label>
-                    <ul class="shift-list" id="other-shift-list">
-                     </ul>
-               </div>
-              <div class="form-group">
-                  <label for="otherExchangeShift">เลือกเวรของคนที่จะสลับด้วย</label>
-                  <select id="otherExchangeShift" required>
-                      <option value="">เลือกเวรของคนที่จะสลับด้วย</option>
-                    </select>
-              </div>
-                <div class="form-group">
-                   <label for="reason">เหตุผล</label>
-                    <textarea id="reason" rows="3" required></textarea>
-                </div>
-                <div class="modal-buttons">
-                    <button type="button" class="cancel-btn" onclick="closeRequestModal()">ยกเลิก</button>
-                     <button type="submit" class="save-btn">ส่งคำขอ</button>
-                </div>
-            </form>
+        <div id="requestModal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal-btn" onclick="closeRequestModal()"><i class="fa fa-times"></i></button>
+                <h3 class="modal-title">ขอสลับเวร</h3>
+                <form id="requestForm">
+                    <div class="calendar-container">
+                        <div class="calendar-wrapper">
+                            <h4>เวรของคุณ</h4>
+                            <table class="calendar" id="my-calendar">
+                                <thead>
+                                    <tr>
+                                        <th>อา</th>
+                                        <th>จ</th>
+                                        <th>อ</th>
+                                        <th>พ</th>
+                                        <th>พฤ</th>
+                                        <th>ศ</th>
+                                        <th>ส</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="my-calendar-body">
+                                </tbody>
+                            </table>
+                            <div class="shift-times" id="my-shift-times"></div>
+                        </div>
+                        <div class="calendar-wrapper">
+                            <label for="exchangeWith">เลือกผู้ที่จะสลับเวรด้วย</label>
+                            <select id="exchangeWith" required>
+                                <option value="">เลือกผู้ใช้...</option>
+                            </select>
+                            <div style="display:none" id="other-calendar-wrapper">
+                                <h4>เวรของคนที่จะสลับด้วย</h4>
+                                <table class="calendar" id="other-calendar">
+                                    <thead>
+                                        <tr>
+                                            <th>อา</th>
+                                            <th>จ</th>
+                                            <th>อ</th>
+                                            <th>พ</th>
+                                            <th>พฤ</th>
+                                            <th>ศ</th>
+                                            <th>ส</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="other-calendar-body">
+                                    </tbody>
+                                </table>
+                                <div class="shift-times" id="other-shift-times"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">เหตุผล</label>
+                        <textarea id="reason" rows="3" required></textarea>
+                    </div>
+                    <div class="modal-buttons">
+                        <button type="button" class="cancel-btn" onclick="closeRequestModal()">ยกเลิก</button>
+                        <button type="submit" class="save-btn">ส่งคำขอ</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script>
-        // Firebase configuration
-        firebase.initializeApp({
-            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
-            authDomain: "cyfencedevbyken.firebaseapp.com",
-            projectId: "cyfencedevbyken",
-            storageBucket: "cyfencedevbyken.appspot.com",
-            messagingSenderId: "632813871756",
-            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
-        });
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+        <script>
+            // Firebase configuration
+            firebase.initializeApp({
+                apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+                authDomain: "cyfencedevbyken.firebaseapp.com",
+                projectId: "cyfencedevbyken",
+                storageBucket: "cyfencedevbyken.appspot.com",
+                messagingSenderId: "632813871756",
+                appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+            });
 
-        const db = firebase.firestore();
-        let currentUser = null;
-
-         function showLoadingOverlay(message) {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            document.getElementById('loadingMessageOverlay').textContent = message;
-        }
-
-        function closeLoadingOverlay() {
-            document.getElementById('loadingOverlay').style.display = 'none';
-        }
-            // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
-        function showAlertModal(message) {
-             document.getElementById('alertMessage').textContent = message;
-            document.getElementById('alertModal').style.display = 'flex';
-        }
-
-        function closeAlertModal() {
-            document.getElementById('alertModal').style.display = 'none';
-        }
-        // Authentication check
-           firebase.auth().onAuthStateChanged(async (user) => {
-            if (user) {
-                currentUser = user;
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                const userData = userDoc.data();
-
-                document.getElementById('userDisplayName').textContent = userData?.displayName || user.email;
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-
-                 loadExchangeRequests();
-            } else {
-                 window.location.href = 'login.html';
+            const db = firebase.firestore();
+            let currentUser = null;
+            let myShifts = [];
+            let otherShifts = [];
+            let selectedMyDate = null;
+            let selectedOtherDate = null;
+            let selectedMyTime = null;
+            let selectedOtherTime = null;
+            function showLoadingOverlay(message) {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+                document.getElementById('loadingMessageOverlay').textContent = message;
             }
-        });
 
-        async function loadExchangeRequests() {
-       showLoadingOverlay('กำลังโหลดคำขอสลับเวร...');
-       try {
-            const userId = firebase.auth().currentUser.uid;
-             const snapshot = await db.collection('shift_exchanges').get();
-             const requestTableBody = document.querySelector('#exchange-requests tbody');
-            if (!requestTableBody) return;
-            requestTableBody.innerHTML = '';
-          if (snapshot.empty) {
-                requestTableBody.innerHTML = `<tr><td colspan="7">ไม่มีคำขอสลับเวร</td></tr>`;
-               return;
-           }
-            const requests = snapshot.docs.map(doc => ({
-                id: doc.id,
-               ...doc.data()
-           }));
+            function closeLoadingOverlay() {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+            // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+            function showAlertModal(message) {
+                document.getElementById('alertMessage').textContent = message;
+                document.getElementById('alertModal').style.display = 'flex';
+            }
 
-           for (const request of requests) {
-               const userDoc = await db.collection('users').doc(request.requestBy).get();
-               const userData = userDoc.data();
-              const userExchange = await db.collection('users').doc(request.exchangeWith).get();
-              const userExchangeData = userExchange.data();
+            function closeAlertModal() {
+                document.getElementById('alertModal').style.display = 'none';
+            }
+            // Authentication check
+            firebase.auth().onAuthStateChanged(async (user) => {
+                if (user) {
+                    currentUser = user;
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    const userData = userDoc.data();
 
-               const row = document.createElement('tr');
-                let actionsHtml = '';
+                    document.getElementById('userDisplayName').textContent = userData?.displayName || user.email;
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
 
-                   if(request.exchangeWith === userId){
-                    actionsHtml = `
-        <div class="action-btn-container">
-            <button class="action-btn nav-btn" onclick="showExchangeDetails('${request.id}')">ดูรายละเอียด</button>
-            ${actionsHtml}
-        </div>
+                    loadExchangeRequests();
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+
+            async function loadExchangeRequests() {
+                showLoadingOverlay('กำลังโหลดคำขอสลับเวร...');
+                try {
+                    const userId = firebase.auth().currentUser.uid;
+                    const snapshot = await db.collection('shift_exchanges')
+                        .where('requestBy', '==', userId)
+                        .get();
+                    const snapshot2 = await db.collection('shift_exchanges')
+                        .where('exchangeWith', '==', userId).get();
+                    const requests = [];
+                    snapshot.forEach(doc => {
+                        requests.push({ id: doc.id, ...doc.data() })
+                    });
+                    snapshot2.forEach(doc => {
+                        requests.push({ id: doc.id, ...doc.data() })
+                    });
+                    const requestTableBody = document.querySelector('#exchange-requests tbody');
+                    if (!requestTableBody) return;
+                    requestTableBody.innerHTML = '';
+                    if (requests.length === 0) {
+                        requestTableBody.innerHTML = `<tr><td colspan="7">ไม่มีคำขอสลับเวร</td></tr>`;
+                        return;
+                    }
+                    for (const request of requests) {
+                        const userDoc = await db.collection('users').doc(request.requestBy).get();
+                        const userData = userDoc.data();
+                        const userExchange = await db.collection('users').doc(request.exchangeWith).get();
+                        const userExchangeData = userExchange.data();
+
+                        const row = document.createElement('tr');
+                        let actionsHtml = '';
+                        if (request.status === 'pending') {
+                            if (request.exchangeWith === userId) {
+                                actionsHtml = `
+            <div class="action-btn-container">
+                <button class="action-btn nav-btn" onclick="showExchangeDetails('${request.id}')">ดูรายละเอียด</button>
+                   <button class="action-btn accept-btn" onclick="acceptExchangeRequest('${request.id}')">ยอมรับ</button>
+                <button class="action-btn reject-btn" onclick="rejectExchangeRequest('${request.id}', this.closest('tr'))">ปฏิเสธ</button>
+            </div>
+        `;
+                            } else if (request.requestBy === userId) {
+                                actionsHtml = request.status === 'accepted' ? `<button class="action-btn save-btn" onclick="generatePdf('${request.id}')">สร้าง PDF</button>` : '';
+                            }
+                        } else if (request.requestBy === userId && request.status === 'accepted') {
+                            actionsHtml = `<button class="action-btn save-btn" onclick="generatePdf('${request.id}')">สร้าง PDF</button>`;
+                        }
+                        row.innerHTML = `
+         <td>${userData?.displayName || userData?.email || 'Unknown User'}</td>
+         <td>${userExchangeData?.displayName || userExchangeData?.email || 'Unknown User'}</td>
+          <td>${request.myShift}</td>
+         <td>${request.otherTime}</td>
+         <td>${request.reason}</td>
+        <td>${request.status}</td>
+        <td>${actionsHtml}</td>
     `;
-                     } else if(request.requestBy === userId) {
-                         actionsHtml = request.status === 'accepted' ? `<button class="action-btn save-btn" onclick="generatePdf('${request.id}')">สร้าง PDF</button>` : '';
-                   }
-                row.innerHTML = `
-                     <td>${userData?.displayName || userData?.email || 'Unknown User'}</td>
-                     <td>${userExchangeData?.displayName || userExchangeData?.email || 'Unknown User'}</td>
-                      <td>${request.myShift}</td>
-                     <td>${request.otherTime}</td>
-                     <td>${request.reason}</td>
-                    <td>${request.status}</td>
-                    <td>${actionsHtml}</td>
-                `;
-                 requestTableBody.appendChild(row);
-         }
-        } catch (error) {
-            console.error("Error loading shift exchanges:", error);
-             showAlertModal('เกิดข้อผิดพลาดในการโหลดคำขอสลับเวร');
-        } finally {
-            closeLoadingOverlay();
-        }
-}
-          async function acceptExchangeRequest(exchangeId){
-        showLoadingOverlay('กำลังยอมรับคำขอ...');
-        try {
-            const exchangeDoc = await db.collection('shift_exchanges').doc(exchangeId).get();
-            const exchangeData = exchangeDoc.data();
+                        requestTableBody.appendChild(row);
+                    }
+                } catch (error) {
+                    console.error("Error loading shift exchanges:", error);
+                    showAlertModal('เกิดข้อผิดพลาดในการโหลดคำขอสลับเวร');
+                } finally {
+                    closeLoadingOverlay();
+                }
+            }
+            async function acceptExchangeRequest(exchangeId) {
+                showLoadingOverlay('กำลังยอมรับคำขอ...');
+                try {
+                    const exchangeDoc = await db.collection('shift_exchanges').doc(exchangeId).get();
+                    const exchangeData = exchangeDoc.data();
 
-             // แสดงหน้าต่างยืนยัน
-            const isConfirmed = confirm(`ยืนยันการสลับเวรกับ ${exchangeData.requestBy}
+                    // แสดงหน้าต่างยืนยัน
+                    const isConfirmed = confirm(`ยืนยันการสลับเวรกับ ${exchangeData.requestBy}
                                      เวรของคุณ: ${exchangeData.myShift}
                                        เวรที่จะสลับด้วย: ${exchangeData.otherTime}
                                         คุณได้อ่านและเข้าใจรายละเอียดการสลับเวรแล้ว`)
-            if (!isConfirmed) {
-                closeLoadingOverlay();
-                return; // หากไม่ยืนยัน ให้หยุดการทำงาน
+                    if (!isConfirmed) {
+                        closeLoadingOverlay();
+                        return; // หากไม่ยืนยัน ให้หยุดการทำงาน
+                    }
+
+                    // บันทึกข้อมูลการยืนยัน
+                    const now = new Date();
+                    await db.collection('shift_exchanges').doc(exchangeId).update({
+                        status: 'accepted',
+                        confirmedBy: firebase.auth().currentUser.uid,
+                        confirmedAt: now,
+                        agreement: `ทั้งสองฝ่ายได้ตกลงที่จะสลับเวรตามเงื่อนไขที่ระบุไว้`, // เพิ่มข้อความแสดงความยินยอม
+                    });
+                    await updateShiftData(exchangeData);
+                    await loadExchangeRequests();
+                    showAlertModal('ยอมรับคำขอสลับเวรสำเร็จ');
+                } catch (error) {
+                    console.error("Error accepting shift exchange:", error);
+                    showAlertModal('เกิดข้อผิดพลาดในการยอมรับคำขอสลับเวร');
+                } finally {
+                    closeLoadingOverlay();
+                }
             }
 
-             // บันทึกข้อมูลการยืนยัน
-            const now = new Date();
-            await db.collection('shift_exchanges').doc(exchangeId).update({
-                 status: 'accepted',
-                 confirmedBy: firebase.auth().currentUser.uid,
-                 confirmedAt: now,
-                 agreement: `ทั้งสองฝ่ายได้ตกลงที่จะสลับเวรตามเงื่อนไขที่ระบุไว้`, // เพิ่มข้อความแสดงความยินยอม
-            });
-            await updateShiftData(exchangeData);
-            await loadExchangeRequests();
-              showAlertModal('ยอมรับคำขอสลับเวรสำเร็จ');
-        } catch (error) {
-            console.error("Error accepting shift exchange:", error);
-            showAlertModal('เกิดข้อผิดพลาดในการยอมรับคำขอสลับเวร');
-        } finally {
-            closeLoadingOverlay();
-        }
-    }
+            async function generatePdf(exchangeId) {
+                showLoadingOverlay('กำลังสร้าง PDF...');
+                try {
+                    // ตรวจสอบว่ามี html2pdf หรือไม่
+                    if (typeof html2pdf === 'undefined') {
+                        throw new Error('html2pdf library is not loaded');
+                    }
 
-    async function generatePdf(exchangeId) {
-    showLoadingOverlay('กำลังสร้าง PDF...');
-    try {
-        // ตรวจสอบว่ามี html2pdf หรือไม่
-        if (typeof html2pdf === 'undefined') {
-            throw new Error('html2pdf library is not loaded');
-        }
+                    const exchangeDoc = await db.collection('shift_exchanges').doc(exchangeId).get();
+                    const exchangeData = exchangeDoc.data();
 
-        const exchangeDoc = await db.collection('shift_exchanges').doc(exchangeId).get();
-        const exchangeData = exchangeDoc.data();
-        
-        const userDoc = await db.collection('users').doc(exchangeData.requestBy).get();
-        const userData = userDoc.data();
-        
-        const userExchange = await db.collection('users').doc(exchangeData.exchangeWith).get();
-        const userExchangeData = userExchange.data();
+                    const userDoc = await db.collection('users').doc(exchangeData.requestBy).get();
+                    const userData = userDoc.data();
 
-        // สร้าง element ชั่วคราวสำหรับ PDF
-        const content = document.createElement('div');
-        content.innerHTML = `
+                    const userExchange = await db.collection('users').doc(exchangeData.exchangeWith).get();
+                    const userExchangeData = userExchange.data();
+
+                    // สร้าง element ชั่วคราวสำหรับ PDF
+                    const content = document.createElement('div');
+                    content.innerHTML = `
             <div style="font-family: 'Sarabun', sans-serif; padding: 20px;">
                 <h1 style="text-align: center; margin-bottom: 20px;">ใบยืนยันการสลับเวร</h1>
                 <div style="margin-bottom: 20px;">
@@ -624,51 +806,51 @@
             </div>
         `;
 
-        // เพิ่ม element เข้าไปใน body ชั่วคราว
-        document.body.appendChild(content);
+                    // เพิ่ม element เข้าไปใน body ชั่วคราว
+                    document.body.appendChild(content);
 
-        // กำหนดค่า options สำหรับ html2pdf
-        const opt = {
-            margin: 1,
-            filename: `exchange_${exchangeId}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2,
-                useCORS: true,
-                logging: true
-            },
-            jsPDF: { 
-                unit: 'in', 
-                format: 'a4', 
-                orientation: 'portrait',
+                    // กำหนดค่า options สำหรับ html2pdf
+                    const opt = {
+                        margin: 1,
+                        filename: `exchange_${exchangeId}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: {
+                            scale: 2,
+                            useCORS: true,
+                            logging: true
+                        },
+                        jsPDF: {
+                            unit: 'in',
+                            format: 'a4',
+                            orientation: 'portrait',
+                        }
+                    };
+
+                    // สร้าง PDF
+                    await html2pdf().set(opt).from(content).save();
+
+                    // ลบ element ชั่วคราว
+                    document.body.removeChild(content);
+
+                    showAlertModal('สร้าง PDF สำเร็จ');
+                } catch (error) {
+                    console.error("Error generating pdf:", error);
+                    showAlertModal('เกิดข้อผิดพลาดในการสร้าง PDF: ' + error.message);
+                } finally {
+                    closeLoadingOverlay();
+                }
             }
-        };
 
-        // สร้าง PDF
-        await html2pdf().set(opt).from(content).save();
+            function checkLibraryLoaded() {
+                if (typeof html2pdf === 'undefined') {
+                    showAlertModal('กำลังโหลดไลบรารี html2pdf กรุณารอสักครู่...');
+                    return false;
+                }
+                return true;
+            }
 
-        // ลบ element ชั่วคราว
-        document.body.removeChild(content);
-        
-        showAlertModal('สร้าง PDF สำเร็จ');
-    } catch (error) {
-        console.error("Error generating pdf:", error);
-        showAlertModal('เกิดข้อผิดพลาดในการสร้าง PDF: ' + error.message);
-    } finally {
-        closeLoadingOverlay();
-    }
-}
-
-function checkLibraryLoaded() {
-    if (typeof html2pdf === 'undefined') {
-        showAlertModal('กำลังโหลดไลบรารี html2pdf กรุณารอสักครู่...');
-        return false;
-    }
-    return true;
-}
-
-const style = document.createElement('style');
-style.textContent = `
+            const style = document.createElement('style');
+            style.textContent = `
     .exchange-details {
         margin: 20px 0;
         line-height: 1.6;
@@ -683,79 +865,80 @@ style.textContent = `
         margin-right: 8px;
     }
 `;
-document.head.appendChild(style);
+            document.head.appendChild(style);
 
 
-    async function updateShiftData(exchangeData) {
-        try {
-            const requestBy = exchangeData.requestBy;
-            const exchangeWith = exchangeData.exchangeWith;
-             const myShift = exchangeData.myShift;
-           const otherTime = exchangeData.otherTime;
+            async function updateShiftData(exchangeData) {
+                try {
+                    const requestBy = exchangeData.requestBy;
+                    const exchangeWith = exchangeData.exchangeWith;
+                    const myShift = exchangeData.myShift;
+                    const otherTime = exchangeData.otherTime;
 
-           const myShiftDate = myShift.split(" ")[0]
-           const myShiftTime =  myShift.split(" ")[2] + '-' + myShift.split(" ")[3]
-           const otherShiftDate = otherTime.split(" ")[0]
-           const otherShiftTime = otherTime.split(" ")[2] + '-' + otherTime.split(" ")[3]
+                    const myShiftDate = myShift.split(" ")[0]
+                    const myShiftTime = myShift.split(" ")[2] + '-' + myShift.split(" ")[3]
+                    const otherShiftDate = otherTime.split(" ")[0]
+                    const otherShiftTime = otherTime.split(" ")[2] + '-' + otherTime.split(" ")[3]
 
-            const shiftPattern = await generateShiftPattern();
-              const myTeam = await findMyTeam(requestBy)
-           const otherTeam =  await findMyTeam(exchangeWith)
+                    const shiftPattern = await generateShiftPattern();
+                    const myTeam = await findMyTeam(requestBy)
+                    const otherTeam = await findMyTeam(exchangeWith)
 
-             const myShiftData = await getShiftsForDay(new Date(myShiftDate), shiftPattern, requestBy)
-             const otherShiftData = await getShiftsForDay(new Date(otherShiftDate), shiftPattern, exchangeWith)
+                    const myShiftData = await getShiftsForDay(new Date(myShiftDate), shiftPattern, requestBy)
+                    const otherShiftData = await getShiftsForDay(new Date(otherShiftDate), shiftPattern, exchangeWith)
 
 
-            // Function to find index of day
-            function findDateIndex(dateString) {
-                const date = new Date(dateString);
-               const startDate = new Date(2024, 0, 12);
-               const daysSinceStart = Math.floor((date - startDate) / (1000 * 60 * 60 * 24));
-              const patternIndex = ((daysSinceStart % 4) + 4) % 4;
-                return patternIndex;
+                    // Function to find index of day
+                    function findDateIndex(dateString) {
+                        const date = new Date(dateString);
+                        const startDate = new Date(2024, 0, 12);
+                        const daysSinceStart = Math.floor((date - startDate) / (1000 * 60 * 60 * 24));
+                        const patternIndex = ((daysSinceStart % 4) + 4) % 4;
+                        return patternIndex;
+                    }
+
+
+                    const myDateIndex = findDateIndex(myShiftDate)
+                    const otherDateIndex = findDateIndex(otherShiftDate)
+
+                    const myOriginalShift = shiftPattern[myDateIndex].find(shift => shift.color === myTeam && shift.time === myShiftTime)
+                    const otherOriginalShift = shiftPattern[otherDateIndex].find(shift => shift.color === otherTeam && shift.time === otherShiftTime)
+
+                    if (myOriginalShift && otherOriginalShift) {
+
+                        shiftPattern[myDateIndex] = shiftPattern[myDateIndex].map(shift => {
+                            if (shift.color === myTeam && shift.time === myShiftTime) {
+                                return {
+                                    ...shift,
+                                    name: otherShiftData?.name || 'undefined'
+                                }
+                            }
+                            return shift;
+                        });
+                        shiftPattern[otherDateIndex] = shiftPattern[otherDateIndex].map(shift => {
+                            if (shift.color === otherTeam && shift.time === otherShiftTime) {
+                                return {
+                                    ...shift,
+                                    name: myShiftData?.name || 'undefined'
+                                }
+                            }
+                            return shift;
+                        });
+                    }
+
+                } catch (error) {
+                    console.error("Error update data shift exchanges:", error);
+                    showAlertModal('เกิดข้อผิดพลาดในการปรับปรุงข้อมูลการสลับเวร');
+                }
             }
 
+            function showExchangeDetails(exchangeId) {
+                const detailsModal = document.createElement('div');
+                detailsModal.className = 'modal';
+                detailsModal.id = 'detailsModal';
 
-             const myDateIndex = findDateIndex(myShiftDate)
-              const otherDateIndex = findDateIndex(otherShiftDate)
-
-              const myOriginalShift = shiftPattern[myDateIndex].find(shift=> shift.color === myTeam && shift.time === myShiftTime)
-              const otherOriginalShift = shiftPattern[otherDateIndex].find(shift=> shift.color === otherTeam && shift.time === otherShiftTime)
-
-               if (myOriginalShift && otherOriginalShift) {
-
-                   shiftPattern[myDateIndex] = shiftPattern[myDateIndex].map(shift =>{
-                         if (shift.color === myTeam && shift.time === myShiftTime){
-                            return {
-                                ...shift,
-                                name: otherShiftData?.name || 'undefined'
-                            }
-                         }
-                         return shift;
-                   });
-                  shiftPattern[otherDateIndex] = shiftPattern[otherDateIndex].map(shift =>{
-                         if (shift.color === otherTeam && shift.time === otherShiftTime){
-                            return{
-                                 ...shift,
-                                name: myShiftData?.name || 'undefined'
-                             }
-                         }
-                       return shift;
-                     });
-                 }
-
-            }catch(error){
-               console.error("Error update data shift exchanges:", error);
-              showAlertModal('เกิดข้อผิดพลาดในการปรับปรุงข้อมูลการสลับเวร');
-           }
-      }
-
-      function showExchangeDetails(exchangeId) {
-    const detailsModal = document.createElement('div');
-    detailsModal.className = 'modal';
-    detailsModal.id = 'detailsModal';
-    
-    detailsModal.innerHTML = `
+                detailsModal.innerHTML = `
+            
         <div class="modal-content">
             <h3 class="modal-title">รายละเอียดการสลับเวร</h3>
             <div id="exchangeDetails"></div>
@@ -765,25 +948,25 @@ document.head.appendChild(style);
             </div>
         </div>
     `;
-    
-    document.body.appendChild(detailsModal);
-    loadExchangeDetails(exchangeId);
-    detailsModal.style.display = 'flex';
-}
 
-async function loadExchangeDetails(exchangeId) {
-    showLoadingOverlay('กำลังโหลดข้อมูล...');
-    try {
-        const exchangeDoc = await db.collection('shift_exchanges').doc(exchangeId).get();
-        const exchangeData = exchangeDoc.data();
-        
-        const requestByDoc = await db.collection('users').doc(exchangeData.requestBy).get();
-        const requestByData = requestByDoc.data();
-        
-        const exchangeWithDoc = await db.collection('users').doc(exchangeData.exchangeWith).get();
-        const exchangeWithData = exchangeWithDoc.data();
-        
-        const detailsHtml = `
+                document.body.appendChild(detailsModal);
+                loadExchangeDetails(exchangeId);
+                detailsModal.style.display = 'flex';
+            }
+
+            async function loadExchangeDetails(exchangeId) {
+                showLoadingOverlay('กำลังโหลดข้อมูล...');
+                try {
+                    const exchangeDoc = await db.collection('shift_exchanges').doc(exchangeId).get();
+                    const exchangeData = exchangeDoc.data();
+
+                    const requestByDoc = await db.collection('users').doc(exchangeData.requestBy).get();
+                    const requestByData = requestByDoc.data();
+
+                    const exchangeWithDoc = await db.collection('users').doc(exchangeData.exchangeWith).get();
+                    const exchangeWithData = exchangeWithDoc.data();
+
+                    const detailsHtml = `
             <div class="exchange-details">
                 <p><strong>สถานะ:</strong> ${exchangeData.status}</p>
                 <p><strong>ผู้ขอ:</strong> ${requestByData?.displayName || requestByData?.email}</p>
@@ -795,287 +978,499 @@ async function loadExchangeDetails(exchangeId) {
                 ${exchangeData.agreement ? `<p><strong>ข้อตกลง:</strong> ${exchangeData.agreement}</p>` : ''}
             </div>
         `;
-        
-        document.getElementById('exchangeDetails').innerHTML = detailsHtml;
-    } catch (error) {
-        console.error("Error loading exchange details:", error);
-        showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล');
-    } finally {
-        closeLoadingOverlay();
-    }
-}
 
-function closeDetailsModal() {
-    const modal = document.getElementById('detailsModal');
-    if (modal) {
-        modal.remove();
-    }
-}
-
-          async function rejectExchangeRequest(exchangeId){
-              showLoadingOverlay('กำลังปฏิเสธคำขอ...');
-             try{
-                  await db.collection('shift_exchanges').doc(exchangeId).update({
-                      status:'rejected'
-                  });
-                  await loadExchangeRequests();
-                showAlertModal('ปฏิเสธคำขอสลับเวรสำเร็จ');
-             }catch(error){
-               console.error("Error rejecting shift exchange:", error);
-                 showAlertModal('เกิดข้อผิดพลาดในการปฏิเสธคำขอสลับเวร');
-           } finally {
-                  closeLoadingOverlay();
-               }
-          }
-
-           async function showRequestModal() {
-               const modal = document.getElementById('requestModal');
-              modal.style.display = 'flex';
-                 showLoadingOverlay('กำลังโหลดข้อมูล...');
-                await loadMyExchangeShifts();
-               await loadTeamMembers();
-                 closeLoadingOverlay();
+                    document.getElementById('exchangeDetails').innerHTML = detailsHtml;
+                } catch (error) {
+                    console.error("Error loading exchange details:", error);
+                    showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+                } finally {
+                    closeLoadingOverlay();
+                }
             }
-            function closeRequestModal(){
+
+            function closeDetailsModal() {
+                const modal = document.getElementById('detailsModal');
+                if (modal) {
+                    modal.remove();
+                }
+            }
+
+            async function rejectExchangeRequest(exchangeId, rowElement) {
+                showLoadingOverlay('กำลังปฏิเสธคำขอ...');
+                try {
+                    await db.collection('shift_exchanges').doc(exchangeId).update({
+                        status: 'rejected'
+                    });
+                    if (rowElement) {
+                        rowElement.remove();
+                    }
+
+                    showAlertModal('ปฏิเสธคำขอสลับเวรสำเร็จ');
+                } catch (error) {
+                    console.error("Error rejecting shift exchange:", error);
+                    showAlertModal('เกิดข้อผิดพลาดในการปฏิเสธคำขอสลับเวร');
+                } finally {
+                    closeLoadingOverlay();
+                }
+            }
+
+            async function showRequestModal() {
+                const modal = document.getElementById('requestModal');
+                modal.style.display = 'flex';
+                document.getElementById('my-calendar-body').innerHTML = '<tr><td colspan="7">กำลังโหลด...</td></tr>';
+                document.getElementById('my-shift-times').innerHTML = '';
+                await Promise.all([loadTeamMembers(), loadMyCalendar()])
+                closeLoadingOverlay();
+            }
+            function closeRequestModal() {
                 const modal = document.getElementById('requestModal');
                 modal.style.display = 'none'
+                selectedMyDate = null;
+                selectedOtherDate = null;
+                selectedMyTime = null;
+                selectedOtherTime = null;
             }
-             async function loadTeamMembers() {
+            async function loadTeamMembers() {
                 const userSelect = document.getElementById('exchangeWith');
-                  if (!userSelect) return;
-                     showLoadingOverlay('กำลังโหลดรายชื่อสมาชิก...');
-                   try{
-                           const teams = ['red', 'green', 'blue', 'yellow'];
-                            userSelect.innerHTML = '<option value="">เลือกผู้ใช้...</option>';
-                             let allMembers = [];
-
-                             for (const team of teams) {
-                                const snapshot = await db.collection('teams').doc(team).collection('members').get();
-                              for( const doc of snapshot.docs){
-                                const data = doc.data()
-                                if(data.userId !== firebase.auth().currentUser.uid){
-                                      allMembers.push(data);
-                                      }
-                             }
-                          }
-                         for(const member of allMembers){
-                               const userDoc = await db.collection('users').doc(member.userId).get();
-                               const userData = userDoc.data()
-                                 const option = document.createElement('option');
-                                option.value = member.userId;
-                                option.textContent = userData?.displayName || userData?.email;
-                              userSelect.appendChild(option);
-                           }
-                    }catch (error) {
-                       console.error('Error loading users:', error);
-                     showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้');
-                   } finally{
-                           closeLoadingOverlay()
-                         }
-             }
-            async function loadMyExchangeShifts(){
-                const myShiftList = document.getElementById('my-shift-list');
-                if(!myShiftList) return
-                 const myExchangeShift = document.getElementById('myExchangeShift')
-                    if (!myExchangeShift) return;
-                     myShiftList.innerHTML = '';
-                     const shiftPattern = await generateShiftPattern()
-                      let myShifts = [];
-                    for(let i = 0; i < 7 ; i++){
-                      const date = new Date()
-                         date.setDate(date.getDate() + i)
-                        const shift = await getShiftsForDay(date, shiftPattern)
-                        if(shift && Object.keys(shift).length > 0){
-                           myShifts.push({date:date.toLocaleDateString('th-TH'), time: shift.time ,name: shift.name})
-                          const li = document.createElement('li');
-                            li.className = 'shift-item';
-                          li.innerHTML = `<span>${date.toLocaleDateString('th-TH')} : ${shift.time} - ${shift.name} </span>`
-                             myShiftList.appendChild(li);
-                           }
-                     }
-                    myExchangeShift.innerHTML =  '<option value="">เลือกเวรที่ต้องการสลับ</option>'
-                       myShifts.forEach(shift =>{
-                            const option = document.createElement('option');
-                           option.value = `${shift.date} : ${shift.time} - ${shift.name}`
-                          option.textContent = `${shift.date} : ${shift.time} - ${shift.name}`
-                          myExchangeShift.appendChild(option);
-                    })
-             }
-            async function loadOtherExchangeShifts(userId){
-                 const otherShiftList = document.getElementById('other-shift-list');
-                   if(!otherShiftList) return;
-                 const otherExchangeShift = document.getElementById('otherExchangeShift');
-                if (!otherExchangeShift) return;
-
-                    otherShiftList.innerHTML = '';
-                     otherExchangeShift.innerHTML = '<option value="">เลือกเวรของคนที่จะสลับด้วย</option>'
-                   const shiftPattern = await generateShiftPattern()
-                    let otherShifts = [];
-                    for(let i = 0; i < 7 ; i++){
-                         const date = new Date()
-                         date.setDate(date.getDate() + i)
-                       const shift = await getShiftsForDay(date, shiftPattern, userId)
-                         if(shift && Object.keys(shift).length > 0){
-                            otherShifts.push({date:date.toLocaleDateString('th-TH'), time: shift.time, name: shift.name})
-                             const li = document.createElement('li');
-                             li.className = 'shift-item';
-                           li.innerHTML = `<span>${date.toLocaleDateString('th-TH')} : ${shift.time} - ${shift.name} </span>`
-                            otherShiftList.appendChild(li);
-                          }
-                   }
-                   otherShifts.forEach(shift =>{
-                        const option = document.createElement('option');
-                      option.value = `${shift.date} : ${shift.time} - ${shift.name}`
-                         option.textContent = `${shift.date} : ${shift.time} - ${shift.name}`
-                           otherExchangeShift.appendChild(option);
-                   })
-             }
-              async function getShiftsForDay(date, shiftPattern, userId) {
-                  const startDate = new Date(2024, 0, 12);
-                    const daysSinceStart = Math.floor((date - startDate) / (1000 * 60 * 60 * 24));
-                   const patternIndex = (daysSinceStart % 4 + 4) % 4;
-                   let myTeam = ''
-                   if(!userId){
-                      myTeam = await findMyTeam(firebase.auth().currentUser.uid)
-                    } else{
-                       myTeam = await findMyTeam(userId)
-                    }
-                   if(shiftPattern) {
-                      const shift = shiftPattern[patternIndex].find(shift => shift.color === myTeam);
-                     if(shift){
-                        return shift
-                      }
-                    }
-                     return {}
-               }
-             async function findMyTeam(userId) {
-                  const teams = ['red', 'green', 'blue', 'yellow'];
-                     for (const team of teams) {
-                     const snapshot = await db.collection('teams').doc(team).collection('members')
-                         .where('userId', '==', userId)
-                       .limit(1)
-                        .get();
-                           if (!snapshot.empty) {
-                             return team
-                         }
-                   }
-                  return ''
-             }
-         async function generateShiftPattern() {
-            const teams = ['red', 'green', 'blue', 'yellow'];
-             const shiftPattern = [];
-            const teamLeaders = {};
-
-           // Get team leaders
-           for (const team of teams) {
+                if (!userSelect) return;
+                showLoadingOverlay('กำลังโหลดรายชื่อสมาชิก...');
                 try {
-                   const leaderSnapshot = await firebase.firestore()
-                    .collection('teams')
-                    .doc(team)
-                    .collection('members')
-                   .where('role', '==', 'leader')
-                     .limit(1)
-                     .get();
+                    const teams = ['red', 'green', 'blue', 'yellow'];
+                    userSelect.innerHTML = '<option value="">เลือกผู้ใช้...</option>';
+                    let allMembers = [];
 
-                  if (!leaderSnapshot.empty) {
-                      const leaderData = leaderSnapshot.docs[0].data();
-                      const userDoc = await firebase.firestore()
-                       .collection('users')
-                      .doc(leaderData.userId)
-                       .get();
-
-                     teamLeaders[team] = userDoc.data().displayName;
-                     }
+                    for (const team of teams) {
+                        const snapshot = await db.collection('teams').doc(team).collection('members').get();
+                        for (const doc of snapshot.docs) {
+                            const data = doc.data()
+                            if (data.userId !== firebase.auth().currentUser.uid) {
+                                allMembers.push(data);
+                            }
+                        }
+                    }
+                    for (const member of allMembers) {
+                        const userDoc = await db.collection('users').doc(member.userId).get();
+                        const userData = userDoc.data()
+                        const option = document.createElement('option');
+                        option.value = member.userId;
+                        option.textContent = userData?.displayName || userData?.email;
+                        userSelect.appendChild(option);
+                    }
                 } catch (error) {
-                      console.error(`Error loading ${team} leader:`, error);
-                  }
-          }
+                    console.error('Error loading users:', error);
+                    showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้');
+                } finally {
+                    closeLoadingOverlay()
+                }
+            }
+            async function loadMyCalendar() {
+                const calendarBody = document.getElementById('my-calendar-body');
+                const shiftTimesDiv = document.getElementById('my-shift-times');
+                if (!calendarBody || !shiftTimesDiv) return;
+                calendarBody.innerHTML = '<tr><td colspan="7">กำลังโหลด...</td></tr>';
+                shiftTimesDiv.innerHTML = '';
+                const shiftPattern = await generateShiftPattern();
+                myShifts = [];
+                const today = new Date();
+                for (let i = 0; i < 30; i++) {
+                    const date = new Date();
+                    date.setDate(today.getDate() + i);
 
-            // Define shift patterns
-            const shifts = [
-                [
-                    { time: '00:00-08:00', teams: ['red', 'yellow', 'green', 'blue'] },
-                  { time: '08:00-16:00', teams: ['green', 'blue', 'red', 'yellow'] },
-                    { time: '16:00-00:00', teams: ['yellow', 'green', 'blue', 'red'] }
-                ],
-                [
-                    { time: '00:00-08:00', teams: ['yellow', 'green', 'blue', 'red'] },
-                    { time: '08:00-16:00', teams: ['blue', 'red', 'yellow', 'green'] },
-                    { time: '16:00-00:00', teams: ['green', 'blue', 'red', 'yellow'] }
-                ],
-                [
-                    { time: '00:00-08:00', teams: ['green', 'blue', 'red', 'yellow'] },
-                     { time: '08:00-16:00', teams: ['red', 'yellow', 'green', 'blue'] },
-                    { time: '16:00-00:00', teams: ['blue', 'red', 'yellow', 'green'] }
-                ],
-                [
-                    { time: '00:00-08:00', teams: ['blue', 'red', 'yellow', 'green'] },
-                    { time: '08:00-16:00', teams: ['yellow', 'green', 'blue', 'red'] },
-                    { time: '16:00-00:00', teams: ['red', 'yellow', 'green', 'blue'] }
-                ]
-            ];
+                    const shift = await getShiftsForDay(date, shiftPattern);
+                    if (shift && Object.keys(shift).length > 0) {
+                        myShifts.push({ date: date, time: shift.time, name: shift.name })
+                    }
+                }
+                calendarBody.innerHTML = '';
+                const firstDay = new Date(today);
+                const dayOfWeek = firstDay.getDay();
+                firstDay.setDate(firstDay.getDate() - dayOfWeek);
+                for (let week = 0; week < 5; week++) {
+                    const row = document.createElement('tr');
+                    for (let day = 0; day < 7; day++) {
+                        const currentDate = new Date(firstDay);
+                        currentDate.setDate(firstDay.getDate() + day + (week * 7));
+                        const formattedDate = currentDate.toLocaleDateString('th-TH');
 
-            // Generate pattern with actual leader names
-             shifts.forEach(day => {
-                 const dayPattern = day.map(shift => ({
-                     color: shift.teams[0],
-                   name: teamLeaders[shift.teams[0]] || 'undefined',
-                  time: shift.time
-                }));
-                 shiftPattern.push(dayPattern);
-             });
-            return shiftPattern;
-         }
-         document.getElementById('exchangeWith').addEventListener('change', async function() {
-               const selectedUserId = this.value;
-                 showLoadingOverlay('กำลังโหลดข้อมูล...');
-                  await loadOtherExchangeShifts(selectedUserId);
-                 closeLoadingOverlay();
-         });
-         document.getElementById('requestForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-           const myExchangeShift = document.getElementById('myExchangeShift').value;
-          const otherExchangeShift = document.getElementById('otherExchangeShift').value;
-            const exchangeWith = document.getElementById('exchangeWith').value;
-            const reason = document.getElementById('reason').value;
+                        const hasShift = myShifts.some(shift => shift.date.toLocaleDateString('th-TH') === formattedDate);
+                        const cell = document.createElement('td');
+                        cell.textContent = currentDate.getDate();
+                        cell.setAttribute('data-date', formattedDate);
+                        if (hasShift) {
+                            cell.classList.add('active');
+                        }
+                        cell.addEventListener('click', () => {
+                            selectMyDate(cell);
+                        });
+                        row.appendChild(cell);
+                    }
+                    calendarBody.appendChild(row);
+                }
 
-            showLoadingOverlay('กำลังส่งคำขอสลับเวร...');
-            try {
-                const userId = firebase.auth().currentUser.uid;
-                 await db.collection('shift_exchanges').add({
-                    requestBy: userId,
-                     exchangeWith: exchangeWith,
-                     myShift:myExchangeShift,
-                     otherTime:otherExchangeShift,
-                    reason:reason,
-                      status:'pending',
-                    createdAt: new Date(),
-                });
-                closeRequestModal();
-               showAlertModal('ส่งคำขอสลับเวรสำเร็จ')
-            } catch (error) {
-                 console.error("Error requesting shift exchange:", error);
-                 showAlertModal('เกิดข้อผิดพลาดในการส่งคำขอสลับเวร')
-            }finally{
-                 closeLoadingOverlay();
-           }
-      });
-          // Logout function
-           function logout() {
-            firebase.auth().signOut().then(() => {
-                window.location.href = 'login.html';
+            }
+            async function selectMyDate(cell) {
+                const calendarBody = document.getElementById('my-calendar-body');
+                const shiftTimesDiv = document.getElementById('my-shift-times');
+                if (!calendarBody || !shiftTimesDiv) return;
+                const selectedDate = cell.getAttribute('data-date');
+                const allCells = calendarBody.querySelectorAll('td')
+                allCells.forEach(td => td.classList.remove('active'));
+                if (selectedMyDate === selectedDate) {
+                    selectedMyDate = null
+                    shiftTimesDiv.innerHTML = '';
+                } else {
+                    cell.classList.add('active');
+                    selectedMyDate = selectedDate;
+                    const currentShift = myShifts.find(shift => shift.date.toLocaleDateString('th-TH') === selectedDate)
+                    shiftTimesDiv.innerHTML = '';
+                    if (currentShift) {
+                        const timeButton = document.createElement('div');
+                        timeButton.className = 'shift-time-item'
+                        timeButton.textContent = `${currentShift.time} - ${currentShift.name}`
+                        timeButton.addEventListener('click', () => selectMyTime(timeButton, currentShift.time, currentShift.name))
+                        shiftTimesDiv.appendChild(timeButton)
+                    }
+                }
+
+            }
+            async function selectMyTime(element, time, name) {
+                const shiftTimesDiv = document.getElementById('my-shift-times');
+                if (!shiftTimesDiv) return;
+                const timeButtons = shiftTimesDiv.querySelectorAll('.shift-time-item');
+                timeButtons.forEach(button => button.classList.remove('active'));
+                if (selectedMyTime === time) {
+                    selectedMyTime = null;
+                } else {
+                    element.classList.add('active');
+                    selectedMyTime = time;
+                }
+
+            }
+            document.getElementById('exchangeWith').addEventListener('change', async function () {
+                const selectedUserId = this.value;
+                if (selectedUserId) {
+                    showLoadingOverlay('กำลังโหลดข้อมูล...');
+                    await loadOtherCalendar(selectedUserId);
+                    document.getElementById('other-calendar-wrapper').style.display = 'block'
+                } else {
+                    document.getElementById('other-calendar-wrapper').style.display = 'none'
+                }
+                closeLoadingOverlay();
             });
-        }
+            async function loadOtherCalendar(userId) {
+                const calendarBody = document.getElementById('other-calendar-body');
+                const shiftTimesDiv = document.getElementById('other-shift-times');
+                if (!calendarBody || !shiftTimesDiv) return;
+                calendarBody.innerHTML = '<tr><td colspan="7">กำลังโหลด...</td></tr>';
+                shiftTimesDiv.innerHTML = '';
+                const shiftPattern = await generateShiftPattern();
+                otherShifts = [];
+                const today = new Date();
+                for (let i = 0; i < 30; i++) {
+                    const date = new Date();
+                    date.setDate(today.getDate() + i);
 
-        // Close modal when clicking outside
-           window.onclick = function (event) {
-               const modal = document.getElementById('requestModal');
+                    const shift = await getShiftsForDay(date, shiftPattern, userId);
+                    if (shift && Object.keys(shift).length > 0) {
+                        otherShifts.push({ date: date, time: shift.time, name: shift.name })
+                    }
+                }
+                calendarBody.innerHTML = '';
+                const firstDay = new Date(today);
+                const dayOfWeek = firstDay.getDay();
+                firstDay.setDate(firstDay.getDate() - dayOfWeek);
+                for (let week = 0; week < 5; week++) {
+                    const row = document.createElement('tr');
+                    for (let day = 0; day < 7; day++) {
+                        const currentDate = new Date(firstDay);
+                        currentDate.setDate(firstDay.getDate() + day + (week * 7));
+                        const formattedDate = currentDate.toLocaleDateString('th-TH');
+
+                        const hasShift = otherShifts.some(shift => shift.date.toLocaleDateString('th-TH') === formattedDate);
+                        const cell = document.createElement('td');
+                        cell.textContent = currentDate.getDate();
+                        cell.setAttribute('data-date', formattedDate);
+                        if (hasShift) {
+                            cell.classList.add('active');
+                        }
+                        cell.addEventListener('click', () => {
+                            selectOtherDate(cell);
+                        });
+                        row.appendChild(cell);
+                    }
+                    calendarBody.appendChild(row);
+                }
+            }
+            document.getElementById('exchangeWith').addEventListener('change', async function () {
+                const selectedUserId = this.value;
+                if (selectedUserId) {
+                    document.getElementById('other-calendar-body').innerHTML = '<tr><td colspan="7">กำลังโหลด...</td></tr>';
+                    document.getElementById('other-shift-times').innerHTML = '';
+                    document.getElementById('other-calendar-wrapper').style.display = 'block'
+                    await loadOtherCalendar(selectedUserId);
+
+                } else {
+                    document.getElementById('other-calendar-wrapper').style.display = 'none'
+                }
+            });
+            async function selectOtherDate(cell) {
+                const calendarBody = document.getElementById('other-calendar-body');
+                const shiftTimesDiv = document.getElementById('other-shift-times');
+                if (!calendarBody || !shiftTimesDiv) return;
+                const selectedDate = cell.getAttribute('data-date');
+                const allCells = calendarBody.querySelectorAll('td')
+                allCells.forEach(td => td.classList.remove('active'));
+
+                if (selectedOtherDate === selectedDate) {
+                    selectedOtherDate = null
+                    shiftTimesDiv.innerHTML = '';
+                } else {
+                    cell.classList.add('active');
+                    selectedOtherDate = selectedDate;
+                    const currentShift = otherShifts.find(shift => shift.date.toLocaleDateString('th-TH') === selectedDate)
+                    shiftTimesDiv.innerHTML = '';
+                    if (currentShift) {
+                        const timeButton = document.createElement('div');
+                        timeButton.className = 'shift-time-item'
+                        timeButton.textContent = `${currentShift.time} - ${currentShift.name}`
+                        timeButton.addEventListener('click', () => selectOtherTime(timeButton, currentShift.time, currentShift.name))
+                        shiftTimesDiv.appendChild(timeButton)
+                    }
+                }
+            }
+            async function selectOtherTime(element, time, name) {
+                const shiftTimesDiv = document.getElementById('other-shift-times');
+                if (!shiftTimesDiv) return;
+                const timeButtons = shiftTimesDiv.querySelectorAll('.shift-time-item');
+                timeButtons.forEach(button => button.classList.remove('active'));
+                if (selectedOtherTime === time) {
+                    selectedOtherTime = null
+                } else {
+                    element.classList.add('active');
+                    selectedOtherTime = time;
+                }
+
+            }
+            async function getShiftsForDay(date, shiftPattern, userId) {
+                const startDate = new Date(2024, 0, 12);
+                const daysSinceStart = Math.floor((date - startDate) / (1000 * 60 * 60 * 24));
+                const patternIndex = (daysSinceStart % 4 + 4) % 4;
+                let myTeam = ''
+                if (!userId) {
+                    myTeam = await findMyTeam(firebase.auth().currentUser.uid)
+                } else {
+                    myTeam = await findMyTeam(userId)
+                }
+                if (shiftPattern) {
+                    const shift = shiftPattern[patternIndex].find(shift => shift.color === myTeam);
+                    if (shift) {
+                        return shift
+                    }
+                }
+                return {}
+            }
+            async function findMyTeam(userId) {
+                const teams = ['red', 'green', 'blue', 'yellow'];
+                for (const team of teams) {
+                    const snapshot = await db.collection('teams').doc(team).collection('members')
+                        .where('userId', '==', userId)
+                        .limit(1)
+                        .get();
+                    if (!snapshot.empty) {
+                        return team
+                    }
+                }
+                return ''
+            }
+            async function generateShiftPattern() {
+                const teams = ['red', 'green', 'blue', 'yellow'];
+                const shiftPattern = [];
+                const teamLeaders = {};
+
+                // Get team leaders
+                for (const team of teams) {
+                    try {
+                        const leaderSnapshot = await firebase.firestore()
+                            .collection('teams')
+                            .doc(team)
+                            .collection('members')
+                            .where('role', '==', 'leader')
+                            .limit(1)
+                            .get();
+
+                        if (!leaderSnapshot.empty) {
+                            const leaderData = leaderSnapshot.docs[0].data();
+                            const userDoc = await firebase.firestore()
+                                .collection('users')
+                                .doc(leaderData.userId)
+                                .get();
+
+                            teamLeaders[team] = userDoc.data().displayName;
+                        }
+                    } catch (error) {
+                        console.error(`Error loading ${team} leader:`, error);
+                    }
+                }
+
+                // Define shift patterns
+                const shifts = [
+                    [
+                        { time: '00:00-08:00', teams: ['red', 'yellow', 'green', 'blue'] },
+                        { time: '08:00-16:00', teams: ['green', 'blue', 'red', 'yellow'] },
+                        { time: '16:00-00:00', teams: ['yellow', 'green', 'blue', 'red'] }
+                    ],
+                    [
+                        { time: '00:00-08:00', teams: ['yellow', 'green', 'blue', 'red'] },
+                        { time: '08:00-16:00', teams: ['blue', 'red', 'yellow', 'green'] },
+                        { time: '16:00-00:00', teams: ['green', 'blue', 'red', 'yellow'] }
+                    ],
+                    [
+                        { time: '00:00-08:00', teams: ['green', 'blue', 'red', 'yellow'] },
+                        { time: '08:00-16:00', teams: ['red', 'yellow', 'green', 'blue'] },
+                        { time: '16:00-00:00', teams: ['blue', 'red', 'yellow', 'green'] }
+                    ],
+                    [
+                        { time: '00:00-08:00', teams: ['blue', 'red', 'yellow', 'green'] },
+                        { time: '08:00-16:00', teams: ['yellow', 'green', 'blue', 'red'] },
+                        { time: '16:00-00:00', teams: ['red', 'yellow', 'green', 'blue'] }
+                    ]
+                ];
+
+                // Generate pattern with actual leader names
+                shifts.forEach(day => {
+                    const dayPattern = day.map(shift => ({
+                        color: shift.teams[0],
+                        name: teamLeaders[shift.teams[0]] || 'undefined',
+                        time: shift.time
+                    }));
+                    shiftPattern.push(dayPattern);
+                });
+                return shiftPattern;
+            }
+
+            document.getElementById('requestForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!selectedMyDate || !selectedMyTime || !selectedOtherDate || !selectedOtherTime) {
+                    showAlertModal('กรุณาเลือกวันและเวลาที่ต้องการสลับเวร')
+                    return;
+                }
+                const exchangeWith = document.getElementById('exchangeWith').value;
+                const reason = document.getElementById('reason').value;
+                showLoadingOverlay('กำลังส่งคำขอสลับเวร...');
+                try {
+                    const userId = firebase.auth().currentUser.uid;
+                    await db.collection('shift_exchanges').add({
+                        requestBy: userId,
+                        exchangeWith: exchangeWith,
+                        myShift: `${selectedMyDate} : ${selectedMyTime} - ${myShifts.find(shift => shift.date.toLocaleDateString('th-TH') === selectedMyDate).name}`,
+                        otherTime: `${selectedOtherDate} : ${selectedOtherTime} - ${otherShifts.find(shift => shift.date.toLocaleDateString('th-TH') === selectedOtherDate).name}`,
+                        reason: reason,
+                        status: 'pending',
+                        createdAt: new Date(),
+                    });
+                    closeRequestModal();
+                    showAlertModal('ส่งคำขอสลับเวรสำเร็จ')
+                } catch (error) {
+                    console.error("Error requesting shift exchange:", error);
+                    showAlertModal('เกิดข้อผิดพลาดในการส่งคำขอสลับเวร')
+                } finally {
+                    closeLoadingOverlay();
+                }
+            });
+            // Logout function
+            function logout() {
+                firebase.auth().signOut().then(() => {
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // Close modal when clicking outside
+            window.onclick = function (event) {
+                const modal = document.getElementById('requestModal');
                 if (event.target === modal) {
-                   closeRequestModal();
-                 }
-          }
-           document.addEventListener('DOMContentLoaded', async() => {
-         })
+                    closeRequestModal();
+                }
+                const detailModal = document.getElementById('detailsModal')
+                if (event.target === detailModal) {
+                    closeDetailsModal()
+                }
+            }
+            document.addEventListener('DOMContentLoaded', async () => {
+            })
+
+            function showConfirmModal(message, myShift, otherTime, exchangeId) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.id = 'confirmModal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <h3 class="modal-title">ยืนยันการสลับเวร</h3>
+                        <p class="alert-message">${message}</p>
+                        <p class="alert-message"><strong>เวรของคุณ:</strong> ${myShift}</p>
+                        <p class="alert-message"><strong>เวรที่จะสลับด้วย:</strong> ${otherTime}</p>
+                           <p class="alert-message">คุณได้อ่านและเข้าใจรายละเอียดการสลับเวรแล้ว</p>
+                        <div class="modal-buttons">
+                            <button type="button" class="save-btn" onclick="closeConfirmModal(true, '${exchangeId}')">ตกลง</button>
+                            <button type="button" class="cancel-btn" onclick="closeConfirmModal(false)">ยกเลิก</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                modal.style.display = 'flex';
+            }
+
+
+            function closeConfirmModal(isConfirmed, exchangeId) {
+                const modal = document.getElementById('confirmModal');
+                if (modal) {
+                    modal.remove();
+                }
+                if (isConfirmed) {
+                    confirmAcceptExchange(exchangeId);
+                }
+
+            }
+
+
+            async function acceptExchangeRequest(exchangeId) {
+                showLoadingOverlay('กำลังยอมรับคำขอ...');
+                try {
+                    const exchangeDoc = await db.collection('shift_exchanges').doc(exchangeId).get();
+                    const exchangeData = exchangeDoc.data();
+                    showConfirmModal(`ยืนยันการสลับเวรกับ ${exchangeData.requestBy}`, exchangeData.myShift, exchangeData.otherTime, exchangeId)
+                } catch (error) {
+                    console.error("Error accepting shift exchange:", error);
+                    showAlertModal('เกิดข้อผิดพลาดในการยอมรับคำขอสลับเวร');
+                } finally {
+                    closeLoadingOverlay();
+                }
+            }
+            async function confirmAcceptExchange(exchangeId) {
+                showLoadingOverlay('กำลังยืนยันการสลับเวร...');
+                try {
+                    const exchangeDoc = await db.collection('shift_exchanges').doc(exchangeId).get();
+                    const exchangeData = exchangeDoc.data();
+
+                    // บันทึกข้อมูลการยืนยัน
+                    const now = new Date();
+                    await db.collection('shift_exchanges').doc(exchangeId).update({
+                        status: 'accepted',
+                        confirmedBy: firebase.auth().currentUser.uid,
+                        confirmedAt: now,
+                        agreement: `ทั้งสองฝ่ายได้ตกลงที่จะสลับเวรตามเงื่อนไขที่ระบุไว้`, // เพิ่มข้อความแสดงความยินยอม
+                    });
+                    await updateShiftData(exchangeData);
+                    await loadExchangeRequests();
+                    showAlertModal('ยอมรับคำขอสลับเวรสำเร็จ');
+
+                } catch (error) {
+                    console.error("Error accepting shift exchange:", error);
+                    showAlertModal('เกิดข้อผิดพลาดในการยอมรับคำขอสลับเวร');
+                } finally {
+                    closeLoadingOverlay();
+                }
+            }
         </script>
 </body>
+
 </html>

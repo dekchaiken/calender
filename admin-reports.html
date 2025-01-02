@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,8 +82,8 @@
         .report-title {
             font-size: 1.2rem;
             color: var(--secondary);
-             flex: 1;
-             overflow: hidden;
+            flex: 1;
+            overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
             max-width: 70%;
@@ -97,6 +98,7 @@
             margin-top: 0.5rem;
             color: #333;
         }
+
         .report-status {
             display: inline-block;
             padding: 0.4rem 0.8rem;
@@ -106,17 +108,20 @@
         }
 
         .status-open {
-            background-color: #ffc107; /* Warning */
+            background-color: #ffc107;
+            /* Warning */
             color: #212529;
         }
 
         .status-closed {
-            background-color: #28a745; /* Success */
+            background-color: #28a745;
+            /* Success */
             color: white;
         }
 
-         .status-pending {
-            background-color: #007bff; /* primary blue */
+        .status-pending {
+            background-color: #007bff;
+            /* primary blue */
             color: white;
         }
 
@@ -124,16 +129,17 @@
         .action-buttons {
             display: flex;
             gap: 0.5rem;
-            align-items:center;
+            align-items: center;
         }
 
-         .status-dropdown {
+        .status-dropdown {
             padding: 0.4rem 0.8rem;
             border: 1px solid #ddd;
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.9rem;
         }
+
         .action-button {
             padding: 0.4rem 0.8rem;
             border: none;
@@ -143,6 +149,7 @@
             background-color: #f5f5f5;
             border: 1px solid #ddd;
         }
+
         .action-button:hover {
             background-color: #eee;
         }
@@ -169,7 +176,8 @@
             height: 40px;
             margin-right: 2rem;
         }
-         .user-container {
+
+        .user-container {
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -210,6 +218,7 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         .back-btn {
             background: #ddd;
             color: #2D2D2D;
@@ -221,9 +230,11 @@
             margin-left: auto;
             transition: all 0.3s;
         }
+
         .back-btn:hover {
             background: #ccc;
         }
+
         h1 {
             margin-right: auto;
         }
@@ -233,7 +244,8 @@
             margin-top: 2rem;
             color: #888;
         }
-         .skeleton {
+
+        .skeleton {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
             animation: loading 1.5s infinite;
@@ -244,6 +256,7 @@
             0% {
                 background-position: 200% 0;
             }
+
             100% {
                 background-position: -200% 0;
             }
@@ -270,12 +283,14 @@
             height: 16px;
             width: 30%;
         }
+
         .report-skeleton-content {
             height: 80px;
             width: 100%;
             margin-top: 0.5rem;
         }
-         .loading-overlay {
+
+        .loading-overlay {
             display: none;
             position: fixed;
             inset: 0;
@@ -301,48 +316,49 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
+
         @keyframes spin {
             to {
                 transform: rotate(360deg);
             }
         }
-
     </style>
 </head>
+
 <body>
-     <div id="loadingScreen">
+    <div id="loadingScreen">
         <div class="spinner"></div>
         <div id="loadingMessage">กำลังตรวจสอบสิทธิ์...</div>
     </div>
-     <div id="mainContent" style="display: none">
-    <div class="header">
-        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo"
-        class="logo">
-        <h1>รายงานปัญหา</h1>
+    <div id="mainContent" style="display: none">
+        <div class="header">
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+                alt="Cyfence Logo" class="logo">
+            <h1>รายงานปัญหา</h1>
             <div class="user-container">
                 <div class="user-info">
                     <div class="user-avatar" id="userAvatar"></div>
                     <span class="user-name" id="userDisplayName">Loading...</span>
-                 <button onclick="window.location.href='admin.html'" class="back-btn">กลับหน้าแอดมิน</button>
-            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+                    <button onclick="window.location.href='admin.html'" class="back-btn">กลับหน้าแอดมิน</button>
+                    <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
                 </div>
+            </div>
         </div>
-    </div>
-    <div class="container" id="reportContainer">
-        <div id="reportSkeletons"></div>
-    </div>
-    <div id="loadingOverlay" class="loading-overlay">
+        <div class="container" id="reportContainer">
+            <div id="reportSkeletons"></div>
+        </div>
+        <div id="loadingOverlay" class="loading-overlay">
             <div class="loading-content">
                 <div class="loading-spinner"></div>
                 <p id="loadingMessage">กำลังดำเนินการ...</p>
             </div>
         </div>
     </div>
-     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
-     <script>
+    <script>
         const loadingOverlay = document.getElementById('loadingOverlay');
         const loadingMessage = document.getElementById('loadingMessage');
         const reportSkeletons = document.getElementById('reportSkeletons');
@@ -355,7 +371,7 @@
         function hideLoading() {
             loadingOverlay.style.display = 'none';
         }
-         function createSkeletons() {
+        function createSkeletons() {
             if (!reportSkeletons) return;
             reportSkeletons.innerHTML = Array(3).fill('').map(() => `
                 <div class="report-skeleton">
@@ -369,34 +385,34 @@
         }
 
         async function loadReports() {
-                const container = document.getElementById('reportContainer');
-                if (!container) return;
-                container.innerHTML = '';
+            const container = document.getElementById('reportContainer');
+            if (!container) return;
+            container.innerHTML = '';
 
-                createSkeletons();
-                 showLoading('กำลังโหลดรายงาน...');
+            createSkeletons();
+            showLoading('กำลังโหลดรายงาน...');
 
-                try {
-                    const snapshot = await firebase.firestore()
+            try {
+                const snapshot = await firebase.firestore()
                     .collection('bugReports')
                     .orderBy('createdAt', 'desc')
                     .get();
-                
+
                 if (reportSkeletons) {
                     reportSkeletons.innerHTML = '';
                 }
 
-                    if (snapshot.empty) {
-                        container.innerHTML = '<p class="no-reports">ไม่พบรายงานปัญหา</p>';
-                        return;
-                    }
-                    snapshot.forEach(doc => {
-                        const report = doc.data();
-                        const reportDate = report.createdAt ? new Date(report.createdAt.seconds * 1000).toLocaleDateString('th-TH') : 'N/A';
-                        const statusClass = report.status === 'open' ? 'status-open' : report.status === 'closed' ? 'status-closed' : 'status-pending';
-                         const reportElement = document.createElement('div');
-                        reportElement.className = 'report-card';
-                        reportElement.innerHTML = `
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="no-reports">ไม่พบรายงานปัญหา</p>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const report = doc.data();
+                    const reportDate = report.createdAt ? new Date(report.createdAt.seconds * 1000).toLocaleDateString('th-TH') : 'N/A';
+                    const statusClass = report.status === 'open' ? 'status-open' : report.status === 'closed' ? 'status-closed' : 'status-pending';
+                    const reportElement = document.createElement('div');
+                    reportElement.className = 'report-card';
+                    reportElement.innerHTML = `
                             <div class="report-header">
                                 <h2 class="report-title">${report.title}</h2>
                                 <span class="report-status ${statusClass}">${report.status}</span>
@@ -414,15 +430,15 @@
                                  <button class="action-button" onclick="deleteReport('${doc.id}')">ลบ</button>
                             </div>
                         `;
-                        container.appendChild(reportElement);
-                    });
-                } catch(error) {
-                    console.error("Error loading reports:", error);
-                    container.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดรายงาน</p>';
-                }finally{
-                    hideLoading();
-                }
-       }
+                    container.appendChild(reportElement);
+                });
+            } catch (error) {
+                console.error("Error loading reports:", error);
+                container.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดรายงาน</p>';
+            } finally {
+                hideLoading();
+            }
+        }
 
         async function updateReportStatus(selectElement) {
             const reportId = selectElement.dataset.reportId;
@@ -434,14 +450,14 @@
                 });
                 alert('อัปเดตสถานะรายงานสำเร็จ');
                 loadReports();
-            } catch(error){
+            } catch (error) {
                 console.error("Error updating report status:", error);
                 alert('เกิดข้อผิดพลาดในการอัปเดตสถานะ');
-            }finally{
+            } finally {
                 hideLoading();
             }
         }
-         async function deleteReport(reportId) {
+        async function deleteReport(reportId) {
             if (confirm("คุณต้องการลบรายงานนี้หรือไม่?")) {
                 showLoading("กำลังลบรายงาน...");
                 try {
@@ -449,17 +465,17 @@
                     alert('ลบรายงานสำเร็จ');
                     loadReports();
                 } catch (error) {
-                     console.error("Error deleting report:", error);
+                    console.error("Error deleting report:", error);
                     alert('เกิดข้อผิดพลาดในการลบรายงาน');
                 } finally {
-                     hideLoading();
+                    hideLoading();
                 }
             }
         }
         // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
-                  try {
+                try {
                     const userDoc = await firebase.firestore()
                         .collection('users')
                         .doc(user.uid)
@@ -470,36 +486,37 @@
                     const avatarElement = document.getElementById('userAvatar');
 
                     if (displayElement && avatarElement) {
-                    if (userData?.role !== 'admin') {
-                        window.location.href = 'dashboard.html';
-                     }
-                     if (userData?.displayName) {
-                        displayElement.textContent = userData.displayName;
-                    } else {
-                        displayElement.textContent = user.email;
+                        if (userData?.role !== 'admin') {
+                            window.location.href = 'dashboard.html';
+                        }
+                        if (userData?.displayName) {
+                            displayElement.textContent = userData.displayName;
+                        } else {
+                            displayElement.textContent = user.email;
+                        }
+                        if (userData?.avatar) {
+                            avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
+                        } else {
+                            avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+                        }
                     }
-                     if (userData?.avatar) {
-                        avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
-                    } else {
-                        avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
-                    }
-                }
-                     document.getElementById('loadingScreen').style.display = 'none';
-                     document.getElementById('mainContent').style.display = 'block';
-                     loadReports();
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                    loadReports();
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                 }
             } else {
-                 window.location.href = 'login.html';
+                window.location.href = 'login.html';
             }
         });
 
-         function logout() {
-                firebase.auth().signOut()
-                    .then(() => window.location.href = 'login.html')
-                    .catch(error => console.error('Logout error:', error));
-         }
-     </script>
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
+    </script>
 </body>
+
 </html>

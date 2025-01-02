@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,7 +53,7 @@
             flex-grow: 1;
         }
 
-          .user-container {
+        .user-container {
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -68,16 +69,16 @@
         }
 
         .nav-btn {
-             background: #f0f0f0;
+            background: #f0f0f0;
             color: var(--secondary);
             border: none;
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
-             transition: all 0.3s;
+            transition: all 0.3s;
         }
 
-         .logout-btn {
+        .logout-btn {
             background: #ff4444;
             color: white;
             border: none;
@@ -93,15 +94,16 @@
             border-radius: 8px;
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
-             display: flex;
-             flex-wrap: wrap;
-             gap: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-         .filter-group {
-                flex: 1 1 200px; /* Allow items to wrap */
-            }
-        
+        .filter-group {
+            flex: 1 1 200px;
+            /* Allow items to wrap */
+        }
+
         .filter-group label {
             display: block;
             margin-bottom: 0.5rem;
@@ -109,28 +111,30 @@
             color: var(--secondary);
         }
 
-        .filter-group select, .filter-group input {
+        .filter-group select,
+        .filter-group input {
             width: 100%;
             padding: 0.5rem;
             border: 1px solid #ddd;
             border-radius: 4px;
-             font-size: 0.9rem;
+            font-size: 0.9rem;
         }
 
         .logs-table {
             width: 100%;
             border-collapse: collapse;
             background: white;
-             border-radius: 8px;
-               box-shadow: var(--shadow);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
         }
 
         .logs-table th,
         .logs-table td {
-           padding: 0.75rem;
+            padding: 0.75rem;
             text-align: left;
             border-bottom: 1px solid #eee;
-              vertical-align: top; /* Align text to the top */
+            vertical-align: top;
+            /* Align text to the top */
         }
 
         .logs-table th {
@@ -144,30 +148,33 @@
             justify-content: center;
             gap: 0.5rem;
             margin-top: 1rem;
-               flex-wrap: wrap; /* Allow buttons to wrap */
+            flex-wrap: wrap;
+            /* Allow buttons to wrap */
         }
 
         .page-btn {
-             background: white;
+            background: white;
             border: 1px solid #ddd;
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s;
-           
+
         }
+
         .page-btn.active {
             background: var(--primary);
             color: var(--accent);
             border-color: var(--primary);
         }
 
-         .anomaly {
+        .anomaly {
             background: #ffebee;
             color: #b71c1c;
             font-weight: bold;
         }
-         .loading-overlay {
+
+        .loading-overlay {
             display: none;
             position: fixed;
             inset: 0;
@@ -199,26 +206,28 @@
                 transform: rotate(360deg);
             }
         }
+
         .log-details {
             white-space: pre-wrap;
             word-wrap: break-word;
             overflow-wrap: break-word;
-             max-width: 350px; /* Set your preferred max-width */
+            max-width: 350px;
+            /* Set your preferred max-width */
 
         }
     </style>
 </head>
+
 <body>
-     <!-- Loading Overlay -->
-        <div id="loadingOverlay" class="loading-overlay">
-            <div class="loading-content">
-                <div class="loading-spinner"></div>
-                <p id="loadingMessage">กำลังโหลดข้อมูล...</p>
-            </div>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingMessage">กำลังโหลดข้อมูล...</p>
         </div>
+    </div>
     <div class="header">
         <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
-             alt="Cyfence Logo" class="logo">
+            alt="Cyfence Logo" class="logo">
         <h1 class="admin-title">บันทึกการใช้งาน</h1>
         <div class="user-container">
             <span class="user-name" id="userDisplayName">Loading...</span>
@@ -235,33 +244,35 @@
             </div>
             <div class="filter-group">
                 <label for="endDate">ถึงวันที่</label>
-                 <input type="date" id="endDate">
+                <input type="date" id="endDate">
             </div>
-             <div class="filter-group">
+            <div class="filter-group">
                 <label for="userFilter">ผู้ใช้งาน</label>
                 <select id="userFilter">
                     <option value="">ทั้งหมด</option>
-                    <!-- Options will be added by JavaScript -->
+
                 </select>
             </div>
-              <div class="filter-group">
+            <div class="filter-group">
                 <label for="actionFilter">การกระทำ</label>
                 <select id="actionFilter">
                     <option value="">ทั้งหมด</option>
                     <option value="login">เข้าสู่ระบบ</option>
-                     <option value="logout">ออกจากระบบ</option>
-                     <option value="page_access">เข้าถึงหน้า</option>
+                    <option value="logout">ออกจากระบบ</option>
+                    <option value="page_access">เข้าถึงหน้า</option>
                     <option value="add_user">เพิ่มผู้ใช้งาน</option>
                     <option value="delete_user">ลบผู้ใช้งาน</option>
                     <option value="edit_user">แก้ไขผู้ใช้งาน</option>
-                   <option value="create_post">สร้างประกาศ</option>
+                    <option value="create_post">สร้างประกาศ</option>
                     <option value="delete_post">ลบประกาศ</option>
-                      <option value="update_following">แก้ไข Following</option>
-                     <option value="access_menu">เข้าเมนู</option>
+                    <option value="update_following">แก้ไข Following</option>
+                    <option value="access_menu">เข้าเมนู</option>
                 </select>
             </div>
-              <button onclick="applyFilters()" style=" margin-top: 20px; padding: 10px 20px; background: #FDB813; border: none; border-radius: 4px; color: black; font-weight: 600; cursor: pointer; transition: all 0.3s;">กรองข้อมูล</button>
-           <button onclick="resetFilters()" style=" margin-top: 20px; padding: 10px 20px; background: #ddd; border: none; border-radius: 4px; color: #404040; font-weight: 600; cursor: pointer; transition: all 0.3s;">รีเซ็ต</button>
+            <button onclick="applyFilters()"
+                style=" margin-top: 20px; padding: 10px 20px; background: #FDB813; border: none; border-radius: 4px; color: black; font-weight: 600; cursor: pointer; transition: all 0.3s;">กรองข้อมูล</button>
+            <button onclick="resetFilters()"
+                style=" margin-top: 20px; padding: 10px 20px; background: #ddd; border: none; border-radius: 4px; color: #404040; font-weight: 600; cursor: pointer; transition: all 0.3s;">รีเซ็ต</button>
         </div>
 
         <table class="logs-table">
@@ -271,32 +282,31 @@
                     <th>ผู้ใช้งาน</th>
                     <th>การกระทำ</th>
                     <th>รายละเอียด</th>
-                      <th>อุปกรณ์</th>
+                    <th>อุปกรณ์</th>
                 </tr>
             </thead>
             <tbody id="logsTableBody">
-                <!-- Logs will be added here -->
             </tbody>
         </table>
 
-          <div class="pagination" id="pagination">
-               <!-- Pagination buttons will be added here -->
+        <div class="pagination" id="pagination">
+
         </div>
     </div>
-    
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-        <script src="firebase-config.js"></script>
-        <script>
-         // ตัวแปรสำหรับการแบ่งหน้า
+    <script src="firebase-config.js"></script>
+    <script>
+        // ตัวแปรสำหรับการแบ่งหน้า
         const LOGS_PER_PAGE = 15;
         let currentPage = 1;
         let totalPages = 1;
         let allLogs = [];
         let lastVisible = null;
 
-          function showLoadingOverlay(message) {
+        function showLoadingOverlay(message) {
             document.getElementById('loadingOverlay').style.display = 'flex';
             document.getElementById('loadingMessage').textContent = message;
         }
@@ -307,17 +317,17 @@
 
         async function loadUsers() {
             const userFilter = document.getElementById('userFilter');
-             showLoadingOverlay('กำลังโหลดข้อมูลผู้ใช้...');
+            showLoadingOverlay('กำลังโหลดข้อมูลผู้ใช้...');
             try {
-                  const usersSnapshot = await db.collection('users').get();
+                const usersSnapshot = await db.collection('users').get();
                 usersSnapshot.forEach(doc => {
                     const userData = doc.data();
                     const option = document.createElement('option');
-                     option.value = doc.id;
-                     option.text = userData.displayName || userData.email;
-                     userFilter.appendChild(option);
+                    option.value = doc.id;
+                    option.text = userData.displayName || userData.email;
+                    userFilter.appendChild(option);
                 });
-            }catch(error) {
+            } catch (error) {
                 console.error('Error loading users:', error);
                 alert('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้');
             } finally {
@@ -325,58 +335,58 @@
             }
         }
 
-          // ฟังชันก์ loadLogs
+        // ฟังชันก์ loadLogs
         async function loadLogs(page = 1, filters = {}) {
-               showLoadingOverlay('กำลังโหลดข้อมูล Log...');
-             const logsTableBody = document.getElementById('logsTableBody');
-             const startDate = filters.startDate ? new Date(filters.startDate) : null;
-                const endDate = filters.endDate ? new Date(filters.endDate) : null;
-                const userFilter = filters.userFilter || '';
-                const actionFilter = filters.actionFilter || '';
+            showLoadingOverlay('กำลังโหลดข้อมูล Log...');
+            const logsTableBody = document.getElementById('logsTableBody');
+            const startDate = filters.startDate ? new Date(filters.startDate) : null;
+            const endDate = filters.endDate ? new Date(filters.endDate) : null;
+            const userFilter = filters.userFilter || '';
+            const actionFilter = filters.actionFilter || '';
             try {
-               
+
                 let query = db.collection('logs').orderBy('timestamp', 'desc');
-                
-                 if (startDate) {
+
+                if (startDate) {
                     query = query.where('timestamp', '>=', startDate);
                 }
-                 if (endDate) {
-                   const endOfDay = new Date(endDate);
-                  endOfDay.setHours(23, 59, 59, 999);
+                if (endDate) {
+                    const endOfDay = new Date(endDate);
+                    endOfDay.setHours(23, 59, 59, 999);
                     query = query.where('timestamp', '<=', endOfDay);
                 }
                 if (userFilter) {
                     query = query.where('userId', '==', userFilter);
                 }
-                 if (actionFilter) {
+                if (actionFilter) {
                     query = query.where('action', '==', actionFilter);
                 }
 
                 const snapshot = await query.get();
 
-                 allLogs = snapshot.docs;
-                 totalPages = Math.ceil(allLogs.length / LOGS_PER_PAGE);
+                allLogs = snapshot.docs;
+                totalPages = Math.ceil(allLogs.length / LOGS_PER_PAGE);
                 let paginatedDocs = [];
-                if(page===1) {
-                   paginatedDocs = snapshot.docs.slice(0, LOGS_PER_PAGE);
+                if (page === 1) {
+                    paginatedDocs = snapshot.docs.slice(0, LOGS_PER_PAGE);
                 }
                 else {
                     const start = (page - 1) * LOGS_PER_PAGE;
-                  const end = start + LOGS_PER_PAGE;
+                    const end = start + LOGS_PER_PAGE;
                     paginatedDocs = snapshot.docs.slice(start, end);
-                    }
+                }
                 logsTableBody.innerHTML = '';
-                
-                 paginatedDocs.forEach(doc => {
+
+                paginatedDocs.forEach(doc => {
                     const log = doc.data();
                     const timestamp = log.timestamp ? log.timestamp.toDate() : new Date();
-                     let details = log.details;
-                     if (typeof details === 'object') {
+                    let details = log.details;
+                    if (typeof details === 'object') {
                         details = JSON.stringify(details, null, 2);
                     }
 
 
-                const row = document.createElement('tr');
+                    const row = document.createElement('tr');
                     row.innerHTML = `
                         <td style="white-space: nowrap;">${timestamp.toLocaleString()}</td>
                         <td>${log.userId || 'ไม่ระบุ'}</td>
@@ -384,115 +394,115 @@
                          <td class="log-details">${details || 'ไม่มี'}</td>
                           <td style="white-space: nowrap;">${log.userAgent || 'ไม่ระบุ'}</td>
                        `;
-                 logsTableBody.appendChild(row);
-                     
+                    logsTableBody.appendChild(row);
+
                     if (isSuspiciousLog(log)) {
-                           row.classList.add('anomaly');
-                        }
+                        row.classList.add('anomaly');
+                    }
                 });
-                
-                 currentPage = page;
+
+                currentPage = page;
                 updatePagination();
             } catch (error) {
-                  console.error('Error loading logs:', error);
+                console.error('Error loading logs:', error);
                 alert('เกิดข้อผิดพลาดในการโหลด Log');
-           } finally {
+            } finally {
                 closeLoadingOverlay();
             }
         }
         function isSuspiciousLog(log) {
-              const isLoginLogout = log.action === 'login' || log.action === 'logout';
-           if (isLoginLogout && log.userAgent.includes("headless")) {
-               return true;
-           }
-           
-           const pageAccess = log.action === 'page_access';
-            if(pageAccess && log.details && log.details.includes("admin")){
-               return true;
-           }
+            const isLoginLogout = log.action === 'login' || log.action === 'logout';
+            if (isLoginLogout && log.userAgent.includes("headless")) {
+                return true;
+            }
 
-           const addUser = log.action === 'add_user';
-             if (addUser && log.userAgent.includes("headless")) {
-               return true;
-           }
-           const deleteUser = log.action === 'delete_user';
-             if (deleteUser && log.userAgent.includes("headless")) {
-               return true;
-           }
+            const pageAccess = log.action === 'page_access';
+            if (pageAccess && log.details && log.details.includes("admin")) {
+                return true;
+            }
+
+            const addUser = log.action === 'add_user';
+            if (addUser && log.userAgent.includes("headless")) {
+                return true;
+            }
+            const deleteUser = log.action === 'delete_user';
+            if (deleteUser && log.userAgent.includes("headless")) {
+                return true;
+            }
             const editUser = log.action === 'edit_user';
-              if (editUser && log.userAgent.includes("headless")) {
-               return true;
-           }
-             const createPost = log.action === 'create_post';
+            if (editUser && log.userAgent.includes("headless")) {
+                return true;
+            }
+            const createPost = log.action === 'create_post';
             if (createPost && log.userAgent.includes("headless")) {
                 return true;
             }
-             const deletePost = log.action === 'delete_post';
+            const deletePost = log.action === 'delete_post';
             if (deletePost && log.userAgent.includes("headless")) {
-               return true;
-           }
-              const updateFollowing = log.action === 'update_following';
-             if (updateFollowing && log.userAgent.includes("headless")) {
-               return true;
-           }
-           const accessMenu = log.action === 'access_menu';
-              if (accessMenu && log.userAgent.includes("headless")) {
                 return true;
             }
-           return false;
-        }
-       
-         function updatePagination() {
-        const pagination = document.getElementById('pagination');
-        pagination.innerHTML = '';
-
-       if (currentPage > 1) {
-           const prevBtn = document.createElement('button');
-           prevBtn.className = 'page-btn';
-            prevBtn.textContent = 'ก่อนหน้า';
-              prevBtn.onclick = () => {
-             loadLogs(currentPage - 1, filters);
-              };
-           pagination.appendChild(prevBtn);
-           }
-         for (let i = 1; i <= totalPages; i++) {
-           const pageBtn = document.createElement('button');
-           pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
-             pageBtn.textContent = i;
-            pageBtn.onclick = () => {
-             loadLogs(i, filters);
-         };
-           pagination.appendChild(pageBtn);
-        }
-           if (currentPage < totalPages) {
-             const nextBtn = document.createElement('button');
-            nextBtn.className = 'page-btn';
-             nextBtn.textContent = 'ถัดไป';
-             nextBtn.onclick = () => {
-             loadLogs(currentPage + 1, filters);
-         };
-              pagination.appendChild(nextBtn);
-             }
+            const updateFollowing = log.action === 'update_following';
+            if (updateFollowing && log.userAgent.includes("headless")) {
+                return true;
             }
-            let filters = {};
-           function applyFilters() {
-               filters = {
-                   startDate: document.getElementById('startDate').value,
-                   endDate: document.getElementById('endDate').value,
-                   userFilter: document.getElementById('userFilter').value,
-                    actionFilter: document.getElementById('actionFilter').value
-               };
-               loadLogs(1, filters);
-           }
-            function resetFilters() {
+            const accessMenu = log.action === 'access_menu';
+            if (accessMenu && log.userAgent.includes("headless")) {
+                return true;
+            }
+            return false;
+        }
+
+        function updatePagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            if (currentPage > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'page-btn';
+                prevBtn.textContent = 'ก่อนหน้า';
+                prevBtn.onclick = () => {
+                    loadLogs(currentPage - 1, filters);
+                };
+                pagination.appendChild(prevBtn);
+            }
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => {
+                    loadLogs(i, filters);
+                };
+                pagination.appendChild(pageBtn);
+            }
+            if (currentPage < totalPages) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'page-btn';
+                nextBtn.textContent = 'ถัดไป';
+                nextBtn.onclick = () => {
+                    loadLogs(currentPage + 1, filters);
+                };
+                pagination.appendChild(nextBtn);
+            }
+        }
+        let filters = {};
+        function applyFilters() {
+            filters = {
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                userFilter: document.getElementById('userFilter').value,
+                actionFilter: document.getElementById('actionFilter').value
+            };
+            loadLogs(1, filters);
+        }
+        function resetFilters() {
             document.getElementById('startDate').value = '';
             document.getElementById('endDate').value = '';
             document.getElementById('userFilter').value = '';
             document.getElementById('actionFilter').value = '';
-             loadLogs(1);
+            loadLogs(1);
         }
 
-            firebase.auth().onAuthStateChanged(async (user) => {
+        firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
                 try {
                     const userDoc = await firebase.firestore()
@@ -510,18 +520,19 @@
                     }
 
                     loadUsers();
-                      loadLogs();
+                    loadLogs();
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                 }
             }
         });
 
-          function logout() {
+        function logout() {
             firebase.auth().signOut()
                 .then(() => window.location.href = 'login.html')
                 .catch(error => console.error('Logout error:', error));
         }
     </script>
 </body>
+
 </html>

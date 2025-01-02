@@ -1,0 +1,535 @@
+/* กำหนดขนาด Font เริ่มต้นที่ root (html) */
+html {
+    font-size: 16px; /* ขนาด Font เริ่มต้น สามารถปรับได้ตามต้องการ */
+ }
+ :root {
+          --primary: #FDB813;
+          --primary-dark: #e5a700;
+          --secondary: #404040;
+          --accent: #2D2D2D;
+          --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+ 
+      * {
+          box-sizing: border-box;
+          font-family: 'Noto Sans Thai', sans-serif;
+          margin: 0;
+          padding: 0;
+      }
+ 
+      #loadingScreen {
+          position: fixed;
+          inset: 0;
+          background: rgba(255, 255, 255, 0.9);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+      }
+ 
+      .spinner {
+          border: 0.25rem solid #f3f3f3;
+          border-top: 0.25rem solid var(--primary);
+          border-radius: 50%;
+          width: 2.5rem;
+          height: 2.5rem;
+          animation: spin 1s linear infinite;
+          margin-bottom: 1.25rem;
+      }
+ 
+      @keyframes spin {
+          to {
+              transform: rotate(360deg);
+          }
+      }
+ 
+      body {
+          background: #f5f5f5;
+          font-size: 1rem;
+      }
+ 
+      .user-container {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-left: auto;
+          padding: 0.5rem 1rem;
+          background: #f5f5f5;
+          border-radius: 8px;
+      }
+ 
+      .user-info {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+      }
+      .user-details {
+      display: flex;
+      flex-direction: column;
+  }
+ 
+      .user-avatar {
+          width: 2rem;
+          height: 2rem;
+          background: #ddd;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          color: #666;
+      }
+ 
+      .user-name {
+          font-weight: 500;
+          color: #333;
+          font-size: 1rem;
+      }
+ 
+      .logout-btn {
+          background: #ff4444;
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.3s;
+          font-size: 1rem;
+      }
+ 
+      .nav-btn {
+          padding: 0.5rem 1rem;
+          background: #f0f0f0;
+          color: var(--secondary);
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.3s;
+          font-size: 1rem;
+      }
+ 
+      .logout-btn:hover {
+          background: #cc0000;
+          transform: translateY(-2px);
+      }
+ 
+      .logout-container {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+      }
+ 
+      .header {
+          display: flex;
+          align-items: center;
+          padding: 1rem 2rem;
+          background: white;
+          box-shadow: var(--shadow);
+          font-size: 1rem;
+      }
+ 
+      .logo {
+          height: 2.5rem;
+          margin-right: 2rem;
+          transition: transform 0.3s ease;
+      }
+ 
+      .logo:hover {
+          transform: scale(1.05);
+      }
+ 
+      .main-content {
+          font-size: 0.7rem;
+          max-width: 1200px;
+          margin: 2rem auto;
+          padding: 0 1rem;
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 2rem;
+          overflow-x: hidden;
+          /* ป้องกันการเลื่อนแนวนอน */
+      }
+ 
+ 
+      .announcement-card {
+          padding: 1rem;
+          border-bottom: 1px solid #eee;
+          margin-bottom: 1rem;
+      }
+ 
+      .announcement-card:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+      }
+ 
+      .menu-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+          gap: 1rem;
+      }
+ 
+      .menu-card {
+          background: white;
+          border-radius: 12px;
+          padding: 1.5rem;
+          text-align: center;
+          cursor: pointer;
+          transition: transform 0.2s;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%; /* Ensure the card takes the full height of its container */
+           font-size: 0.7rem;
+      }
+ 
+      .menu-card:hover {
+          transform: translateY(-5px);
+      }
+ 
+      .menu-icon {
+          font-size: 2rem;
+          margin-bottom: 1rem;
+          color: #FDB813;
+      }
+ 
+      .modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.9);
+      }
+ 
+      .modal-content {
+          margin: auto;
+          display: block;
+          max-width: 90%;
+          max-height: 90vh;
+          position: relative;
+          top: 50%;
+          transform: translateY(-50%);
+      }
+ 
+      .close {
+          position: absolute;
+          right: 20px;
+          top: 20px;
+          color: #f1f1f1;
+          font-size: 40px;
+          font-weight: bold;
+          cursor: pointer;
+      }
+ 
+      /* เพิ่ม style สำหรับส่วนโพสต์ */
+      .create-post-btn {
+          background: var(--primary);
+          color: var(--accent);
+          padding: 0.75rem 1.5rem;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          transition: all 0.3s;
+           font-size: 1rem;
+      }
+ 
+      .create-post-btn:hover {
+          background: var(--primary-dark);
+          transform: translateY(-2px);
+      }
+ 
+      .post-card {
+          width: 100%;
+          padding: 1.5rem;
+          border-bottom: 1px solid #eee;
+          margin-bottom: 1rem;
+          word-wrap: break-word;
+          /* ตัดคำเมื่อยาวเกินไป */
+          overflow-wrap: break-word;
+      }
+ 
+      .post-title {
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+          font-size: 1.2rem;
+      }
+ 
+      .post-content {
+          width: 100%;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+          word-break: break-word;
+          /* ช่วยตัดคำในภาษาไทย */
+          hyphens: auto;
+           font-size: 1rem;
+      }
+ 
+      .post-text {
+          white-space: pre-wrap;
+          /* รักษารูปแบบการขึ้นบรรทัดใหม่ */
+          width: 100%;
+          max-width: 100%;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+      }
+ 
+      .post-content p {
+          margin-bottom: 1rem;
+          /* ระยะห่างระหว่างย่อหน้า */
+      }
+ 
+      .post-content.expanded {
+          max-height: none;
+          /* ไม่จำกัดความสูง */
+      }
+ 
+      .expand-btn {
+          background: none;
+          border: none;
+          color: #0066cc;
+          cursor: pointer;
+          padding: 0.5rem 0;
+           font-size: 0.9rem;
+          text-decoration: underline;
+      }
+ 
+      .announcements {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  max-height: 740px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+ }
+ 
+ .announcements-header {
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid #eee;
+  z-index: 10;
+  border-radius: 12px 12px 0 0;
+  background-clip: padding-box;
+ }
+ 
+ .posts-scroll-container {
+  overflow-y: auto;
+  padding: 0 1.5rem 1.5rem;
+  flex-grow: 1;
+  margin-top: 0.5rem;
+ }
+ 
+ .post-card:first-child {
+  margin-top: 0;
+ }
+ 
+      .view-all-btn {
+          background: var(--secondary);
+          color: white;
+          padding: 0.75rem 1.5rem;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: 600;
+          margin-left: 1rem;
+          transition: all 0.3s;
+           font-size: 1rem;
+      }
+ 
+      .view-all-btn:hover {
+          background: #333;
+          transform: translateY(-2px);
+      }
+ 
+      .post-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.5rem;
+      }
+ 
+      .post-meta {
+          font-size: 0.9rem;
+          color: #666;
+      }
+ 
+      .post-actions {
+          display: flex;
+          gap: 0.5rem;
+      }
+ 
+      .delete-post-btn {
+          background: #ff4444;
+          color: white;
+          border: none;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 0.9rem;
+      }
+ 
+      .delete-post-btn:hover {
+          background: #cc0000;
+      }
+ 
+      .page-transition {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 3px;
+          background: linear-gradient(to right, var(--primary), #ff9800);
+          z-index: 1000;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.3s ease-in-out;
+      }
+ 
+      .system-announcement {
+          background: linear-gradient(135deg, #FFF3DC, #FFE5E5);
+          border-left: 4px solid var(--primary);
+          padding: 1rem;
+          margin-bottom: 1rem;
+          border-radius: 8px;
+          animation: slideIn 0.5s ease-out;
+          font-size: 15px;
+      }
+ 
+      .system-announcement-header {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.5rem;
+      }
+ 
+      .system-announcement-badge {
+          background: var(--primary);
+          color: var(--accent);
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          font-size: 0.8rem;
+          font-weight: bold;
+      }
+ 
+      .menu-card {
+          position: relative;
+          overflow: hidden;
+      }
+ 
+      .menu-card::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+          transform: translateX(-100%);
+          transition: transform 0.3s;
+      }
+ 
+      .menu-card:hover::after {
+          transform: translateX(100%);
+      }
+ 
+      @keyframes slideIn {
+          from {
+              transform: translateY(-20px);
+              opacity: 0;
+          }
+          to {
+              transform: translateY(0);
+              opacity: 1;
+          }
+      }
+ 
+      .skeleton {
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+      }
+ 
+      @keyframes loading {
+          0% {
+              background-position: 200% 0;
+          }
+          100% {
+              background-position: -200% 0;
+          }
+      }
+ 
+      .post-skeleton {
+          padding: 1rem;
+          margin-bottom: 1rem;
+      }
+ 
+      .post-skeleton-title {
+          height: 24px;
+          width: 70%;
+          margin-bottom: 0.5rem;
+      }
+ 
+      .post-skeleton-meta {
+          height: 16px;
+          width: 40%;
+          margin-bottom: 1rem;
+      }
+ 
+      .post-skeleton-content {
+          height: 80px;
+          width: 100%;
+      }
+ 
+ 
+      .admin-btn {
+          padding: 0.5rem 1rem;
+          background: #FDB813;
+          color: #2D2D2D;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.3s;
+          font-weight: 600;
+          font-size: 1rem;
+      }
+ 
+      .admin-btn:hover {
+          background: #e5a700;
+          transform: translateY(-2px);
+      }
+      
+      @media (max-width: 768px) {
+         .header{
+              padding: 1rem;
+          }
+         .logo {
+          height: 2rem;
+          margin-right: 1rem;
+         }
+      }
+      @media (max-width: 768px) {
+          .main-content {
+              grid-template-columns: 1fr;
+          }
+      }
+       @media (max-width: 768px) {
+         .user-container{
+             flex-direction: column;
+         }
+          .user-info {
+            align-items: flex-start;
+         }
+      }

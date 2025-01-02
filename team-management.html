@@ -18,7 +18,7 @@
             --green-team: rgba(75, 192, 75, 0.2);
             --blue-team: rgba(99, 148, 255, 0.2);
             --yellow-team: rgba(255, 206, 86, 0.2);
-             --gray: #f0f0f0;
+            --gray: #f0f0f0;
         }
 
         * {
@@ -166,7 +166,7 @@
         }
 
         /* Modal styles */
-         .modal {
+        .modal {
             display: none;
             position: fixed;
             inset: 0;
@@ -174,7 +174,7 @@
             align-items: center;
             justify-content: center;
         }
-       
+
         .modal-content {
             background: white;
             padding: 2rem;
@@ -182,7 +182,8 @@
             width: 100%;
             max-width: 500px;
         }
-         .modal-content h3 {
+
+        .modal-content h3 {
             margin-top: 0;
             color: var(--secondary);
         }
@@ -252,7 +253,8 @@
         .team-section.yellow {
             border-left: 4px solid var(--yellow-team);
         }
-          #loadingScreen {
+
+        #loadingScreen {
             position: fixed;
             inset: 0;
             background: rgba(255, 255, 255, 0.9);
@@ -278,6 +280,7 @@
                 transform: rotate(360deg);
             }
         }
+
         .loading-overlay {
             display: none;
             position: fixed;
@@ -304,12 +307,14 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
-         .alert-message {
+
+        .alert-message {
             margin: 1rem 0;
             line-height: 1.5;
-             color: var(--secondary);
+            color: var(--secondary);
         }
-          .modal {
+
+        .modal {
             display: none;
             position: fixed;
             inset: 0;
@@ -337,6 +342,7 @@
             justify-content: flex-end;
             margin-top: 1.5rem;
         }
+
         .save-btn {
             background: var(--primary);
             color: var(--accent);
@@ -359,11 +365,10 @@
 </head>
 
 <body>
-     <div id="loadingScreen">
+    <div id="loadingScreen">
         <div class="spinner"></div>
         <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
     </div>
-    <!-- Alert Modal -->
     <div id="alertModal" class="modal">
         <div class="modal-content">
             <h3 id="alertTitle">แจ้งเตือน</h3>
@@ -373,8 +378,7 @@
             </div>
         </div>
     </div>
-    <!-- Loading Overlay -->
-      <div id="loadingOverlay" class="loading-overlay">
+    <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <p id="loadingMessageOverlay">กำลังดำเนินการ...</p>
@@ -387,23 +391,21 @@
                 alt="Cyfence Logo" class="logo">
             <div class="user-container">
                 <div class="user-info">
-                <span id="userDisplayName">Loading...</span>
-                <button onclick="window.location.href='calendar.html'" class="nav-btn">ตารางเวร</button>
-                <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
-                <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+                    <span id="userDisplayName">Loading...</span>
+                    <button onclick="window.location.href='calendar.html'" class="nav-btn">ตารางเวร</button>
+                    <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
+                    <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+                </div>
             </div>
-        </div>
         </div>
 
         <div class="container">
-            <!-- Red Team Section -->
             <div class="team-section red">
                 <div class="team-header">
                     <h2 class="team-title">Shift A (Red Team)</h2>
                     <button class="add-member-btn" onclick="showAddMemberModal('red')">เพิ่มสมาชิก</button>
                 </div>
                 <ul class="member-list" id="red-team-members">
-                    <!-- Members will be populated by JavaScript -->
                 </ul>
             </div>
 
@@ -414,7 +416,6 @@
                     <button class="add-member-btn" onclick="showAddMemberModal('yellow')">เพิ่มสมาชิก</button>
                 </div>
                 <ul class="member-list" id="yellow-team-members">
-                    <!-- Members will be populated by JavaScript -->
                 </ul>
             </div>
 
@@ -425,7 +426,6 @@
                     <button class="add-member-btn" onclick="showAddMemberModal('blue')">เพิ่มสมาชิก</button>
                 </div>
                 <ul class="member-list" id="blue-team-members">
-                    <!-- Members will be populated by JavaScript -->
                 </ul>
             </div>
 
@@ -436,13 +436,11 @@
                     <button class="add-member-btn" onclick="showAddMemberModal('green')">เพิ่มสมาชิก</button>
                 </div>
                 <ul class="member-list" id="green-team-members">
-                    <!-- Members will be populated by JavaScript -->
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Add/Edit Member Modal -->
     <div id="memberModal" class="modal">
         <div class="modal-content">
             <h3 class="modal-title">เพิ่มสมาชิกใหม่</h3>
@@ -487,7 +485,7 @@
 
         const db = firebase.firestore();
         let currentUser = null;
-          function showLoadingOverlay(message) {
+        function showLoadingOverlay(message) {
             document.getElementById('loadingOverlay').style.display = 'flex';
             document.getElementById('loadingMessageOverlay').textContent = message;
         }
@@ -495,9 +493,9 @@
         function closeLoadingOverlay() {
             document.getElementById('loadingOverlay').style.display = 'none';
         }
-         // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+        // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
         function showAlertModal(message) {
-             document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertMessage').textContent = message;
             document.getElementById('alertModal').style.display = 'flex';
         }
 
@@ -640,33 +638,33 @@
 
         // Show edit member modal
         async function showEditMemberModal(team, memberId, name, role, userId) {
-             const modal = document.getElementById('memberModal');
+            const modal = document.getElementById('memberModal');
             const form = document.getElementById('memberForm');
             const titleEl = modal.querySelector('.modal-title');
             const userSelect = document.getElementById('memberUser');
-             if (!userSelect) return;
-              try {
+            if (!userSelect) return;
+            try {
                 // โหลดรายชื่อผู้ใช้ทั้งหมด
-                 const users = await loadAllUsers();
+                const users = await loadAllUsers();
                 userSelect.innerHTML = '<option value="">เลือกผู้ใช้...</option>';
 
                 Object.entries(users).forEach(([userId, userData]) => {
                     const option = document.createElement('option');
-                     option.value = userId;
+                    option.value = userId;
                     option.textContent = userData.displayName || userData.email;
-                     userSelect.appendChild(option);
-                   });
-                    userSelect.value = userId
-                     titleEl.textContent = 'แก้ไขข้อมูลสมาชิก';
-                    document.getElementById('memberRole').value = role;
-                    document.getElementById('teamColor').value = team;
-                    document.getElementById('memberId').value = memberId;
+                    userSelect.appendChild(option);
+                });
+                userSelect.value = userId
+                titleEl.textContent = 'แก้ไขข้อมูลสมาชิก';
+                document.getElementById('memberRole').value = role;
+                document.getElementById('teamColor').value = team;
+                document.getElementById('memberId').value = memberId;
 
-                    modal.style.display = 'flex';
-                   } catch (error) {
-                       console.error('Error loading users:', error);
-                        showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้');
-                     }
+                modal.style.display = 'flex';
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้');
+            }
 
         }
 
@@ -677,18 +675,18 @@
 
         // Delete member
         async function deleteMember(team, memberId) {
-           if (confirm('คุณแน่ใจหรือไม่ที่จะลบสมาชิกคนนี้?')) {
-               showLoadingOverlay('กำลังลบสมาชิก...');
+            if (confirm('คุณแน่ใจหรือไม่ที่จะลบสมาชิกคนนี้?')) {
+                showLoadingOverlay('กำลังลบสมาชิก...');
                 try {
                     await db.collection('teams').doc(team).collection('members').doc(memberId).delete();
                     await loadTeamMembers();
-                     showAlertModal('ลบสมาชิกเรียบร้อย');
+                    showAlertModal('ลบสมาชิกเรียบร้อย');
                 } catch (error) {
                     console.error('Error deleting member:', error);
                     showAlertModal('เกิดข้อผิดพลาดในการลบสมาชิก');
                 } finally {
-                      closeLoadingOverlay();
-                   }
+                    closeLoadingOverlay();
+                }
             }
         }
 
@@ -696,7 +694,7 @@
         document.getElementById('memberForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-             const userId = document.getElementById('memberUser').value;
+            const userId = document.getElementById('memberUser').value;
             const role = document.getElementById('memberRole').value;
             const team = document.getElementById('teamColor').value;
             const memberId = document.getElementById('memberId').value;
@@ -709,11 +707,11 @@
                     .get();
 
                 if (existingLeader.docs.length > 0 && existingLeader.docs[0].id !== memberId) {
-                      showAlertModal('ทีมนี้มี Leader อยู่แล้ว');
+                    showAlertModal('ทีมนี้มี Leader อยู่แล้ว');
                     return;
                 }
             }
-             showLoadingOverlay('กำลังบันทึกข้อมูล...');
+            showLoadingOverlay('กำลังบันทึกข้อมูล...');
             const memberData = {
                 userId,
                 role,
@@ -736,8 +734,8 @@
                 await loadTeamMembers();
             } catch (error) {
                 console.error('Error saving member:', error);
-                 showAlertModal('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
-            } finally{
+                showAlertModal('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            } finally {
                 closeLoadingOverlay();
             }
         });

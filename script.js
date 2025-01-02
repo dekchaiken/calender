@@ -239,38 +239,40 @@ function getShiftsForDay(date) {
 
 // สร้างปฏิทิน (ใช้ข้อมูลจาก Firestore)
 function createCalendarMonth(year, month) {
-    if (!shiftPattern || shiftPattern.length === 0) {
-      const calendarDiv = document.createElement('div');
-      calendarDiv.className = 'calendar';
-      const monthHeader = document.createElement('div');
-       monthHeader.className = 'month-header';
-        monthHeader.textContent = `${thaiMonths[month]} ${year + 543}`;
-      calendarDiv.appendChild(monthHeader);
+  if (!shiftPattern || shiftPattern.length === 0) {
+    const calendarDiv = document.createElement("div");
+    calendarDiv.className = "calendar";
+    const monthHeader = document.createElement("div");
+    monthHeader.className = "month-header";
+    monthHeader.textContent = `${thaiMonths[month]} ${year + 543}`;
+    calendarDiv.appendChild(monthHeader);
 
-        const noDataMessage = document.createElement('div');
-       noDataMessage.textContent = 'กำลังโหลดข้อมูล...';
-         calendarDiv.appendChild(noDataMessage);
-        return calendarDiv; // ถ้า shiftPattern ยังไม่พร้อม ให้คืนค่า element ว่าง
+    const noDataMessage = document.createElement("div");
+    noDataMessage.textContent = "กำลังโหลดข้อมูล...";
+    calendarDiv.appendChild(noDataMessage);
+    return calendarDiv; // ถ้า shiftPattern ยังไม่พร้อม ให้คืนค่า element ว่าง
   }
 
-  const calendarDiv = document.createElement('div');
-  calendarDiv.className = 'calendar';
-  const monthHeader = document.createElement('div');
-      monthHeader.className = 'month-header';
-      monthHeader.textContent = `${thaiMonths[month]} ${year + 543}`;
-      calendarDiv.appendChild(monthHeader);
+  const calendarDiv = document.createElement("div");
+  calendarDiv.className = "calendar";
+  const monthHeader = document.createElement("div");
+  monthHeader.className = "month-header";
+  monthHeader.textContent = `${thaiMonths[month]} ${year + 543}`;
+  calendarDiv.appendChild(monthHeader);
 
-  const headerDiv = document.createElement('div');
-  headerDiv.className = 'calendar-header';
-  ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'].forEach(day => {
-      const dayDiv = document.createElement('div');
+  const headerDiv = document.createElement("div");
+  headerDiv.className = "calendar-header";
+  ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"].forEach(
+    (day) => {
+      const dayDiv = document.createElement("div");
       dayDiv.textContent = day;
       headerDiv.appendChild(dayDiv);
-  });
+    }
+  );
   calendarDiv.appendChild(headerDiv);
 
-  const gridDiv = document.createElement('div');
-  gridDiv.className = 'calendar-grid';
+  const gridDiv = document.createElement("div");
+  gridDiv.className = "calendar-grid";
 
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
@@ -278,56 +280,56 @@ function createCalendarMonth(year, month) {
   const totalDays = lastDay.getDate();
 
   for (let i = 0; i < startingDay; i++) {
-      const emptyDay = document.createElement('div');
-      emptyDay.className = 'calendar-day empty-day';
-      gridDiv.appendChild(emptyDay);
+    const emptyDay = document.createElement("div");
+    emptyDay.className = "calendar-day empty-day";
+    gridDiv.appendChild(emptyDay);
   }
 
   for (let day = 1; day <= totalDays; day++) {
-      const date = new Date(year, month, day);
-      const dayElement = document.createElement('div');
-      dayElement.className = 'calendar-day';
+    const date = new Date(year, month, day);
+    const dayElement = document.createElement("div");
+    dayElement.className = "calendar-day";
 
-      const dateDiv = document.createElement('div');
-      dateDiv.className = 'date';
-      dateDiv.textContent = day;
-      dayElement.appendChild(dateDiv);
+    const dateDiv = document.createElement("div");
+    dateDiv.className = "date";
+    dateDiv.textContent = day;
+    dayElement.appendChild(dateDiv);
 
-      const shifts = getShiftsForDay(date);
-      shifts.forEach(shift => {
-          const shiftDiv = document.createElement('div');
-          shiftDiv.className = `shift shift-${shift.color}`;
-           shiftDiv.textContent = `${shift.time} ${shift.name}`;
-          shiftDiv.style.cursor = 'pointer';
-          shiftDiv.onclick = (e) => {
-              e.stopPropagation();
-              showShiftDetails(shift, shift.time);
-          };
-          dayElement.appendChild(shiftDiv);
-      });
+    const shifts = getShiftsForDay(date);
+    shifts.forEach((shift) => {
+      const shiftDiv = document.createElement("div");
+      shiftDiv.className = `shift shift-${shift.color}`;
+      shiftDiv.textContent = `${shift.time} ${shift.name}`;
+      shiftDiv.style.cursor = "pointer";
+      shiftDiv.onclick = (e) => {
+        e.stopPropagation();
+        showShiftDetails(shift, shift.time);
+      };
+      dayElement.appendChild(shiftDiv);
+    });
 
-      gridDiv.appendChild(dayElement);
+    gridDiv.appendChild(dayElement);
   }
   calendarDiv.appendChild(gridDiv);
   return calendarDiv;
 }
 
 function updateCalendarUI(teamData) {
-    // Update team cards
-    Object.keys(teamData).forEach(team => {
-        const membersDiv = document.getElementById(`${team}-members`);
-        const leaderDiv = document.getElementById(`${team}-team-leader`);
-        
-        if (membersDiv && leaderDiv) {
-            leaderDiv.innerHTML = `<p>Leader: ${teamData[team].leader}</p>`;
-            membersDiv.innerHTML = teamData[team].members
-                .map((member, index) => `<p>${index + 1}. ${member}</p>`)
-                .join('');
-        }
-    });
-    
-    // Update calendar view
-    renderCalendar();
+  // Update team cards
+  Object.keys(teamData).forEach((team) => {
+    const membersDiv = document.getElementById(`${team}-members`);
+    const leaderDiv = document.getElementById(`${team}-team-leader`);
+
+    if (membersDiv && leaderDiv) {
+      leaderDiv.innerHTML = `<p>Leader: ${teamData[team].leader}</p>`;
+      membersDiv.innerHTML = teamData[team].members
+        .map((member, index) => `<p>${index + 1}. ${member}</p>`)
+        .join("");
+    }
+  });
+
+  // Update calendar view
+  renderCalendar();
 }
 
 function toggleTeamMembers(teamColor) {
@@ -395,9 +397,9 @@ async function checkShiftExchanges() {
       const notification = document.createElement("div");
       notification.className = "notification notification-pending";
       notification.innerHTML = `
-            คุณมี ${exchanges.size} คำขอแลกเวรที่รอการตอบรับ 
-             <a href="exchange.html">คลิกเพื่อดูรายละเอียด</a>
-          `;
+          คุณมี ${exchanges.size} คำขอแลกเวรที่รอการตอบรับ 
+           <a href="exchange.html">คลิกเพื่อดูรายละเอียด</a>
+        `;
 
       const header = document.querySelector(".header");
       header.parentNode.insertBefore(notification, header.nextSibling);
@@ -428,13 +430,13 @@ function showShiftDetails(shift, time) {
   ).innerHTML = `<strong>เวลาทำงาน:</strong> ${time}`;
 
   const detailsHTML = `
-        <h4>รายละเอียดทีม</h4>
-        <ul>
-            <li><strong>หัวหน้าทีม:</strong> ${teamInfo.leader}</li>
-            <li><strong>สมาชิกทีม:</strong></li>
-            ${teamInfo.members.map((member) => `<li>- ${member}</li>`).join("")}
-        </ul>
-    `;
+      <h4>รายละเอียดทีม</h4>
+      <ul>
+          <li><strong>หัวหน้าทีม:</strong> ${teamInfo.leader}</li>
+          <li><strong>สมาชิกทีม:</strong></li>
+          ${teamInfo.members.map((member) => `<li>- ${member}</li>`).join("")}
+      </ul>
+  `;
 
   modal.querySelector(".team-details").innerHTML = detailsHTML;
   modal.style.display = "block";
@@ -449,17 +451,17 @@ window.onclick = function (event) {
 
 // ฟังก์ชันเปลี่ยนเดือน (เก็บไว้เหมือนเดิม)
 function changeMonth(offset) {
-    showLoadingOverlay("กำลังโหลดปฏิทิน...");
-    currentDate.setMonth(currentDate.getMonth() + offset);
-    document.getElementById("monthSelect").value = currentDate.getMonth();
-    document.getElementById("yearSelect").value = currentDate.getFullYear();
-    renderCalendar();
-     closeLoadingOverlay();
-  }
+  showLoadingOverlay("กำลังโหลดปฏิทิน...");
+  currentDate.setMonth(currentDate.getMonth() + offset);
+  document.getElementById("monthSelect").value = currentDate.getMonth();
+  document.getElementById("yearSelect").value = currentDate.getFullYear();
+  renderCalendar();
+  closeLoadingOverlay();
+}
 
 // ฟังก์ชัน Export PDF (ปรับใช้ข้อมูลจาก Firestore)
 async function exportToPDF() {
-    showLoadingOverlay("กำลัง Export PDF...");
+  showLoadingOverlay("กำลัง Export PDF...");
   const startMonth = parseInt(
     document.getElementById("startMonthSelect").value
   );
@@ -469,7 +471,7 @@ async function exportToPDF() {
 
   // ตรวจสอบช่วงเวลาที่เลือก
   if (startYear > endYear || (startYear === endYear && startMonth > endMonth)) {
-     closeLoadingOverlay();
+    closeLoadingOverlay();
     showAlertModal("กรุณาเลือกช่วงเวลาให้ถูกต้อง");
     return;
   }
@@ -479,27 +481,27 @@ async function exportToPDF() {
 
   const teamDetailsSection = document.createElement("div");
   teamDetailsSection.innerHTML = `
-        <div class="export-header">
-          <h2>ตารางเวรการปฏิบัติงาน</h2>
-           <p>ประจำเดือน ${thaiMonths[startMonth]} - ${thaiMonths[endMonth]} ${
+      <div class="export-header">
+        <h2>ตารางเวรการปฏิบัติงาน</h2>
+         <p>ประจำเดือน ${thaiMonths[startMonth]} - ${thaiMonths[endMonth]} ${
     startYear + 543
   }</p>
-        </div>
-         ${Object.entries(teamData)
-           .map(
-             ([color, team]) => `
-           <div class="team-section ${color}">
-               <h3>${team.name}</h3>
-                <p><strong>หัวหน้าทีม:</strong> ${team.leader}</p>
-               <p><strong>สมาชิกทีม:</strong></p>
-                 <ul>
-                  ${team.members.map((member) => `<li>${member}</li>`).join("")}
-                 </ul>
-            </div>
-           `
-           )
-           .join("")}
-    `;
+      </div>
+       ${Object.entries(teamData)
+         .map(
+           ([color, team]) => `
+         <div class="team-section ${color}">
+             <h3>${team.name}</h3>
+              <p><strong>หัวหน้าทีม:</strong> ${team.leader}</p>
+             <p><strong>สมาชิกทีม:</strong></p>
+               <ul>
+                ${team.members.map((member) => `<li>${member}</li>`).join("")}
+               </ul>
+          </div>
+         `
+         )
+         .join("")}
+  `;
   pdfContainer.appendChild(teamDetailsSection);
 
   let currentYear = startYear;
@@ -530,11 +532,11 @@ async function exportToPDF() {
   try {
     await html2pdf().set(opt).from(pdfContainer).save();
     closeLoadingOverlay();
-     showAlertModal("Export PDF สำเร็จ");
+    showAlertModal("Export PDF สำเร็จ");
   } catch (error) {
     console.error("เกิดข้อผิดพลาดในการสร้าง PDF:", error);
     closeLoadingOverlay();
-     showAlertModal("เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง");
+    showAlertModal("เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง");
   }
 }
 // ฟังก์ชัน Print
@@ -554,53 +556,53 @@ function printCalendar() {
   let currentMonth = startMonth;
 
   let printContent = `
-         <html>
-            <head>
-               <title>ตารางเวรการปฏิบัติงาน</title>
-                 <style>
-                    body { font-family: 'Noto Sans Thai', sans-serif; margin: 20px; }
-                    .export-header { text-align: center; margin-bottom: 20px; padding: 20px;  background: #f8f9fa; border-radius: 8px; }
-                             .team-section { margin: 20px 0; padding: 15px; border-radius: 8px; }
-                     .calendar { width: 100%; border-collapse: collapse;  }
-                        .calendar-header { display: grid;  grid-template-columns: repeat(7, 1fr);   padding: 0.75rem 0;   text-align: center;   background: #f8f9fa;     border-top-left-radius: 12px;    border-top-right-radius: 12px;   border-bottom: 1px solid #ddd;}
-                          .month-header { text-align: center; font-size: 1.5em; margin-bottom: 10px;  padding: 1.5rem; background: white;    border-top-left-radius: 12px; border-top-right-radius: 12px;}
-                          .calendar-grid {display: grid;  grid-template-columns: repeat(7, 1fr);  text-align: center; }
-                        .calendar-day {padding: 10px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; position: relative;}
-                         .calendar-day:nth-child(7n) {  border-right: none; }
-                        .calendar-day:last-child { border-bottom: none; }
-                        .calendar-day.empty-day { background: #fafafa;  border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; }
-                        .shift { font-size: 0.9em; padding: 0.5rem;  border-radius: 4px; margin: 2px; display: block; }
-                          .shift-red { background-color: rgba(255, 99, 99, 0.2); color: #404040;}
-                           .shift-green { background-color: rgba(75, 192, 75, 0.2);  color: #404040; }
-                         .shift-blue { background-color: rgba(99, 148, 255, 0.2); color: #404040; }
-                          .shift-yellow {background-color: rgba(255, 206, 86, 0.2);  color: #404040; }
-                      </style>
-                  </head>
-                <body>
-                   <div class="pdf-container">
-                        <div class="export-header">
-                              <h2>ตารางเวรการปฏิบัติงาน</h2>
-                              <p>ประจำเดือน ${thaiMonths[startMonth]} - ${
+       <html>
+          <head>
+             <title>ตารางเวรการปฏิบัติงาน</title>
+               <style>
+                  body { font-family: 'Noto Sans Thai', sans-serif; margin: 20px; }
+                  .export-header { text-align: center; margin-bottom: 20px; padding: 20px;  background: #f8f9fa; border-radius: 8px; }
+                           .team-section { margin: 20px 0; padding: 15px; border-radius: 8px; }
+                   .calendar { width: 100%; border-collapse: collapse;  }
+                      .calendar-header { display: grid;  grid-template-columns: repeat(7, 1fr);   padding: 0.75rem 0;   text-align: center;   background: #f8f9fa;     border-top-left-radius: 12px;    border-top-right-radius: 12px;   border-bottom: 1px solid #ddd;}
+                        .month-header { text-align: center; font-size: 1.5em; margin-bottom: 10px;  padding: 1.5rem; background: white;    border-top-left-radius: 12px; border-top-right-radius: 12px;}
+                        .calendar-grid {display: grid;  grid-template-columns: repeat(7, 1fr);  text-align: center; }
+                      .calendar-day {padding: 10px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; position: relative;}
+                       .calendar-day:nth-child(7n) {  border-right: none; }
+                      .calendar-day:last-child { border-bottom: none; }
+                      .calendar-day.empty-day { background: #fafafa;  border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; }
+                      .shift { font-size: 0.9em; padding: 0.5rem;  border-radius: 4px; margin: 2px; display: block; }
+                        .shift-red { background-color: rgba(255, 99, 99, 0.2); color: #404040;}
+                         .shift-green { background-color: rgba(75, 192, 75, 0.2);  color: #404040; }
+                       .shift-blue { background-color: rgba(99, 148, 255, 0.2); color: #404040; }
+                        .shift-yellow {background-color: rgba(255, 206, 86, 0.2);  color: #404040; }
+                    </style>
+                </head>
+              <body>
+                 <div class="pdf-container">
+                      <div class="export-header">
+                            <h2>ตารางเวรการปฏิบัติงาน</h2>
+                            <p>ประจำเดือน ${thaiMonths[startMonth]} - ${
     thaiMonths[endMonth]
   } ${startYear + 543}</p>
-                         </div>
-                      ${Object.entries(teamData)
-                        .map(
-                          ([color, team]) => `
-                         <div class="team-section ${color}">
-                            <h3>${team.name}</h3>
-                            <p><strong>หัวหน้าทีม:</strong> ${team.leader}</p>
-                            <p><strong>สมาชิกทีม:</strong></p>
-                            <ul>
-                                ${team.members
-                                  .map((member) => `<li>${member}</li>`)
-                                  .join("")}
-                             </ul>
-                         </div>
-                      `
-                        )
-                        .join("")}
-                     `;
+                       </div>
+                    ${Object.entries(teamData)
+                      .map(
+                        ([color, team]) => `
+                       <div class="team-section ${color}">
+                          <h3>${team.name}</h3>
+                          <p><strong>หัวหน้าทีม:</strong> ${team.leader}</p>
+                          <p><strong>สมาชิกทีม:</strong></p>
+                          <ul>
+                              ${team.members
+                                .map((member) => `<li>${member}</li>`)
+                                .join("")}
+                           </ul>
+                       </div>
+                    `
+                      )
+                      .join("")}
+                   `;
 
   while (
     currentYear < endYear ||
@@ -615,10 +617,10 @@ function printCalendar() {
   }
 
   printContent += `
-             </div>
-           </body>
-          </html>
-         `;
+           </div>
+         </body>
+        </html>
+       `;
 
   printWindow.document.write(printContent);
   printWindow.document.close();
@@ -627,56 +629,54 @@ function printCalendar() {
   printWindow.close();
 }
 
-  function showLoadingOverlay(message) {
-    document.getElementById('loadingOverlay').style.display = 'flex';
-    document.getElementById('loadingMessage').textContent = message;
+function showLoadingOverlay(message) {
+  document.getElementById("loadingOverlay").style.display = "flex";
+  document.getElementById("loadingMessage").textContent = message;
 }
-  function closeLoadingOverlay() {
-    document.getElementById('loadingOverlay').style.display = 'none';
+function closeLoadingOverlay() {
+  document.getElementById("loadingOverlay").style.display = "none";
 }
-  // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
-  function showAlertModal(message) {
-      document.getElementById('alertMessage').textContent = message;
-      document.getElementById('alertModal').style.display = 'flex';
-  }
+// เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+function showAlertModal(message) {
+  document.getElementById("alertMessage").textContent = message;
+  document.getElementById("alertModal").style.display = "flex";
+}
 
-  function closeAlertModal() {
-      document.getElementById('alertModal').style.display = 'none';
-  }
-
+function closeAlertModal() {
+  document.getElementById("alertModal").style.display = "none";
+}
 
 // เริ่มต้นใช้งาน (ปรับให้ดึงข้อมูลจาก Firestore)
-document.addEventListener('DOMContentLoaded', async () => {
-    initializeSelectors();
-    showLoadingOverlay('กำลังโหลดข้อมูล...');
-    try {
-      const data = await initializeCalendarData();
-        teamData = data.teamData
-       shiftPattern = data.shiftPattern
-       if (teamData && shiftPattern) {
-        updateCalendarUI(teamData,shiftPattern);
-        }
-     } catch (error) {
-        console.error('Error initializing calendar data:', error);
-    } finally {
-         closeLoadingOverlay();
-       }
-    checkShiftExchanges();
+document.addEventListener("DOMContentLoaded", async () => {
+  initializeSelectors();
+  showLoadingOverlay("กำลังโหลดข้อมูล...");
+  try {
+    const data = await initializeCalendarData();
+    teamData = data.teamData;
+    shiftPattern = data.shiftPattern;
+    if (teamData && shiftPattern) {
+      updateCalendarUI(teamData, shiftPattern);
+    }
+  } catch (error) {
+    console.error("Error initializing calendar data:", error);
+  } finally {
+    closeLoadingOverlay();
+  }
+  checkShiftExchanges();
 });
-  
+
 async function initializeCalendarData() {
-            try {
-                // Load team data and shift pattern
-                const teamData = await loadTeamData();
-                const shiftPattern = await generateShiftPattern();
-    
-                // Update UI with new data
-                
-                 return { teamData, shiftPattern };
-    
-            } catch (error) {
-                console.error('Error initializing calendar data:', error);
-                 showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล');
-                 return null
-            }
-        }
+  try {
+    // Load team data and shift pattern
+    const teamData = await loadTeamData();
+    const shiftPattern = await generateShiftPattern();
+
+    // Update UI with new data
+
+    return { teamData, shiftPattern };
+  } catch (error) {
+    console.error("Error initializing calendar data:", error);
+    showAlertModal("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+    return null;
+  }
+}

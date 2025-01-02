@@ -250,7 +250,7 @@
                 transform: rotate(360deg);
             }
         }
-        
+
         .modal {
             display: none;
             position: fixed;
@@ -324,25 +324,23 @@
         <div class="spinner"></div>
         <div id="loadingMessage">กำลังตรวจสอบการเข้าสู่ระบบ...</div>
     </div>
-    
-        <!-- Alert Modal -->
-        <div id="alertModal" class="modal">
-            <div class="modal-content">
-                <h3 id="alertTitle">แจ้งเตือน</h3>
-                <p id="alertMessage" class="alert-message"></p>
-                <div class="modal-buttons">
-                    <button type="button" class="save-btn" onclick="closeAlertModal()">ตกลง</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- Loading Overlay -->
-        <div id="loadingOverlay" class="loading-overlay">
-            <div class="loading-content">
-                <div class="loading-spinner"></div>
-                <p id="loadingMessage">กำลังดำเนินการ...</p>
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <h3 id="alertTitle">แจ้งเตือน</h3>
+            <p id="alertMessage" class="alert-message"></p>
+            <div class="modal-buttons">
+                <button type="button" class="save-btn" onclick="closeAlertModal()">ตกลง</button>
             </div>
         </div>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingMessage">กำลังดำเนินการ...</p>
+        </div>
+    </div>
 
     <div id="mainContent" style="display: none">
         <div class="header">
@@ -398,7 +396,6 @@
                                 </tr>
                             </thead>
                             <tbody id="allCustomerInfo">
-                                <!-- ข้อมูลจะถูกเพิ่มด้วย JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -440,7 +437,7 @@
                     </div>
                     <button class="btn btn-primary" onclick="addCustomer()"
                         style="margin-top: 1rem; padding: 0.75rem 2rem; font-weight: 600;">เพิ่มลูกค้า</button>
-            
+
                 </div>
             </div>
 
@@ -448,7 +445,6 @@
                 <div class="card">
                     <h2>จัดการ Shifts</h2>
                     <div class="shift-group" id="shiftsList">
-                        <!-- รายการ Shifts จะถูกเพิ่มที่นี่ด้วย JavaScript -->
                     </div>
                 </div>
             </div>
@@ -456,7 +452,7 @@
             <div id="mappings" class="tab-content" style="display: none;">
                 <div class="card">
                     <h2>จัดการ Mappings</h2>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label>ชื่อที่แสดงในระบบ</label>
                         <input type="text" class="form-control" id="mappingDisplay">
                     </div>
@@ -469,13 +465,12 @@
                 <div class="card">
                     <h2>รายชื่อ Mappings ทั้งหมด</h2>
                     <div id="mappingList">
-                        <!-- ข้อมูล Mapping จะถูกเพิ่มที่นี่ด้วย JavaScript -->
                     </div>
                 </div>
             </div>
-    
+
             <div id="callings" class="tab-content" style="display: none;">
-                 <div class="card">
+                <div class="card">
                     <h2>จัดการการเรียกชื่อลูกค้า</h2>
                     <div class="form-group">
                         <label>เลือกลูกค้า</label>
@@ -490,7 +485,7 @@
                     </div>
                     <button class="btn btn-primary" onclick="saveCustomerCalling()">บันทึก</button>
                 </div>
-    
+
                 <div class="card">
                     <h2>รายการการเรียกชื่อทั้งหมด</h2>
                     <div id="callingList"></div>
@@ -517,14 +512,14 @@
         let companyTypes = {};
         let companyGroups = {};
 
-         // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+        // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
         function showAlertModal(message) {
-        document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertMessage').textContent = message;
             document.getElementById('alertModal').style.display = 'flex';
         }
 
         function closeAlertModal() {
-        document.getElementById('alertModal').style.display = 'none';
+            document.getElementById('alertModal').style.display = 'none';
         }
 
         function showLoadingOverlay(message) {
@@ -533,7 +528,7 @@
         }
 
         function closeLoadingOverlay() {
-        document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
 
         async function loadCustomerData() {
@@ -771,7 +766,7 @@
 
         // เพิ่มฟังก์ชันในการโหลดข้อมูลทั้งหมด
         async function loadAllCustomerInfo() {
-             showLoadingOverlay('กำลังโหลดข้อมูลลูกค้า...');
+            showLoadingOverlay('กำลังโหลดข้อมูลลูกค้า...');
             try {
                 const db = firebase.firestore();
 
@@ -835,7 +830,7 @@
             } catch (error) {
                 console.error('Error loading all customer info:', error);
                 showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูลลูกค้า');
-            }finally {
+            } finally {
                 closeLoadingOverlay(); // Hide loading
             }
         }
@@ -903,7 +898,7 @@
         }
 
         // ฟังก์ชันบันทึกข้อมูลที่แก้ไข
-         async function saveEditedCustomer(oldShortName) {
+        async function saveEditedCustomer(oldShortName) {
             showLoadingOverlay('กำลังบันทึกข้อมูล...');
             try {
                 const db = firebase.firestore();
@@ -923,12 +918,12 @@
 
                 // อัพเดท companyTypes
                 await logActivity(firebase.auth().currentUser.uid, 'update_following', {
-                        updatedCustomer: shortName,
-                        updatedFullName: fullName,
-                        updatedType: type,
-                        updatedShift: shift,
-                        updatedCalling: calling
-                   });
+                    updatedCustomer: shortName,
+                    updatedFullName: fullName,
+                    updatedType: type,
+                    updatedShift: shift,
+                    updatedCalling: calling
+                });
                 const typeRef = db.collection('customerManagement').doc('companyTypes');
                 const types = (await typeRef.get()).data() || {};
                 types[shortName] = type;
@@ -983,12 +978,12 @@
 
                 closeEditModal();
                 loadAllCustomerInfo(); // โหลดข้อมูลใหม่
-                 closeLoadingOverlay();
+                closeLoadingOverlay();
                 showAlertModal('บันทึกข้อมูลสำเร็จ');
 
             } catch (error) {
                 console.error('Error saving edited customer:', error);
-                 closeLoadingOverlay();
+                closeLoadingOverlay();
                 showAlertModal('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
             }
         }
@@ -1025,10 +1020,10 @@
 
         // แก้ไขการเรียกชื่อ
         async function editCalling(shortName, currentCalling) {
-      const mappingsDoc = await firebase.firestore().collection('customerManagement').doc('companyMappings').get();
-       const mappings = mappingsDoc.exists ? mappingsDoc.data() : {};
+            const mappingsDoc = await firebase.firestore().collection('customerManagement').doc('companyMappings').get();
+            const mappings = mappingsDoc.exists ? mappingsDoc.data() : {};
 
-    const modalHtml = `
+            const modalHtml = `
       <div id="editCallingModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
         <div style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
           <h2 style="margin-bottom: 1.5rem; color: #2D2D2D;">แก้ไขรูปแบบการเรียกชื่อ</h2>
@@ -1052,40 +1047,40 @@
       </div>
     `;
 
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-}
-
-function closeEditCallingModal() {
-    const modal = document.getElementById('editCallingModal');
-    if (modal) {
-        modal.remove();
-    }
-}
-
-async function saveEditedCalling(shortName) {
-     showLoadingOverlay('กำลังบันทึกข้อมูล...');
-    try {
-        const newCalling = document.getElementById('editCallingPattern').value.trim();
-        if (newCalling) {
-            const db = firebase.firestore();
-            const callingsRef = db.collection('customerManagement').doc('companyFullNames');
-    
-                const doc = await callingsRef.get();
-                const callings = doc.exists ? doc.data() : {};
-    
-                callings[shortName] = newCalling;
-                await callingsRef.set(callings);
-            closeEditCallingModal();
-             loadCallingData();
-             closeLoadingOverlay();
-                showAlertModal('แก้ไขข้อมูลสำเร็จ');
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
         }
-    } catch (error) {
-        console.error('Error editing calling:', error);
-        closeLoadingOverlay();
-        showAlertModal('เกิดข้อผิดพลาดในการแก้ไขข้อมูล');
-    }
-}
+
+        function closeEditCallingModal() {
+            const modal = document.getElementById('editCallingModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function saveEditedCalling(shortName) {
+            showLoadingOverlay('กำลังบันทึกข้อมูล...');
+            try {
+                const newCalling = document.getElementById('editCallingPattern').value.trim();
+                if (newCalling) {
+                    const db = firebase.firestore();
+                    const callingsRef = db.collection('customerManagement').doc('companyFullNames');
+
+                    const doc = await callingsRef.get();
+                    const callings = doc.exists ? doc.data() : {};
+
+                    callings[shortName] = newCalling;
+                    await callingsRef.set(callings);
+                    closeEditCallingModal();
+                    loadCallingData();
+                    closeLoadingOverlay();
+                    showAlertModal('แก้ไขข้อมูลสำเร็จ');
+                }
+            } catch (error) {
+                console.error('Error editing calling:', error);
+                closeLoadingOverlay();
+                showAlertModal('เกิดข้อผิดพลาดในการแก้ไขข้อมูล');
+            }
+        }
 
         // ลบการเรียกชื่อ
         async function deleteCalling(shortName) {
@@ -1104,18 +1099,18 @@ async function saveEditedCalling(shortName) {
                     showAlertModal('ลบข้อมูลสำเร็จ');
                 } catch (error) {
                     console.error('Error deleting calling:', error);
-                     showAlertModal('เกิดข้อผิดพลาดในการลบข้อมูล');
+                    showAlertModal('เกิดข้อผิดพลาดในการลบข้อมูล');
                 }
             }
         }
 
         // อัพเดต showTab function
-       function showTab(tabName) {
-          document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-          document.getElementById(tabName).style.display = 'block';
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            document.getElementById(tabName).style.display = 'block';
 
-          document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-          event.target.classList.add('active');
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
 
 
             if (tabName === 'allInfo') {
@@ -1134,7 +1129,7 @@ async function saveEditedCalling(shortName) {
 
         // ฟังก์ชันเพิ่มลูกค้าใหม่
         async function addCustomer() {
-             showLoadingOverlay('กำลังเพิ่มลูกค้า...');
+            showLoadingOverlay('กำลังเพิ่มลูกค้า...');
             try {
                 const shortName = document.getElementById('customerName').value.trim();
                 const fullName = document.getElementById('customerMapping').value.trim();
@@ -1195,22 +1190,22 @@ async function saveEditedCalling(shortName) {
 
                 // เอาออก
                 //refreshCustomerList();
-                 closeLoadingOverlay();
+                closeLoadingOverlay();
                 showAlertModal('เพิ่มลูกค้าสำเร็จ');
 
             } catch (error) {
                 console.error('Error adding customer:', error);
-                 closeLoadingOverlay();
+                closeLoadingOverlay();
                 showAlertModal('เกิดข้อผิดพลาดในการเพิ่มลูกค้า');
             }
         }
         async function deleteCustomer(companyName, shift) {
-             if (!confirm(`ต้องการลบ ${companyName} ใช่หรือไม่?`)) {
+            if (!confirm(`ต้องการลบ ${companyName} ใช่หรือไม่?`)) {
                 return;
             }
             showLoadingOverlay('กำลังลบลูกค้า...');
             try {
-                await logActivity(firebase.auth().currentUser.uid, 'update_following', { deletedCustomer: companyName});
+                await logActivity(firebase.auth().currentUser.uid, 'update_following', { deletedCustomer: companyName });
                 // ลบจาก companyTypes
                 const updatedTypes = { ...companyTypes };
                 delete updatedTypes[companyName];
@@ -1226,7 +1221,7 @@ async function saveEditedCalling(shortName) {
                 companyGroups = updatedGroups;
                 //เอาออก
                 // refreshCustomerList();
-                 closeLoadingOverlay();
+                closeLoadingOverlay();
                 showAlertModal('ลบลูกค้าสำเร็จ');
             } catch (error) {
                 console.error('Error deleting customer:', error);
@@ -1236,7 +1231,7 @@ async function saveEditedCalling(shortName) {
         }
         // ฟังก์ชันเพิ่ม mapping
         async function addMapping() {
-             showLoadingOverlay('กำลังเพิ่ม Mapping...');
+            showLoadingOverlay('กำลังเพิ่ม Mapping...');
             const displayName = document.getElementById('mappingDisplay').value.trim();
             const replaceName = document.getElementById('mappingReplace').value.trim();
 
@@ -1259,13 +1254,13 @@ async function saveEditedCalling(shortName) {
                 document.getElementById('mappingReplace').value = '';
 
                 // Reload mapping data
-                 await loadMappingData();
-                 closeLoadingOverlay();
+                await loadMappingData();
+                closeLoadingOverlay();
                 showAlertModal('เพิ่ม Mapping สำเร็จ');
             } catch (error) {
                 console.error('Error adding mapping:', error);
-                 closeLoadingOverlay();
-                 showAlertModal('เกิดข้อผิดพลาดในการเพิ่ม Mapping');
+                closeLoadingOverlay();
+                showAlertModal('เกิดข้อผิดพลาดในการเพิ่ม Mapping');
             }
         }
 
@@ -1311,13 +1306,13 @@ async function saveEditedCalling(shortName) {
                 const tbody = document.createElement('tbody');
                 // เรียงข้อมูลตาม key (displayName)
                 Object.entries(mappings)
-                     .sort(( [displayNameA], [displayNameB]) => displayNameA.localeCompare(displayNameB))
+                    .sort(([displayNameA], [displayNameB]) => displayNameA.localeCompare(displayNameB))
                     .forEach(([displayName, replaceName]) => {
-                    const tr = document.createElement('tr');
-                    tr.style.transition = 'background-color 0.3s ease';
-                    tr.onmouseenter = () => tr.style.backgroundColor = '#f8f9fa';
-                    tr.onmouseleave = () => tr.style.backgroundColor = 'white';
-                    tr.innerHTML = `
+                        const tr = document.createElement('tr');
+                        tr.style.transition = 'background-color 0.3s ease';
+                        tr.onmouseenter = () => tr.style.backgroundColor = '#f8f9fa';
+                        tr.onmouseleave = () => tr.style.backgroundColor = 'white';
+                        tr.innerHTML = `
                         <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${displayName}</td>
                         <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${replaceName}</td>
                         <td style="padding: 1rem; border-bottom: 1px solid #dee2e6; text-align: center;">
@@ -1329,8 +1324,8 @@ async function saveEditedCalling(shortName) {
                                     style="padding: 0.5rem 1rem;">ลบ</button>
                         </td>
                     `;
-                    tbody.appendChild(tr);
-                });
+                        tbody.appendChild(tr);
+                    });
                 table.appendChild(tbody);
 
                 tableContainer.appendChild(table);
@@ -1341,7 +1336,7 @@ async function saveEditedCalling(shortName) {
                 mappingList.innerHTML = '<p style="color: red;">เกิดข้อผิดพลาดในการโหลดข้อมูล Mapping</p>';
             }
         }
-        
+
         // โหลดข้อมูลการเรียกชื่อลูกค้า
         async function loadCallingData() {
             try {
@@ -1370,7 +1365,7 @@ async function saveEditedCalling(shortName) {
                 const callingList = document.getElementById('callingList');
                 callingList.innerHTML = '';
 
-                 const table = document.createElement('table');
+                const table = document.createElement('table');
                 table.style.width = '100%';
                 table.style.borderCollapse = 'collapse';
 
@@ -1388,13 +1383,13 @@ async function saveEditedCalling(shortName) {
 
                 // สร้างส่วนเนื้อหาตาราง
                 const tbody = document.createElement('tbody');
-                
-                 // เรียงข้อมูลตาม key (shortName)
+
+                // เรียงข้อมูลตาม key (shortName)
                 Object.entries(callings)
-                     .sort(([shortNameA], [shortNameB]) => shortNameA.localeCompare(shortNameB))
+                    .sort(([shortNameA], [shortNameB]) => shortNameA.localeCompare(shortNameB))
                     .forEach(([shortName, calling]) => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
                          <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${shortName}</td>
                         <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${mappings[shortName] || ''}</td>
                         <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${calling}</td>
@@ -1403,24 +1398,24 @@ async function saveEditedCalling(shortName) {
                             <button onclick="deleteCalling('${shortName}')" class="btn btn-danger">ลบ</button>
                         </td>
                     `;
-                    tbody.appendChild(tr);
-                });
+                        tbody.appendChild(tr);
+                    });
                 table.appendChild(tbody);
                 callingList.appendChild(table);
 
             } catch (error) {
                 console.error('Error loading calling data:', error);
-                 showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+                showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล');
             }
         }
 
         async function handleBulkImport() {
-           showLoadingOverlay('กำลังนำเข้าข้อมูล...');
+            showLoadingOverlay('กำลังนำเข้าข้อมูล...');
             const fileInput = document.getElementById('csvFileInput');
             const file = fileInput.files[0];
 
             if (!file) {
-               closeLoadingOverlay();
+                closeLoadingOverlay();
                 showAlertModal('กรุณาเลือกไฟล์ CSV');
                 return;
             }
@@ -1477,7 +1472,7 @@ async function saveEditedCalling(shortName) {
                 companyTypes = updatedTypes;
                 companyGroups = updatedGroups;
                 // เอาออก
-               // refreshCustomerList();
+                // refreshCustomerList();
                 closeLoadingOverlay();
                 showAlertModal('นำเข้าข้อมูลสำเร็จ');
                 fileInput.value = '';  // รีเซ็ต input file
@@ -1490,7 +1485,7 @@ async function saveEditedCalling(shortName) {
         }
 
         async function editMapping(displayName, replaceName) {
-      // สร้าง modal dialog สำหรับแก้ไขข้อมูล
+            // สร้าง modal dialog สำหรับแก้ไขข้อมูล
             const modalHtml = `
         <div id="editMappingModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
             <div style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -1516,53 +1511,53 @@ async function saveEditedCalling(shortName) {
 
             // เพิ่ม modal เข้าไปใน DOM
             document.body.insertAdjacentHTML('beforeend', modalHtml);
-}
+        }
 
-// ฟังก์ชันปิด modal
-function closeEditMappingModal() {
-      const modal = document.getElementById('editMappingModal');
-      if (modal) {
-          modal.remove();
-      }
-    }
+        // ฟังก์ชันปิด modal
+        function closeEditMappingModal() {
+            const modal = document.getElementById('editMappingModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
 
-    async function saveEditedMapping(oldDisplayName) {
-             showLoadingOverlay('กำลังบันทึก Mapping...');
+        async function saveEditedMapping(oldDisplayName) {
+            showLoadingOverlay('กำลังบันทึก Mapping...');
             try {
-                  const newDisplayName = document.getElementById('editMappingDisplayName').value.trim();
-                  const newReplaceName = document.getElementById('editMappingReplaceName').value.trim();
-                  
-                  if (!newDisplayName || !newReplaceName) {
-                      showAlertModal('กรุณากรอกข้อมูลให้ครบถ้วน');
-                      return;
-                  }
+                const newDisplayName = document.getElementById('editMappingDisplayName').value.trim();
+                const newReplaceName = document.getElementById('editMappingReplaceName').value.trim();
 
-                 const db = firebase.firestore();
+                if (!newDisplayName || !newReplaceName) {
+                    showAlertModal('กรุณากรอกข้อมูลให้ครบถ้วน');
+                    return;
+                }
+
+                const db = firebase.firestore();
                 const mappingRef = db.collection('customerManagement').doc('companyMappings');
                 const mappings = (await mappingRef.get()).data() || {};
 
                 // ลบค่าเดิมและเพิ่มค่าที่แก้ไขใหม่
-                    delete mappings[oldDisplayName];
-                  mappings[newDisplayName] = newReplaceName;
-                  
-                  await logActivity(firebase.auth().currentUser.uid, 'update_following', { editedMappingDisplay: oldDisplayName, addedMappingReplace: replaceName,newMappingDisplay: newDisplayName });
+                delete mappings[oldDisplayName];
+                mappings[newDisplayName] = newReplaceName;
 
-                    await mappingRef.set(mappings);
-                
-                  closeEditMappingModal();
-                   loadMappingData();
-                   closeLoadingOverlay();
-                    showAlertModal('แก้ไข Mapping สำเร็จ');
-               
-            }catch(error) {
+                await logActivity(firebase.auth().currentUser.uid, 'update_following', { editedMappingDisplay: oldDisplayName, addedMappingReplace: replaceName, newMappingDisplay: newDisplayName });
+
+                await mappingRef.set(mappings);
+
+                closeEditMappingModal();
+                loadMappingData();
+                closeLoadingOverlay();
+                showAlertModal('แก้ไข Mapping สำเร็จ');
+
+            } catch (error) {
                 console.error('Error editing mapping:', error);
                 closeLoadingOverlay();
-                 showAlertModal('เกิดข้อผิดพลาดในการแก้ไข Mapping');
+                showAlertModal('เกิดข้อผิดพลาดในการแก้ไข Mapping');
             }
-    }
+        }
 
-         async function deleteMapping(displayName) {
-             if (confirm(`ต้องการลบ Mapping ของ ${displayName} ใช่หรือไม่?`)) {
+        async function deleteMapping(displayName) {
+            if (confirm(`ต้องการลบ Mapping ของ ${displayName} ใช่หรือไม่?`)) {
                 try {
                     const db = firebase.firestore();
                     const mappingRef = db.collection('customerManagement').doc('companyMappings');
@@ -1570,17 +1565,17 @@ function closeEditMappingModal() {
 
                     delete mappings[displayName];
 
-                    await logActivity(firebase.auth().currentUser.uid, 'update_following', { deletedMappingDisplay: displayName});
-                    
+                    await logActivity(firebase.auth().currentUser.uid, 'update_following', { deletedMappingDisplay: displayName });
+
                     await mappingRef.set(mappings);
-                     showAlertModal('ลบ Mapping สำเร็จ');
+                    showAlertModal('ลบ Mapping สำเร็จ');
                     loadMappingData(); // โหลดข้อมูลใหม่
                 } catch (error) {
                     console.error('Error deleting mapping:', error);
-                     showAlertModal('เกิดข้อผิดพลาดในการลบ Mapping');
+                    showAlertModal('เกิดข้อผิดพลาดในการลบ Mapping');
                 }
-             }
-         }
+            }
+        }
 
         // ฟังก์ชัน logout
         function logout() {
@@ -1635,13 +1630,13 @@ function closeEditMappingModal() {
                     document.getElementById('allInfo').style.display = 'block';
                     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
                     document.querySelector('.tab[onclick="showTab(\'allInfo\')"]').classList.add('active');
-                   
-                     document.getElementById('loadingScreen').style.display = 'flex';
-                     document.getElementById('loadingMessage').textContent = 'กำลังโหลดข้อมูลลูกค้า...';
+
+                    document.getElementById('loadingScreen').style.display = 'flex';
+                    document.getElementById('loadingMessage').textContent = 'กำลังโหลดข้อมูลลูกค้า...';
                     loadAllCustomerInfo().finally(() => {
                         document.getElementById('loadingScreen').style.display = 'none';
                     });
-                     document.getElementById('mainContent').style.display = 'block';
+                    document.getElementById('mainContent').style.display = 'block';
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                 }

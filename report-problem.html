@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - แจ้งปัญหา</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/components.css">
     <style>
         :root {
             --primary: #FDB813;
@@ -95,7 +96,7 @@
             height: 40px;
             margin-right: 2rem;
         }
-        
+
         .back-btn {
             background: #ddd;
             color: #2D2D2D;
@@ -107,10 +108,12 @@
             margin-left: auto;
             transition: all 0.3s;
         }
+
         .back-btn:hover {
             background: #ccc;
         }
-          .loading-overlay {
+
+        .loading-overlay {
             display: none;
             position: fixed;
             inset: 0;
@@ -136,28 +139,32 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
+
         @keyframes spin {
             to {
                 transform: rotate(360deg);
             }
         }
-
     </style>
 </head>
 
 <body>
     <div class="header">
-        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo"
-            class="logo">
-        <h1>แจ้งปัญหา</h1>
-        <button onclick="window.location.href='dashboard.html'" class="back-btn">กลับ</button>
-    </div>
-     <div id="loadingOverlay" class="loading-overlay">
-            <div class="loading-content">
-                <div class="loading-spinner"></div>
-                <p id="loadingMessage">กำลังดำเนินการ...</p>
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
+        <h1>Report Bug</h1>
+        <div class="user-container">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar"></div>
+                <div class="user-details">
+                    <span id="userDisplayName">Loading...</span>
+                    <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+                </div>
             </div>
+            <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
+            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
+    </div>
     <div class="report-container">
         <form id="reportForm">
             <div class="form-group">
@@ -176,46 +183,118 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const loadingMessage = document.getElementById('loadingMessage');
-
-    function showLoading(message = 'กำลังดำเนินการ...') {
-        loadingMessage.textContent = message;
-        loadingOverlay.style.display = 'flex';
-    }
-    function hideLoading() {
-        loadingOverlay.style.display = 'none';
-    }
-    document.getElementById('reportForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        showLoading('กำลังส่งรายงาน...');
-        const title = document.getElementById('title').value;
-        const description = document.getElementById('description').value;
-        const currentUser = firebase.auth().currentUser;
-    
-        if (!currentUser) {
-            alert('โปรดเข้าสู่ระบบก่อนทำการแจ้งปัญหา');
-            window.location.href = 'login.html';
-            return;
-        }
-        firebase.firestore().collection('bugReports').add({
-            title: title,
-            description: description,
-            userId: currentUser.uid,
-            userEmail: currentUser.email,
-            status: 'open',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            alert('ส่งรายงานปัญหาสำเร็จ');
-            document.getElementById('reportForm').reset(); // Clear the form
-            window.location.href = 'dashboard.html'; // Redirect to dashboard
-        }).catch((error) => {
-            console.error('Error adding report: ', error);
-            alert('เกิดข้อผิดพลาดในการส่งรายงาน กรุณาลองใหม่อีกครั้ง');
-        }).finally(()=>{
-            hideLoading();
+        // Firebase initialization
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
         });
-    });
+
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+
+        function showLoading(message = 'กำลังดำเนินการ...') {
+            loadingMessage.textContent = message;
+            loadingOverlay.style.display = 'flex';
+        }
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+        document.getElementById('reportForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            showLoading('กำลังส่งรายงาน...');
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const currentUser = firebase.auth().currentUser;
+
+            if (!currentUser) {
+                alert('โปรดเข้าสู่ระบบก่อนทำการแจ้งปัญหา');
+                window.location.href = 'login.html';
+                return;
+            }
+            firebase.firestore().collection('bugReports').add({
+                title: title,
+                description: description,
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                status: 'open',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert('ส่งรายงานปัญหาสำเร็จ');
+                document.getElementById('reportForm').reset(); // Clear the form
+                window.location.href = 'dashboard.html'; // Redirect to dashboard
+            }).catch((error) => {
+                console.error('Error adding report: ', error);
+                alert('เกิดข้อผิดพลาดในการส่งรายงาน กรุณาลองใหม่อีกครั้ง');
+            }).finally(() => {
+                hideLoading();
+            });
+        });
+    </script>
+    <script>
+        // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
+
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
+                    const roleElement = document.getElementById('userRole');
+                    const avatarElement = document.getElementById('userAvatar');
+
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
+                    }
+
+                    if (userData?.role) {
+                        roleElement.textContent = `(${userData.role})`;
+                    } else {
+                        roleElement.textContent = '';
+                    }
+
+                    if (userData?.avatar) {
+                        avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
+                    } else {
+                        avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+                    }
+
+                    if (userData?.role === 'supervisor' || userData?.role === 'admin') {
+                        document.getElementById('customerManagementBtn').style.display = 'inline-block';
+                        const userContainer = document.querySelector('.user-container');
+                        const logoutBtn = document.querySelector('.logout-btn');
+
+                        if (!document.querySelector('.admin-btn')) {
+                            const adminBtn = document.createElement('button');
+                            adminBtn.innerHTML = 'หน้า Admin';
+                            adminBtn.className = 'admin-btn';
+                            adminBtn.onclick = () => window.location.href = 'admin.html';
+                            userContainer.insertBefore(adminBtn, logoutBtn);
+                        }
+                    }
+
+
+                    // Add admin button if user has admin role
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            }
+        });
+
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
     </script>
 </body>
+
 </html>

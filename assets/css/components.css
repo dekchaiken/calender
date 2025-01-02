@@ -1,0 +1,95 @@
+/* assets/css/components.css */
+
+:root {
+    --primary: #FDB813;
+    --primary-dark: #e5a700;
+    --secondary: #404040;
+    --accent: #2D2D2D;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --gray: #f0f0f0;
+    font-size: 10px;
+}
+
+/* Reusable styles for header */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: white;
+    box-shadow: var(--shadow);
+}
+
+.logo {
+    height: 40px;
+    margin-right: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.admin-title {
+    font-size: 1.5rem;
+    color: var(--secondary);
+    margin: 0;
+    flex-grow: 1;
+}
+
+.user-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+    padding: 0.5rem 1rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: #ddd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #666;
+}
+
+.user-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.nav-btn,
+.logout-btn,
+.admin-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-btn {
+    background: #f0f0f0;
+    color: var(--secondary);
+}
+
+.logout-btn {
+    background: #ff4444;
+    color: white;
+}
+
+.admin-btn {
+    background: var(--primary);
+    color: var(--accent);
+}

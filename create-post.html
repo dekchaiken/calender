@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -97,14 +98,15 @@
             font-size: 0.9rem;
             margin-top: 0.5rem;
         }
-        
+
         label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: bold;
         }
 
-        input[type="text"], textarea {
+        input[type="text"],
+        textarea {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #ddd;
@@ -152,9 +154,11 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
-        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg" alt="Cyfence Logo" class="logo">
+        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            alt="Cyfence Logo" class="logo">
         <h1>สร้างประกาศใหม่</h1>
     </div>
 
@@ -175,7 +179,8 @@
                 <div id="imagePreviewContainer"></div>
             </div>
             <div class="btn-container">
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='dashboard.html'">ยกเลิก</button>
+                <button type="button" class="btn btn-secondary"
+                    onclick="window.location.href='dashboard.html'">ยกเลิก</button>
                 <button type="submit" class="btn btn-primary">โพสต์ประกาศ</button>
             </div>
         </form>
@@ -211,7 +216,7 @@
         const imageInput = document.getElementById('image');
         const previewContainer = document.getElementById('imagePreviewContainer');
 
-        
+
 
         function getBase64(file) {
             return new Promise((resolve, reject) => {
@@ -235,7 +240,7 @@
             try {
                 const base64Image = await getBase64(file);
                 selectedImage = base64Image;
-                
+
                 previewContainer.innerHTML = `
                     <img src="${base64Image}" class="image-preview">
                 `;
@@ -283,4 +288,5 @@
         });
     </script>
 </body>
+
 </html>
