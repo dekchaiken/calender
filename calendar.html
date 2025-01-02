@@ -59,13 +59,13 @@
                     <div class="expand-icon">▼</div>
                 </div>
 
-                <!-- Green Team -->
-                <div class="team-card green" onclick="toggleTeamMembers('green')">
-                    <h3>Shift B (Green Team)</h3>
-                    <div class="team-leader" id="green-team-leader">
+                <!-- Yellow Team -->
+                <div class="team-card yellow" onclick="toggleTeamMembers('yellow')">
+                    <h3>Shift D (Yellow Team)</h3>
+                    <div class="team-leader" id="yellow-team-leader">
                         <!-- Leader will be populated by JavaScript -->
                     </div>
-                    <div class="team-members" id="green-members">
+                    <div class="team-members" id="yellow-members">
                         <!-- Members will be populated by JavaScript -->
                     </div>
                     <div class="expand-icon">▼</div>
@@ -83,18 +83,20 @@
                     <div class="expand-icon">▼</div>
                 </div>
 
-                <!-- Yellow Team -->
-                <div class="team-card yellow" onclick="toggleTeamMembers('yellow')">
-                    <h3>Shift D (Yellow Team)</h3>
-                    <div class="team-leader" id="yellow-team-leader">
+                <!-- Green Team -->
+                <div class="team-card green" onclick="toggleTeamMembers('green')">
+                    <h3>เวรที่ 4</h3>
+                    <div class="team-leader" id="green-team-leader">
                         <!-- Leader will be populated by JavaScript -->
                     </div>
-                    <div class="team-members" id="yellow-members">
+                    <div class="team-members" id="green-members">
                         <!-- Members will be populated by JavaScript -->
                     </div>
                     <div class="expand-icon">▼</div>
                 </div>
             </div>
+
+            
 
             <div class="controls">
                 <button onclick="changeMonth(-1)" class="nav-btn">← เดือนก่อนหน้า</button>
@@ -112,11 +114,6 @@
                         <span class="checkmark red">Shift A - อธิราช</span>
                     </label>
                     <label class="shift-filter">
-                        <input type="checkbox" value="green" checked class="shift-checkbox"
-                            onchange="updateFilters()" />
-                        <span class="checkmark green">Shift B - ปพน</span>
-                    </label>
-                    <label class="shift-filter">
                         <input type="checkbox" value="blue" checked class="shift-checkbox" onchange="updateFilters()" />
                         <span class="checkmark blue">Shift C - กฤษฏ์</span>
                     </label>
@@ -124,6 +121,11 @@
                         <input type="checkbox" value="yellow" checked class="shift-checkbox"
                             onchange="updateFilters()" />
                         <span class="checkmark yellow">Shift D - พิสุทธิ์</span>
+                    </label>
+                    <label class="shift-filter">
+                        <input type="checkbox" value="green" checked class="shift-checkbox"
+                            onchange="updateFilters()" />
+                        <span class="checkmark green">เวรที่ 4</span>
                     </label>
                 </div>
                 <div class="filter-buttons">
