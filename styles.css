@@ -160,7 +160,7 @@
 
 .team-card h3 {
     margin-bottom: 1rem;
-    font-size: 1.2rem;
+    font-size: 0.8rem;
     font-weight: 600;
 }
 
@@ -322,7 +322,7 @@
 }
 
 * {
-    box-sizing: border-box;
+    font-size: 0.9rem;
     font-family: 'Noto Sans Thai', sans-serif;
     margin: 0;
     padding: 0;
@@ -751,7 +751,7 @@ body {
 }
 
 .shift {
-    font-size: 0.9em;
+    font-size: 0.7em;
     padding: 0.5rem;
     border-radius: 4px;
     margin: 2px;
