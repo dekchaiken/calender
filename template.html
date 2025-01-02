@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Template Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="dashboard.css">
     <style>
         :root {
             --primary: #FDB813;
@@ -269,13 +268,7 @@
             alt="Cyfence Logo" class="logo">
         <h1>Template Management</h1>
         <div class="user-container">
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar"></div>
-                <div class="user-details">
-                    <span id="userDisplayName">Loading...</span>
-                    <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
-                </div>
-            </div>
+            <span class="user-name" id="userDisplayName">Loading...</span>
             <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
             <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
@@ -286,6 +279,13 @@
             <h2>เลือกลูกค้า</h2>
             <select id="customerSelect" onchange="loadUseCases()">
                 <option value="">-- เลือกลูกค้า --</option>
+                <option value="IPST">IPST</option>
+                <option value="BLA">BLA</option>
+                <option value="Carabao">Carabao</option>
+                <option value="CJ">CJ Express</option>
+                <option value="Driessen">Driessen</option>
+                <option value="KSAM">KSAM</option>
+                <option value="E-VISA">Thai E-Visa</option>
             </select>
 
             <div id="useCaseSelect" style="display: none;">
@@ -299,7 +299,6 @@
         <div id="templateForm" class="card" style="display: none;">
             <h2>รายละเอียด Template</h2>
             <div class="template-form">
-                <div id="templateInputs"></div> <!-- Add this element -->
                 <input type="text" id="caseId" placeholder="Case ID (IRXXXXXXXX)">
                 <input type="text" id="sourceIp" placeholder="Source IP">
                 <input type="text" id="destIp" placeholder="Destination IP">
@@ -313,309 +312,233 @@
                     <option value="success">Success</option>
                 </select>
             </div>
-            <input type="file" id="csvFile" accept=".csv">
-            <button class="btn btn-primary" onclick="handleCSVFile()">Preview with CSV</button>
+
             <div class="preview-section">
                 <h3>ตัวอย่าง Template</h3>
                 <div id="templatePreview"></div>
             </div>
             <div class="validation-status" id="validationStatus"></div>
         </div>
+    </div>
 
-        <script>
-            let templates = {};
-            let customerUseCases = {};
-            function loadCustomerList() {
-                const customerSelect = document.getElementById('customerSelect');
-                customerSelect.innerHTML = '<option value="">-- เลือกลูกค้า --</option>';
-                firebase.firestore().collection('customerManagement').doc('companyMappings').get()
-                    .then(doc => {
-                        if (doc.exists) {
-                            const mappings = doc.data();
-                            const customerNames = Object.values(mappings).sort();
-                            customerNames.forEach(shortName => {
-                                const option = document.createElement('option');
-                                option.value = shortName;
-                                option.textContent = shortName;
-                                customerSelect.appendChild(option);
-                            });
-                        }
-                    });
-            }
-            function loadUseCases() {
-                const customerSelect = document.getElementById('customerSelect');
-                const useCaseSelect = document.getElementById('useCaseSelect');
-                const caseSelect = document.getElementById('caseSelect');
-                const selectedCustomer = customerSelect.value;
+    <script>
+        // Template definitions
+        const templates = {
+            'vpn_guessing': {
+                name: 'VPN Password Guessing Detect to Firewall Hostname',
+                template: (data) => `ดำเนินการเปิดเคส ${data.caseId} ${data.customerName} Rule VPN Password Guessing Detect to Firewall Hostname: ${data.deviceName}
 
-                if (selectedCustomer) {
-                    // Clear previous options
-                    caseSelect.innerHTML = '<option value="">-- เลือก Case --</option>';
+##Identification##
+Source IP: ${data.sourceIp}
+Source User: ${data.sourceUser}
+Destination IP: ${data.destIp}
+Device Name: ${data.deviceName}
+Event Subtype: ${data.eventSubtype}
 
-                    // Fetch templates from Firestore
-                    firebase.firestore().collection('templates').get()
-                        .then(querySnapshot => {
-                            templates = {};
-                            customerUseCases = {};
+##Threat Information##
+ตรวจพบพฤติกรรม VPN ด้วย Source IP: ${data.sourceIp} มาที่ VPN Gateway IP: ${data.destIp} ปริมาณมากกว่า 10 Event ในระยะเวลา 10 นาที โดยอุปกรณ์ Firewall มีสถานะ VPN Login Fail ซึ่งเป็นสถานะ การพยายามทำ Password Guessing Attack 
+จากการตรวจสอบ IP reputation ของ IP ดังกล่าวทั้งหมด พบรายงานว่าเป็น BAD IP ที่มีประวัติโจมตีที่อื่นมาก่อน 
+(Ref: https://www.abuseipdb.com/check/${data.sourceIp})
 
-                            querySnapshot.forEach(doc => {
-                                const templateData = doc.data();
-                                // Convert template string to function
-                                try {
-                                    const templateFunction = new Function('data', 'return `' + templateData.template + '`;');
-                                    templates[doc.id] = {
-                                        name: templateData.name,
-                                        template: templateFunction,
-                                        fields: templateData.fields,
-                                        customers: templateData.customers || ['all']
-                                    };
+##Solution/Workaround##
+1) กำหนดเปิดให้ใช้งาน Geolocation เฉพาะในประเทศไทย หรือประเทศอื่นๆที่จำเป็นต้องใช้งานผ่านระบบดังกล่าวเท่านั้น
+2) Block source IP ดังกล่าว บน Firewall Gateway
+3) Review Policy Firewall เปิดเฉพาะ IP / Port ที่ใช้งานเท่านั้น
+4) ตรวจสอบเครื่อง Target IP address ว่ามีความผิดปกติหรือไม่`,
+                fields: ['caseId', 'sourceIp', 'sourceUser', 'destIp', 'deviceName']
+            },
+            'php_vulnerability': {
+                name: 'Web PHP Common website vulnerability scans',
+                template: (data) => `ดำเนินการเปิดเคส ${data.caseId} ${data.customerName} Rule Web PHP Common website vulnerability scans from Source IP ${data.sourceIp}
 
-                                } catch (error) {
-                                    console.error(`Error creating template function for ${doc.id}:`, error);
-                                }
-                                // Build customerUseCases dynamically
-                                templateData.customers.forEach(customer => {
-                                    if (!customerUseCases[customer]) {
-                                        customerUseCases[customer] = [];
-                                    }
-                                    customerUseCases[customer].push(doc.id);
+##Identification##
+Source IP: ${data.sourceIp}
+Destination IP: ${data.destIp}
+Destination Port: ${data.destPort}
+Path URL: ${data.pathUrl || '/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php'}
+Event Subtype: ${data.eventSubtype}
+HTTP Code: ${data.httpCode}
 
-                                });
-                            });
-                            const cases = customerUseCases[selectedCustomer] || [];
+##Threat Information##
+1. ตรวจพบไอพีแอดเดรส ${data.sourceIp} มีพฤติกรรมการ Scan เพื่อโจมตี Website ที่มีการใช้งาน PHP โดยอาศัยข้อมูลจากช่องโหว่ CVE-2017-9841
+2. ข้อมูล Access Log ของ Web Server พบว่าหมายเลขไอพีแอดเดรสดังกล่าว พยายาม Request Access หน้า page โดยมีสถานะ Log Error ${data.httpCode}
+3. ข้อมูลจากการตรวจสอบ IP reputation พบรายงานว่าเป็น BAD IP (Ref: https://www.abuseipdb.com/check/${data.sourceIp})
 
-                            cases.forEach(caseId => {
-                                const option = document.createElement('option');
-                                option.value = caseId;
-                                option.textContent = templates[caseId].name;
-                                caseSelect.appendChild(option);
-                            });
-                            useCaseSelect.style.display = 'block';
+##Solution/Workaround##
+1. ตรวจสอบว่ามีความจำเป็นต้องมีการเชื่อมต่อเพื่อใช้งานกับ Source IP ดังกล่าวหรือไม่
+2. ตรวจสอบเครื่อง Target IP address ว่ามี Vulnerability/Application ที่สัมพันธ์กับการโจมตี
+3. ทำการตรวจสอบช่องโหว่ของ Software ที่หน่วยงานมีการใช้งานจริง
+4. ควรเปิดใช้งานบริการ Services หรือ Ports ที่จำเป็นเท่านั้น`,
+                fields: ['caseId', 'sourceIp', 'destIp', 'destPort', 'httpCode', 'pathUrl']
+            },
+            'env': {
+                name: 'Web Mass-scanning for unsecured ENV file',
+                template: (data) => `ดำเนินการเปิดเคส ${data.caseId} ${data.customerName} Rule Web Mass-scanning for unsecured ENV file from Source IP ${data.sourceIp}
 
-                        }).catch(error => {
-                            console.error('Error loading templates:', error);
-                        });
+##Identification##
+Source IP: ${data.sourceIp}
+Source User: ${data.sourceUser}
+Destination IP: ${data.destIp}
+Device Name: ${data.deviceName}
+Event Subtype: ${data.eventSubtype}
 
-                } else {
-                    useCaseSelect.style.display = 'none';
-                }
+##Threat Information##
+ตรวจพบพฤติกรรม VPN ด้วย Source IP: ${data.sourceIp} มาที่ VPN Gateway IP: ${data.destIp} ปริมาณมากกว่า 10 Event ในระยะเวลา 10 นาที โดยอุปกรณ์ Firewall มีสถานะ VPN Login Fail ซึ่งเป็นสถานะ การพยายามทำ Password Guessing Attack 
+จากการตรวจสอบ IP reputation ของ IP ดังกล่าวทั้งหมด พบรายงานว่าเป็น BAD IP ที่มีประวัติโจมตีที่อื่นมาก่อน 
+(Ref: https://www.abuseipdb.com/check/${data.sourceIp})
 
-                // Hide template form when customer changes
-                document.getElementById('templateForm').style.display = 'none';
-            }
-            function loadTemplate() {
-    const selectedCase = document.getElementById('caseSelect').value;
-    const templateForm = document.getElementById('templateForm');
-    const templateInputs = document.getElementById('templateInputs');
-    templateInputs.innerHTML = '';
-    if (selectedCase) {
-        templateForm.style.display = 'block';
-        // Load template from Firestore
-        if(templates[selectedCase]) {
-            const fields = templates[selectedCase].fields;
-            const variableDescriptions = templates[selectedCase].variableDescriptions || {}; // Use an empty object as default for variableDescriptions
-            const variableTypes = templates[selectedCase].variableTypes || {}; // Use an empty object as default for variableTypes
-            fields.forEach(field => {
-                const label = document.createElement('label');
-                  label.textContent = variableDescriptions && variableDescriptions[field] ? variableDescriptions[field] : field; // Check if variableDescriptions[field] exists before accessing it
+##Solution/Workaround##
+1) กำหนดเปิดให้ใช้งาน Geolocation เฉพาะในประเทศไทย หรือประเทศอื่นๆที่จำเป็นต้องใช้งานผ่านระบบดังกล่าวเท่านั้น
+2) Block source IP ดังกล่าว บน Firewall Gateway
+3) Review Policy Firewall เปิดเฉพาะ IP / Port ที่ใช้งานเท่านั้น
+4) ตรวจสอบเครื่อง Target IP address ว่ามีความผิดปกติหรือไม่`,
+                fields: ['caseId', 'sourceIp', 'sourceUser', 'destIp', 'deviceName']
+            },
+        };
 
-                let input;
-                if (variableTypes[field] === 'select') {
-                    input = document.createElement('select');
-                    input.innerHTML = `<option value="">-- เลือก --</option>`; // Default option
-                } else {
-                    input = document.createElement('input');
-                    input.type = variableTypes[field] || 'text';
-                }
-                input.id = field;
-                input.placeholder = field;
-                templateInputs.appendChild(label);
-                templateInputs.appendChild(input);
+        // Customer use cases mapping
+        const customerUseCases = {
+            'IPST': ['vpn_guessing', 'php_vulnerability'],
+            'BLA': ['vpn_guessing'],
+            'Carabao': ['php_vulnerability'],
+            'KSAM': ['vpn_guessing', 'php_vulnerability', 'env'],
+            'E-VISA': ['vpn_guessing'],
+            'Driessen': ['vpn_guessing', 'php_vulnerability'],
+            'CJ': ['vpn_guessing', 'php_vulnerability']
+        };
 
-            });
-            const eventSubtypeSelect = document.createElement('select');
-            eventSubtypeSelect.id = 'eventSubtype';
-            eventSubtypeSelect.innerHTML = `
-            <option value="failure">Failure</option>
-            <option value="success">Success</option>
-            `;
-            templateInputs.appendChild(eventSubtypeSelect);
-        }
-        updatePreview();
-    } else {
-        templateForm.style.display = 'none';
-    }
-}
+        function loadUseCases() {
+            const customerSelect = document.getElementById('customerSelect');
+            const useCaseSelect = document.getElementById('useCaseSelect');
+            const caseSelect = document.getElementById('caseSelect');
+            const selectedCustomer = customerSelect.value;
 
-            let csvData = null; // Store the parsed CSV data
+            if (selectedCustomer) {
+                // Clear previous options
+                caseSelect.innerHTML = '<option value="">-- เลือก Case --</option>';
 
-            function handleCSVFile() {
-                const csvFile = document.getElementById('csvFile').files[0];
-                if (csvFile) {
-                    const reader = new FileReader();
-                    reader.onload = function (event) {
-                        const csvString = event.target.result;
-                        Papa.parse(csvString, {
-                            header: true,
-                            complete: function (results) {
-                                csvData = results.data;
-                                if (csvData && csvData.length > 0) {
-                                    updatePreviewWithCSVData(csvData[0]) // Show preview with the first row from CSV
-                                } else {
-                                    alert('CSV file is empty or has invalid format.');
-                                }
-                            },
-                            error: function (error) {
-                                console.error('Error parsing CSV file:', error);
-                                alert('Error parsing CSV file. Please make sure the file is in the correct format.');
-                            }
-                        });
-                    };
-                    reader.readAsText(csvFile);
-                } else {
-                    alert('Please select a CSV file.');
-                }
-            }
-
-            function updatePreview() {
-                const selectedCase = document.getElementById('caseSelect').value;
-                const selectedCustomer = document.getElementById('customerSelect').value;
-                if (!selectedCase || !templates[selectedCase]) return;
-                const data = {
-                    customerName: selectedCustomer,
-                };
-
-                templates[selectedCase].fields.forEach(field => {
-                    const element = document.getElementById(field);
-                    data[field] = element ? element.value : '';
+                // Add use cases for selected customer
+                const cases = customerUseCases[selectedCustomer] || [];
+                cases.forEach(caseId => {
+                    const option = document.createElement('option');
+                    option.value = caseId;
+                    option.textContent = templates[caseId].name;
+                    caseSelect.appendChild(option);
                 });
-                data['eventSubtype'] = document.getElementById('eventSubtype').value;
-                const template = templates[selectedCase].template(data);
-                document.getElementById('templatePreview').innerText = template;
-                validateFields(selectedCase);
+
+                useCaseSelect.style.display = 'block';
+            } else {
+                useCaseSelect.style.display = 'none';
             }
-            function updatePreviewWithCSVData(csvRow) {
-    const selectedCase = document.getElementById('caseSelect').value;
-     const selectedCustomer = document.getElementById('customerSelect').value;
 
-    if (!selectedCase || !templates[selectedCase]) return;
-
-     const data = {
-        customerName: selectedCustomer,
-     };
-
-    templates[selectedCase].fields.forEach(field => {
-         const element = document.getElementById(field); // Find the input field for the current field
-        if (element) {
-            element.value = csvRow[field] || ''; // Populate the field
-            data[field] = element.value; // Store the value in data
-        } else {
-          data[field] = csvRow[field] || '';
+            // Hide template form when customer changes
+            document.getElementById('templateForm').style.display = 'none';
         }
+
+        function loadTemplate() {
+            const selectedCase = document.getElementById('caseSelect').value;
+            const templateForm = document.getElementById('templateForm');
+
+            if (selectedCase) {
+                templateForm.style.display = 'block';
+                updatePreview();
+            } else {
+                templateForm.style.display = 'none';
+            }
+        }
+
+        function updatePreview() {
+            const selectedCase = document.getElementById('caseSelect').value;
+            const selectedCustomer = document.getElementById('customerSelect').value;
+
+            if (!selectedCase || !templates[selectedCase]) return;
+
+            const data = {
+                caseId: document.getElementById('caseId').value || 'IRXXXXXXXX',
+                customerName: selectedCustomer,
+                sourceIp: document.getElementById('sourceIp').value || 'XXXXXXXXXXX',
+                sourceUser: document.getElementById('sourceUser').value || 'XXXXX',
+                destIp: document.getElementById('destIp').value || 'XXXXXX',
+                destPort: document.getElementById('destPort').value || 'XXXXXX',
+                deviceName: document.getElementById('deviceName').value || 'XXXXXXX',
+                eventSubtype: document.getElementById('eventSubtype').value,
+                httpCode: document.getElementById('httpCode').value || 'XXXXXXXXXX',
+                pathUrl: document.getElementById('pathUrl').value || '/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php'
+            };
+
+            const template = templates[selectedCase].template(data);
+            document.getElementById('templatePreview').innerText = template;
+            validateFields(selectedCase);
+        }
+
+        function validateFields(selectedCase) {
+            if (!selectedCase || !templates[selectedCase]) return;
+
+            const requiredFields = templates[selectedCase].fields;
+            const missingFields = requiredFields.filter(field => !document.getElementById(field).value);
+            const validationStatus = document.getElementById('validationStatus');
+
+            if (missingFields.length > 0) {
+                validationStatus.className = 'validation-status validation-error';
+                validationStatus.innerText = 'กรุณากรอกข้อมูลให้ครบถ้วน: ' + missingFields.join(', ');
+            } else {
+                validationStatus.className = 'validation-status validation-success';
+                validationStatus.innerText = 'ข้อมูลครบถ้วน';
+            }
+        }
+
+        // Add event listeners to all inputs for real-time preview
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', updatePreview);
         });
-      data['eventSubtype'] =  document.getElementById('eventSubtype')?.value || 'failure'
-     const template = templates[selectedCase].template(data);
-    document.getElementById('templatePreview').innerText = template;
-    validateFields(selectedCase);
-}
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase initialization
+        firebase.initializeApp({
+            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+            authDomain: "cyfencedevbyken.firebaseapp.com",
+            projectId: "cyfencedevbyken",
+            storageBucket: "cyfencedevbyken.appspot.com",
+            messagingSenderId: "632813871756",
+            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+        });
+    </script>
+    <script>
+        // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
 
-            function validateFields(selectedCase) {
-                if (!selectedCase || !templates[selectedCase]) return;
+                    const userData = userDoc.data();
+                    const displayElement = document.getElementById('userDisplayName');
 
-                const requiredFields = templates[selectedCase].fields;
-                const missingFields = requiredFields.filter(field => {
-                    const element = document.getElementById(field);
-                    return element == null || !element.value;
-                });
-
-                const validationStatus = document.getElementById('validationStatus');
-
-                if (missingFields.length > 0) {
-                    validationStatus.className = 'validation-status validation-error';
-                    validationStatus.innerText = 'กรุณากรอกข้อมูลให้ครบถ้วน: ' + missingFields.join(', ');
-                } else {
-                    validationStatus.className = 'validation-status validation-success';
-                    validationStatus.innerText = 'ข้อมูลครบถ้วน';
-                }
-            }
-
-            // Add event listeners to all inputs for real-time preview
-            document.querySelectorAll('input, select').forEach(input => {
-                input.addEventListener('input', updatePreview);
-            });
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-        <script>
-            // Firebase initialization
-            firebase.initializeApp({
-                apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
-                authDomain: "cyfencedevbyken.firebaseapp.com",
-                projectId: "cyfencedevbyken",
-                storageBucket: "cyfencedevbyken.appspot.com",
-                messagingSenderId: "632813871756",
-                appId: "1:632813871756:web:57d674643f258ddd2e11a9",
-            });
-        </script>
-        <script>
-            // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
-            firebase.auth().onAuthStateChanged(async (user) => {
-                if (user) {
-                    try {
-                        const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
-                        const userData = userDoc.data();
-                        const displayElement = document.getElementById('userDisplayName');
-                        const roleElement = document.getElementById('userRole');
-                        const avatarElement = document.getElementById('userAvatar');
-
-                        if (userData?.displayName) {
-                            displayElement.textContent = userData.displayName;
-                        } else {
-                            displayElement.textContent = user.email;
-                        }
-
-                        if (userData?.role) {
-                            roleElement.textContent = `(${userData.role})`;
-                        } else {
-                            roleElement.textContent = '';
-                        }
-
-                        if (userData?.avatar) {
-                            avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
-                        } else {
-                            avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
-                        }
-
-                        if (userData?.role === 'admin') {
-                            const userContainer = document.querySelector('.user-container');
-                            const logoutBtn = document.querySelector('.logout-btn');
-
-                            if (!document.querySelector('.admin-btn')) {
-                                const adminBtn = document.createElement('button');
-                                adminBtn.innerHTML = 'หน้า Admin';
-                                adminBtn.className = 'admin-btn';
-                                adminBtn.onclick = () => window.location.href = 'admin.html';
-                                userContainer.insertBefore(adminBtn, logoutBtn);
-                            }
-                        }
-                        loadCustomerList(); // Load customers on page load
-                        document.getElementById('mainContent').style.display = 'block';
-                    } catch (error) {
-                        console.error('Error fetching user data:', error);
+                    if (userData?.displayName) {
+                        displayElement.textContent = userData.displayName;
+                    } else {
+                        displayElement.textContent = user.email;
                     }
-                }
-            });
 
-            function logout() {
-                firebase.auth().signOut()
-                    .then(() => window.location.href = 'login.html')
-                    .catch(error => console.error('Logout error:', error));
+                    // Add admin button if user has admin role
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
             }
-        </script>
-        <script src="auth.js"></script>
-        <script src="template.js"></script>
+        });
+
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => console.error('Logout error:', error));
+        }
+    </script>
+    <script src="auth.js"></script>
 </body>
 
 </html>
