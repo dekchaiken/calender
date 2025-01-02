@@ -580,6 +580,12 @@
 
             <div class="card">
                 <h2>Template สำหรับบริษัทที่เลือก</h2>
+                 <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
+                    <input type="radio" id="lineTemplate" name="templateType" value="line" checked>
+                    <label for="lineTemplate" style="cursor: pointer;">Line Template</label>
+                    <input type="radio" id="emailTemplate" name="templateType" value="email">
+                    <label for="emailTemplate" style="cursor: pointer;">Email Template</label>
+                </div>
                 <div id="allTemplates" class="preview-area">
                     โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...
                 </div>
@@ -678,29 +684,38 @@
             closeLoadingOverlay();
         }
 
-        function generateTemplate(companyCode, formattedDate, incidents) {
+        function generateTemplate(companyCode, formattedDate, incidents, templateType = 'line') {
             const isHospital = companyTypes[companyCode] === 'hospital';
             let template = '';
 
-            if (isHospital) {
-                // Template for hospitals
-                template += `เรียนทีม ${companyFullNames[companyCode]}\n`;
-                template += `${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
-            } else {
-                // Template for regular companies
-                template += `เรียนทีม ${companyCode}\n`;
-                template += `${companyCode} Follow Incident ${formattedDate}\n\n`;
-            }
+            if (templateType === 'line') {
+                if (isHospital) {
+                    template += `เรียนทีม ${companyFullNames[companyCode]}\n`;
+                    template += `${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
+                } else {
+                    template += `เรียนทีม ${companyCode}\n`;
+                    template += `${companyCode} Follow Incident ${formattedDate}\n\n`;
+                }
 
-            if (incidents.length > 0) {
-                template += `ขอแจ้ง Incident ที่มีสถานะยังคง Pending ครับ\n`;
-                incidents.forEach((incident, idx) => {
-                    template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
-                });
-                template += `\nรายละเอียดเพิ่มเติม ส่งให้ทาง E-mail ครับ\n`;
-                template += `หากดำเนินการแก้ไขแล้ว รบกวนแจ้งปิดเคสด้วยครับ`;
-            } else {
-                template += `- ไม่พบ Incident ที่มีสถานะ pending ครับ`;
+                if (incidents.length > 0) {
+                    template += `ขอแจ้ง Incident ที่มีสถานะยังคง Pending ครับ\n`;
+                    incidents.forEach((incident, idx) => {
+                        template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
+                    });
+                    template += `\nรายละเอียดเพิ่มเติม ส่งให้ทาง E-mail ครับ\n`;
+                    template += `หากดำเนินการแก้ไขแล้ว รบกวนแจ้งปิดเคสด้วยครับ`;
+                } else {
+                    template += `- ไม่พบ Incident ที่มีสถานะ pending ครับ`;
+                }
+            } else if (templateType === 'email') {
+                if (incidents.length > 0) {
+                    template += `เรียนทีม ${companyCode}\n`;
+                    template += `${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
+                    incidents.forEach((incident, idx) => {
+                        template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
+                    });
+                    template += `\nหากดำเนินการตรวจสอบแก้ไขเสร็จเรียบร้อยแล้ว รบกวนแจ้งปิด Incidents ด้วยครับ\nรายละเอียดเพิ่มเติมตามเอกสารแนบ\n\nBest regard,\nSecurity Analyst`;
+                }
             }
 
             return template;
@@ -747,7 +762,7 @@
                 const buttonContainer = document.createElement('div');
                 buttonContainer.style.display = 'flex';
                 buttonContainer.style.gap = '8px';
-        
+                
                 const selectGroupBtn = document.createElement('button');
                 selectGroupBtn.textContent = 'Select All';
                 selectGroupBtn.className = 'select-group-btn';
@@ -906,6 +921,8 @@
             const formattedDate = formatDateToEng(date);
             let allTemplates = '';
 
+            const selectedTemplateType = document.querySelector('input[name="templateType"]:checked').value;
+
             // กรองเฉพาะบริษัทที่ถูกเลือกจาก checkbox
             const selectedCompaniesArray = Array.from(selectedCompanies).sort();
 
@@ -922,12 +939,20 @@
                         getCompanyCode(incident.Customer) === companyCode
                     );
 
-                    allTemplates += generateTemplate(companyCode, formattedDate, incidents);
+                    allTemplates += generateTemplate(companyCode, formattedDate, incidents, selectedTemplateType);
                 }
             });
 
             document.getElementById('allTemplates').textContent = allTemplates || 'กรุณาเลือกบริษัทที่ต้องการดู Template';
         }
+        // Event listener for radio button change
+        document.querySelectorAll('input[name="templateType"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                showLoadingOverlay('กำลังอัพเดต Template...');
+                updateAllTemplates();
+                closeLoadingOverlay();
+            });
+        });
 
         function copyAllTemplates() {
             showLoadingOverlay('กำลังคัดลอก Template...');
