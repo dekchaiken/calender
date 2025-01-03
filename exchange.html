@@ -402,9 +402,27 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: calc(50% - 10px);
-            /* Occupy 50% of the container width with a small gap */
+            width: 100%;
             min-width: 300px;
+            min-height: 320px;
+        }
+
+        #exchangeWith {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .calendar td.shift {
+            background-color: #ffeb3b;
+            color: black;
+        }
+
+        .calendar td.active {
+            background-color: var(--primary);
+            color: white;
         }
 
         .calendar-wrapper h4 {
@@ -417,6 +435,7 @@
             flex-direction: column;
             width: 100%;
             min-width: 300px;
+            align-items: center;
         }
 
         .shift-times.other {
@@ -1029,6 +1048,7 @@
                 selectedOtherDate = null;
                 selectedMyTime = null;
                 selectedOtherTime = null;
+                document.getElementById('exchangeWith').value = ""
             }
             async function loadTeamMembers() {
                 const userSelect = document.getElementById('exchangeWith');
@@ -1078,7 +1098,7 @@
 
                     const shift = await getShiftsForDay(date, shiftPattern);
                     if (shift && Object.keys(shift).length > 0) {
-                        myShifts.push({ date: date, time: shift.time, name: shift.name })
+                        myShifts.push({ date: date, time: shift.time, name: shift.name });
                     }
                 }
                 calendarBody.innerHTML = '';
@@ -1089,15 +1109,17 @@
                     const row = document.createElement('tr');
                     for (let day = 0; day < 7; day++) {
                         const currentDate = new Date(firstDay);
-                        currentDate.setDate(firstDay.getDate() + day + (week * 7));
+                        currentDate.setDate(firstDay.getDate() + day + week * 7);
                         const formattedDate = currentDate.toLocaleDateString('th-TH');
 
-                        const hasShift = myShifts.some(shift => shift.date.toLocaleDateString('th-TH') === formattedDate);
+                        const hasShift = myShifts.some(
+                            (shift) => shift.date.toLocaleDateString('th-TH') === formattedDate
+                        );
                         const cell = document.createElement('td');
                         cell.textContent = currentDate.getDate();
                         cell.setAttribute('data-date', formattedDate);
                         if (hasShift) {
-                            cell.classList.add('active');
+                            cell.classList.add('shift');
                         }
                         cell.addEventListener('click', () => {
                             selectMyDate(cell);
@@ -1106,32 +1128,54 @@
                     }
                     calendarBody.appendChild(row);
                 }
-
             }
             async function selectMyDate(cell) {
                 const calendarBody = document.getElementById('my-calendar-body');
                 const shiftTimesDiv = document.getElementById('my-shift-times');
                 if (!calendarBody || !shiftTimesDiv) return;
                 const selectedDate = cell.getAttribute('data-date');
-                const allCells = calendarBody.querySelectorAll('td')
-                allCells.forEach(td => td.classList.remove('active'));
+                const allCells = calendarBody.querySelectorAll('td');
+
                 if (selectedMyDate === selectedDate) {
-                    selectedMyDate = null
+                    // If the same date is clicked again, deselect it and reapply shift color if exist
+                    cell.classList.remove('active');
+                    const hasShift = myShifts.some(shift => shift.date.toLocaleDateString('th-TH') === selectedDate);
+                    if (hasShift) {
+                        cell.classList.add('shift')
+                    }
+                    selectedMyDate = null;
                     shiftTimesDiv.innerHTML = '';
                 } else {
+                    // Remove the active class from the previously selected cell
+                    allCells.forEach(td => {
+                        if (td.classList.contains('active') && td !== cell) {
+                            td.classList.remove('active');
+                            const shiftDate = td.getAttribute('data-date');
+                            const hasShift = myShifts.some(
+                                (shift) => shift.date.toLocaleDateString('th-TH') === shiftDate
+                            );
+                            if (hasShift) {
+                                td.classList.add('shift')
+                            }
+                        }
+                    });
+
+                    // Add 'active' class to selected cell and remove 'shift' if it exists
                     cell.classList.add('active');
+                    cell.classList.remove('shift');
                     selectedMyDate = selectedDate;
-                    const currentShift = myShifts.find(shift => shift.date.toLocaleDateString('th-TH') === selectedDate)
+
+                    // Get shift data and append shift to shift time
+                    const currentShift = myShifts.find(shift => shift.date.toLocaleDateString('th-TH') === selectedDate);
                     shiftTimesDiv.innerHTML = '';
                     if (currentShift) {
                         const timeButton = document.createElement('div');
-                        timeButton.className = 'shift-time-item'
-                        timeButton.textContent = `${currentShift.time} - ${currentShift.name}`
-                        timeButton.addEventListener('click', () => selectMyTime(timeButton, currentShift.time, currentShift.name))
-                        shiftTimesDiv.appendChild(timeButton)
+                        timeButton.className = 'shift-time-item';
+                        timeButton.textContent = `${currentShift.time} - ${currentShift.name}`;
+                        timeButton.addEventListener('click', () => selectMyTime(timeButton, currentShift.time, currentShift.name));
+                        shiftTimesDiv.appendChild(timeButton);
                     }
                 }
-
             }
             async function selectMyTime(element, time, name) {
                 const shiftTimesDiv = document.getElementById('my-shift-times');
@@ -1191,7 +1235,7 @@
                         cell.textContent = currentDate.getDate();
                         cell.setAttribute('data-date', formattedDate);
                         if (hasShift) {
-                            cell.classList.add('active');
+                            cell.classList.add('shift');
                         }
                         cell.addEventListener('click', () => {
                             selectOtherDate(cell);
@@ -1218,23 +1262,46 @@
                 const shiftTimesDiv = document.getElementById('other-shift-times');
                 if (!calendarBody || !shiftTimesDiv) return;
                 const selectedDate = cell.getAttribute('data-date');
-                const allCells = calendarBody.querySelectorAll('td')
-                allCells.forEach(td => td.classList.remove('active'));
+                const allCells = calendarBody.querySelectorAll('td');
 
                 if (selectedOtherDate === selectedDate) {
-                    selectedOtherDate = null
+                    // If the same date is clicked again, deselect it and reapply shift color if exist
+                    cell.classList.remove('active');
+                    const hasShift = otherShifts.some(shift => shift.date.toLocaleDateString('th-TH') === selectedDate);
+                    if (hasShift) {
+                        cell.classList.add('shift')
+                    }
+                    selectedOtherDate = null;
                     shiftTimesDiv.innerHTML = '';
                 } else {
+                    // Remove the active class from the previously selected cell
+                    allCells.forEach(td => {
+                        if (td.classList.contains('active') && td !== cell) {
+                            td.classList.remove('active');
+                            const shiftDate = td.getAttribute('data-date');
+                            const hasShift = otherShifts.some(
+                                (shift) => shift.date.toLocaleDateString('th-TH') === shiftDate
+                            );
+                            if (hasShift) {
+                                td.classList.add('shift')
+                            }
+                        }
+                    });
+
+                    // Add 'active' class to selected cell and remove 'shift' if it exists
                     cell.classList.add('active');
+                    cell.classList.remove('shift');
                     selectedOtherDate = selectedDate;
-                    const currentShift = otherShifts.find(shift => shift.date.toLocaleDateString('th-TH') === selectedDate)
+
+                    // Get shift data and append shift to shift time
+                    const currentShift = otherShifts.find(shift => shift.date.toLocaleDateString('th-TH') === selectedDate);
                     shiftTimesDiv.innerHTML = '';
                     if (currentShift) {
                         const timeButton = document.createElement('div');
-                        timeButton.className = 'shift-time-item'
-                        timeButton.textContent = `${currentShift.time} - ${currentShift.name}`
-                        timeButton.addEventListener('click', () => selectOtherTime(timeButton, currentShift.time, currentShift.name))
-                        shiftTimesDiv.appendChild(timeButton)
+                        timeButton.className = 'shift-time-item';
+                        timeButton.textContent = `${currentShift.time} - ${currentShift.name}`;
+                        timeButton.addEventListener('click', () => selectOtherTime(timeButton, currentShift.time, currentShift.name));
+                        shiftTimesDiv.appendChild(timeButton);
                     }
                 }
             }
