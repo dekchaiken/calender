@@ -217,7 +217,7 @@
         .company-checkbox {
             display: flex;
             align-items: center;
-            padding: 8px;
+             padding: 8px;
             margin: 2px 0;
             background: #f8f8f8;
             border-radius: 4px;
@@ -358,14 +358,14 @@
         }
 
         .admin-btn {
-            padding: 8px 16px;
-            background: #FDB813;
+             padding: 8px 16px;
+             background: #FDB813;
             color: #2D2D2D;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
+           border-radius: 4px;
+           cursor: pointer;
             transition: all 0.3s;
-            font-weight: 600;
+           font-weight: 600;
         }
 
         .modal-content h3 {
@@ -420,19 +420,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
+             margin-bottom: 0.5rem;
             padding: 0.5rem;
-            background-color: #FDB813;
+           background-color: #FDB813;
             border-radius: 4px;
             color: #2D2D2D;
         }
 
-        .company-group-title {
+          .company-group-title {
             margin: 0;
             font-size: 14px;
             font-weight: 500;
-        }
-
+         }
         .select-group-btn {
             background-color: #2D2D2D;
             color: white;
@@ -449,12 +448,12 @@
             transform: translateY(-1px);
         }
 
-        .company-checkbox {
+       .company-checkbox {
             display: flex;
             align-items: center;
             padding: 8px;
             margin: 2px 0;
-            background: #f8f8f8;
+           background: #f8f8f8;
             border-radius: 4px;
             transition: background-color 0.2s;
             font-size: 13px;
@@ -466,9 +465,9 @@
             height: 14px;
         }
 
-        .company-checkbox:hover {
-            background: #f0f0f0;
-        }
+      .company-checkbox:hover {
+        background: #f0f0f0;
+      }
 
         .company-group-content::-webkit-scrollbar {
             width: 8px;
@@ -479,29 +478,29 @@
             border-radius: 4px;
         }
 
-        .company-group-content::-webkit-scrollbar-thumb {
-            background: #FDB813;
+       .company-group-content::-webkit-scrollbar-thumb {
+         background: #FDB813;
             border-radius: 4px;
         }
 
         .company-group-content::-webkit-scrollbar-thumb:hover {
-            background: #e5a700;
+           background: #e5a700;
         }
 
-        .province-group {
-            margin-left: 10px;
+      .province-group {
+          margin-left: 10px;
         }
 
-        .province-group-content {
+      .province-group-content {
             margin-left: 20px;
-        }
+         }
 
-        .province-group div {
-            font-size: 14px;
-            /* Added font-size for province headers */
-            cursor: pointer;
-            padding: 4px 0;
-        }
+       .province-group div{
+           font-size: 14px; /* Added font-size for province headers */
+             cursor: pointer;
+             padding: 4px 0;
+         }
+
     </style>
 </head>
 
@@ -612,7 +611,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script>
         const months = [
             'January', 'February', 'March', 'April',
@@ -649,7 +647,8 @@
                 Object.keys(companyGroups).length > 0 &&
                 companyTypes &&
                 companyMappings &&
-                companyFullNames
+                companyFullNames &&
+                companyEmailMappings
             );
         }
 
@@ -701,8 +700,9 @@
             closeLoadingOverlay();
         }
 
-        function generateTemplate(companyCode, formattedDate, incidents, templateType = 'line') {
+       function generateTemplate(companyCode, formattedDate, incidents, templateType = 'line') {
             const isHospital = companyTypes[companyCode] === 'hospital';
+            const emailMapping = companyEmailMappings[companyCode] || companyCode;
 
             // If no incidents and it's email template, return empty string
             if (incidents.length === 0) {
@@ -733,169 +733,168 @@
                 }
             } else if (templateType === 'email') {
                 if (incidents.length > 0) {
-                    template += `เรียนทีม ${companyCode}\n`;
+                   template += `เรียนทีม ${emailMapping}\n`;
                     template += `\n${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
                     incidents.forEach((incident, idx) => {
                         template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
                     });
-                    template += `\n\nหากดำเนินการตรวจสอบแก้ไขเสร็จเรียบร้อยแล้ว รบกวนแจ้งปิด Incidents ด้วยครับ\nรายละเอียดเพิ่มเติมตามเอกสารแนบ\n\nBest regard,\nSecurity Analyst \n`;
+                    template += `\nหากดำเนินการตรวจสอบแก้ไขเสร็จเรียบร้อยแล้ว รบกวนแจ้งปิด Incidents ด้วยครับ\nรายละเอียดเพิ่มเติมตามเอกสารแนบ\n\nBest regard,\nSecurity Analyst \n`;
                     template += `====================================================\n`;
                 }
             }
 
             return template;
         }
-
         function updateCompanyFilters() {
-            const filtersContainer = document.getElementById('companyFilters');
-            filtersContainer.innerHTML = '';
+    const filtersContainer = document.getElementById('companyFilters');
+    filtersContainer.innerHTML = '';
 
-            const sortedGroups = Object.entries(companyGroups)
-                .sort((a, b) => {
-                    const numA = parseInt(a[0].replace('Shift ', '')) || Infinity;
-                    const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
-                    return numA - numB;
-                });
+        const sortedGroups = Object.entries(companyGroups)
+            .sort((a, b) => {
+                const numA = parseInt(a[0].replace('Shift ', '')) || Infinity;
+                const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
+                return numA - numB;
+            });
 
 
             sortedGroups.forEach(([groupId, group]) => {
-                const companies = Array.isArray(group) ? group : group.companies;
-                const groupName = Array.isArray(group) ? groupId : (group.name || groupId);
+            const companies = Array.isArray(group) ? group : group.companies;
+            const groupName = Array.isArray(group) ? groupId : (group.name || groupId);
 
-                if (!companies || !Array.isArray(companies)) {
-                    console.warn(`Invalid companies data for ${groupId}:`, companies);
-                    return;
-                }
-                const sortedCompanies = [...companies].sort((a, b) => a.localeCompare(b, 'th'));
+            if (!companies || !Array.isArray(companies)) {
+                console.warn(`Invalid companies data for ${groupId}:`, companies);
+                return;
+            }
+            const sortedCompanies = [...companies].sort((a, b) => a.localeCompare(b, 'th'));
 
-                const groupDiv = document.createElement('div');
-                groupDiv.className = 'company-group';
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'company-group';
 
-                const header = document.createElement('div');
-                header.className = 'company-group-header';
+            const header = document.createElement('div');
+            header.className = 'company-group-header';
 
-                const groupTitle = document.createElement('h3');
-                groupTitle.className = 'company-group-title';
-                groupTitle.textContent = groupName;
-                header.appendChild(groupTitle);
+            const groupTitle = document.createElement('h3');
+            groupTitle.className = 'company-group-title';
+            groupTitle.textContent = groupName;
+            header.appendChild(groupTitle);
 
-                const buttonContainer = document.createElement('div');
-                buttonContainer.style.display = 'flex';
-                buttonContainer.style.gap = '8px';
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.gap = '8px';
 
-                const selectGroupBtn = document.createElement('button');
-                selectGroupBtn.textContent = 'Select All';
-                selectGroupBtn.className = 'select-group-btn';
-                selectGroupBtn.onclick = () => selectGroupCompanies(sortedCompanies);
+            const selectGroupBtn = document.createElement('button');
+            selectGroupBtn.textContent = 'Select All';
+            selectGroupBtn.className = 'select-group-btn';
+            selectGroupBtn.onclick = () => selectGroupCompanies(sortedCompanies);
 
-                const unselectGroupBtn = document.createElement('button');
-                unselectGroupBtn.textContent = 'Unselect All';
-                unselectGroupBtn.className = 'select-group-btn';
-                unselectGroupBtn.style.backgroundColor = '#404040';
-                unselectGroupBtn.onclick = () => unselectGroupCompanies(sortedCompanies);
+            const unselectGroupBtn = document.createElement('button');
+            unselectGroupBtn.textContent = 'Unselect All';
+            unselectGroupBtn.className = 'select-group-btn';
+            unselectGroupBtn.style.backgroundColor = '#404040';
+            unselectGroupBtn.onclick = () => unselectGroupCompanies(sortedCompanies);
 
-                buttonContainer.appendChild(selectGroupBtn);
-                buttonContainer.appendChild(unselectGroupBtn);
-                header.appendChild(buttonContainer);
+             buttonContainer.appendChild(selectGroupBtn);
+             buttonContainer.appendChild(unselectGroupBtn);
+            header.appendChild(buttonContainer);
 
-                groupDiv.appendChild(header);
+            groupDiv.appendChild(header);
 
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'company-group-content';
-
-
-                if (groupId === 'Shift 5') {
-                    const provinceGroups = {};
-                    sortedCompanies.forEach(company => {
-                        const province = company.split('-')[0];
-                        if (!provinceGroups[province]) {
-                            provinceGroups[province] = [];
-                        }
-                        provinceGroups[province].push(company);
-                    });
-
-                    Object.keys(provinceGroups).forEach(province => {
-                        const provinceDiv = document.createElement('div');
-                        provinceDiv.classList.add('province-group');
-                        const provinceHeader = document.createElement('div');
-                        provinceHeader.style.cursor = 'pointer' // Add this
-                        provinceHeader.textContent = province
-                        provinceDiv.appendChild(provinceHeader)
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'company-group-content';
 
 
-                        const provinceContentDiv = document.createElement('div');
-                        provinceContentDiv.classList.add('province-group-content');
-                        provinceContentDiv.style.display = 'none' // hide initially
+            if (groupId === 'Shift 5') {
+                const provinceGroups = {};
+                sortedCompanies.forEach(company => {
+                    const province = company.split('-')[0];
+                    if (!provinceGroups[province]) {
+                        provinceGroups[province] = [];
+                    }
+                    provinceGroups[province].push(company);
+                });
+
+               Object.keys(provinceGroups).forEach(province => {
+                    const provinceDiv = document.createElement('div');
+                     provinceDiv.classList.add('province-group');
+                    const provinceHeader = document.createElement('div');
+                    provinceHeader.style.cursor = 'pointer' // Add this
+                    provinceHeader.textContent = province
+                    provinceDiv.appendChild(provinceHeader)
 
 
-                        provinceGroups[province].forEach(company => {
-                            const label = document.createElement('label');
-                            label.className = 'company-checkbox';
-                            const checkbox = document.createElement('input');
-                            checkbox.type = 'checkbox';
-                            checkbox.value = company;
-                            checkbox.checked = false;
+                    const provinceContentDiv = document.createElement('div');
+                    provinceContentDiv.classList.add('province-group-content');
+                    provinceContentDiv.style.display = 'none' // hide initially
 
-                            checkbox.addEventListener('change', function () {
-                                showLoadingOverlay('กำลังอัพเดต Template...');
-                                if (this.checked) {
-                                    selectedCompanies.add(this.value);
-                                } else {
-                                    selectedCompanies.delete(this.value);
-                                }
-                                updateAllTemplates();
-                                closeLoadingOverlay();
+
+                    provinceGroups[province].forEach(company => {
+                         const label = document.createElement('label');
+                          label.className = 'company-checkbox';
+                         const checkbox = document.createElement('input');
+                          checkbox.type = 'checkbox';
+                           checkbox.value = company;
+                         checkbox.checked = false;
+
+                          checkbox.addEventListener('change', function () {
+                             showLoadingOverlay('กำลังอัพเดต Template...');
+                              if (this.checked) {
+                                selectedCompanies.add(this.value);
+                              } else {
+                                 selectedCompanies.delete(this.value);
+                            }
+                            updateAllTemplates();
+                            closeLoadingOverlay();
                             });
 
-                            label.appendChild(checkbox);
-                            label.appendChild(document.createTextNode(company));
-                            provinceContentDiv.appendChild(label);
-                        });
-
-
-                        provinceDiv.appendChild(provinceContentDiv);
-                        contentDiv.appendChild(provinceDiv);
-
-                        provinceHeader.addEventListener('click', function () {
-                            showLoadingOverlay('กำลังอัพเดต Template...');
-                            provinceContentDiv.style.display = provinceContentDiv.style.display === 'none' ? 'block' : 'none';
-
-                            updateAllTemplates()
-                            closeLoadingOverlay();
-                        });
+                       label.appendChild(checkbox);
+                        label.appendChild(document.createTextNode(company));
+                         provinceContentDiv.appendChild(label);
                     });
-                } else {
-                    sortedCompanies.forEach(company => {
-                        const label = document.createElement('label');
-                        label.className = 'company-checkbox';
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
+
+
+                     provinceDiv.appendChild(provinceContentDiv);
+                     contentDiv.appendChild(provinceDiv);
+
+                      provinceHeader.addEventListener('click', function () {
+                       showLoadingOverlay('กำลังอัพเดต Template...');
+                       provinceContentDiv.style.display = provinceContentDiv.style.display === 'none' ? 'block' : 'none';
+
+                         updateAllTemplates()
+                        closeLoadingOverlay();
+                      });
+                });
+           } else {
+                sortedCompanies.forEach(company => {
+                    const label = document.createElement('label');
+                    label.className = 'company-checkbox';
+                     const checkbox = document.createElement('input');
+                      checkbox.type = 'checkbox';
                         checkbox.value = company;
                         checkbox.checked = false;
 
                         checkbox.addEventListener('change', function () {
                             showLoadingOverlay('กำลังอัพเดต Template...');
                             if (this.checked) {
-                                selectedCompanies.add(this.value);
+                              selectedCompanies.add(this.value);
                             } else {
-                                selectedCompanies.delete(this.value);
-                            }
-                            updateAllTemplates();
-                            closeLoadingOverlay();
-                        });
+                                 selectedCompanies.delete(this.value);
+                             }
+                              updateAllTemplates();
+                             closeLoadingOverlay();
+                         });
 
-                        label.appendChild(checkbox);
-                        label.appendChild(document.createTextNode(company));
-                        contentDiv.appendChild(label);
-                    });
-                }
+                     label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(company));
+                     contentDiv.appendChild(label);
+                });
+           }
 
 
-                groupDiv.appendChild(contentDiv);
-                filtersContainer.appendChild(groupDiv);
+            groupDiv.appendChild(contentDiv);
+             filtersContainer.appendChild(groupDiv);
 
-            });
-        }
+      });
+}
 
         function unselectGroupCompanies(groupCompanies) {
             showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
@@ -1062,52 +1061,6 @@
                 });
         }
 
-        function excelDateToString(dateValue) {
-            // Handle null or undefined values
-            if (!dateValue) return "";
-
-            // If the value is already a properly formatted date string (YYYY-MM-DD HH:mm:ss)
-            if (typeof dateValue === 'string') {
-                const dateMatch = dateValue.match(/^\d{4}-\d{2}-\d{2}(\s\d{2}:\d{2}:\d{2})?$/);
-                if (dateMatch) return dateValue;
-            }
-
-            let date;
-
-            // Handle Excel serial number dates
-            if (typeof dateValue === 'number') {
-                // Excel's epoch starts from December 30, 1899
-                const EXCEL_EPOCH = new Date(Date.UTC(1899, 11, 30));
-                const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-
-                // Convert Excel serial number to JavaScript Date
-                date = new Date(EXCEL_EPOCH.getTime() + (dateValue * MILLISECONDS_PER_DAY));
-
-                // Adjust for Excel's leap year bug
-                if (dateValue > 60) {
-                    date.setTime(date.getTime() - MILLISECONDS_PER_DAY);
-                }
-            } else if (dateValue instanceof Date) {
-                date = new Date(dateValue.getTime()); // Create a new Date object to avoid modifying the original
-            } else {
-                // Try to parse the date string
-                date = new Date(dateValue);
-            }
-
-            // Check if the date is valid
-            if (isNaN(date.getTime())) return "";
-
-            // Get UTC components to avoid timezone offset issues
-            const year = date.getUTCFullYear();
-            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-            const day = String(date.getUTCDate()).padStart(2, '0');
-            const hours = String(date.getUTCHours()).padStart(2, '0');
-            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-            const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-
-            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-        }
-
         function exportExcelByCompany() {
             showLoadingOverlay('กำลัง Export Excel...');
             if (!excelData || selectedCompanies.size === 0) {
@@ -1140,10 +1093,6 @@
 
                 if (companyData.length === 0) return;
 
-                // Create workbook and worksheet
-                const wb = XLSX.utils.book_new();
-
-                // Define the header
                 const header = [
                     'Incident ID', 'Summary', 'Customer', 'Note', 'Priority', 'Status',
                     'Submit Date', 'Resolution Date', 'Cause', 'Resolution',
@@ -1151,9 +1100,7 @@
                     'Response Time', 'Resolution Time'
                 ];
 
-                // Prepare the data
                 const dataRows = companyData.map(incident => {
-                    // Create a new object with formatted dates
                     return [
                         incident['Incident ID'],
                         incident['Summary'],
@@ -1161,50 +1108,49 @@
                         incident['Note'],
                         incident['Priority'],
                         incident['Status'],
-                        excelDateToString(incident['Submit Date']),
-                        excelDateToString(incident['Resolution Date']),
+                        incident['Submit Date'],
+                        incident['Resolution Date'],
                         incident['Cause'],
                         incident['Resolution'],
                         incident['Category'],
                         incident['Sub Category'],
-                        excelDateToString(incident['Occur Date']),
-                        excelDateToString(incident['Response Date']),
+                        incident['Occur Date'],
+                        incident['Response Date'],
                         incident['Response Time'],
                         incident['Resolution Time']
                     ];
                 });
 
-                // Create worksheet
-                const ws = XLSX.utils.aoa_to_sheet([header, ...dataRows]);
+                // Create sheet from array of arrays
+                const ws = XLSX.utils.aoa_to_sheet([header, ...dataRows], {
+                    cellDates: true
+                });
 
-                // Set column widths
-                ws['!cols'] = [
-                    { wch: 15 },  // Incident ID
-                    { wch: 40 },  // Summary
-                    { wch: 20 },  // Customer
-                    { wch: 20 },  // Note
-                    { wch: 10 },  // Priority
-                    { wch: 10 },  // Status
-                    { wch: 20 },  // Submit Date
-                    { wch: 20 },  // Resolution Date
-                    { wch: 20 },  // Cause
-                    { wch: 30 },  // Resolution
-                    { wch: 15 },  // Category
-                    { wch: 15 },  // Sub Category
-                    { wch: 20 },  // Occur Date
-                    { wch: 20 },  // Response Date
-                    { wch: 15 },  // Response Time
-                    { wch: 15 }   // Resolution Time
-                ];
+                // Set custom date format for each date/time column
+                const dateFormat = "dd/mm/yyyy hh:mm:ss"; // or 'yyyy-mm-dd hh:mm:ss' if you prefer
 
-                // Add the worksheet to the workbook
+                const dateColumns = [7, 8, 13, 14, 15, 16];
+                dateColumns.forEach(colIdx => {
+                    for (let row = 2; row <= dataRows.length + 1; row++) {
+                        const cellRef = XLSX.utils.encode_cell({ r: row - 1, c: colIdx - 1 });
+                        const cell = ws[cellRef];
+
+                        if (cell && cell.v instanceof Date) {
+                            cell.t = 'd';
+                            cell.z = dateFormat;
+                        }
+
+                    }
+                });
+
+
+                const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, companyCode);
 
-                // Write the file
+
                 const fileName = `${companyCode} Follow Incident ${formattedDate}.xlsx`;
                 XLSX.writeFile(wb, fileName);
             });
-
             closeLoadingOverlay();
             showAlertModal('Export Excel สำเร็จ');
         }
@@ -1235,6 +1181,7 @@
         let companyGroups = {};
         let companyTypes = {};
         let companyMappings = {};
+         let companyEmailMappings = {};
         let companyFullNames = {};
 
         async function loadCustomerData() {
@@ -1275,19 +1222,22 @@
                 }
 
                 // โหลดข้อมูลอื่นๆ เหมือนเดิม
-                const [typesDoc, mappingsDoc, fullNamesDoc] = await Promise.all([
+                const [typesDoc, mappingsDoc, fullNamesDoc, emailMappingsDoc] = await Promise.all([
                     db.collection('customerManagement').doc('companyTypes').get(),
                     db.collection('customerManagement').doc('companyMappings').get(),
-                    db.collection('customerManagement').doc('companyFullNames').get()
+                    db.collection('customerManagement').doc('companyFullNames').get(),
+                     db.collection('customerManagement').doc('companyEmailMappings').get()
                 ]);
 
                 companyTypes = typesDoc.exists ? typesDoc.data() : {};
                 companyMappings = mappingsDoc.exists ? mappingsDoc.data() : {};
                 companyFullNames = fullNamesDoc.exists ? fullNamesDoc.data() : {};
+                 companyEmailMappings = emailMappingsDoc.exists ? emailMappingsDoc.data() : {};
 
                 console.log('Loaded companyTypes:', companyTypes);
                 console.log('Loaded companyMappings:', companyMappings);
                 console.log('Loaded companyFullNames:', companyFullNames);
+                 console.log('Loaded companyEmailMappings:', companyEmailMappings);
 
                 if (Object.keys(companyGroups).length > 0) {
                     updateCompanyFilters();

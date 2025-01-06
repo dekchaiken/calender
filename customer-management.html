@@ -364,6 +364,8 @@
                     style="margin-top: 1rem; padding: 0.75rem 2rem; font-weight: 600;">จัดการ Mappings</button>
                 <button class="tab" onclick="showTab('callings')"
                     style="margin-top: 1rem; padding: 0.75rem 2rem; font-weight: 600;">จัดการการเรียกชื่อ</button>
+                  <button class="tab" onclick="showTab('emailMappings')"
+                    style="margin-top: 1rem; padding: 0.75rem 2rem; font-weight: 600;">จัดการ Email Mappings</button>
             </div>
 
             <div id="allInfo" class="tab-content">
@@ -390,6 +392,9 @@
                                     <th
                                         style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">
                                         รูปแบบการเรียก</th>
+                                      <th
+                                        style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">
+                                        Email Mapping</th>
                                     <th
                                         style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600;">
                                         เมนูจัดการ</th>
@@ -466,6 +471,28 @@
                     <h2>รายชื่อ Mappings ทั้งหมด</h2>
                     <div id="mappingList">
                     </div>
+                </div>
+            </div>
+             <div id="emailMappings" class="tab-content" style="display: none;">
+                <div class="card">
+                    <h2>จัดการ Email Mappings</h2>
+                      <div class="form-group">
+                        <label>เลือกลูกค้า</label>
+                        <select class="form-control" id="emailCustomerSelect">
+                            <option value="">-- เลือกลูกค้า --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ชื่อที่ใช้ใน Email Template</label>
+                        <input type="text" class="form-control" id="emailMappingName"
+                            placeholder="เช่น ทีม IPSTXXX2">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveEmailMapping()">บันทึก</button>
+                </div>
+                 <div class="card">
+                     <h2>รายการ Email Mapping ทั้งหมด</h2>
+                     <div id="emailMappingList">
+                     </div>
                 </div>
             </div>
 
@@ -653,8 +680,103 @@
         }
 
 
+            async function loadEmailMappingData() {
+            try {
+                 const db = firebase.firestore();
+                   const mappingsDoc = await db.collection('customerManagement').doc('companyMappings').get();
+                const mappings = mappingsDoc.exists ? mappingsDoc.data() : {};
+                   const emailMappingsDoc = await db.collection('customerManagement').doc('companyEmailMappings').get();
+                const emailMappings = emailMappingsDoc.exists ? emailMappingsDoc.data() : {};
+
+                  const emailCustomerSelect = document.getElementById('emailCustomerSelect');
+                emailCustomerSelect.innerHTML = '<option value="">-- เลือกลูกค้า --</option>';
+
+                Object.entries(mappings).forEach(([fullName, shortName]) => {
+                    const option = document.createElement('option');
+                    option.value = shortName;
+                    option.textContent = `${shortName} (${fullName})`;
+                   emailCustomerSelect.appendChild(option);
+                });
+
+                    const emailMappingList = document.getElementById('emailMappingList');
+                emailMappingList.innerHTML = '';
+
+                 const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
 
 
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+            <tr style="background-color: #f8f9fa;">
+                <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">รหัสลูกค้า</th>
+                 <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;"></th>
+                <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">ชื่อใน Email Template</th>
+                <th style="padding: 1rem; text-align: center; border-bottom: 2px solid #dee2e6;">จัดการ</th>
+            </tr>
+        `;
+                table.appendChild(thead);
+
+                  const tbody = document.createElement('tbody');
+                 Object.entries(emailMappings).forEach(([shortName, emailName]) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                         <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${shortName}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${mappings[shortName] || ''}</td>
+                       <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${emailName}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #dee2e6; text-align: center;">
+                            <button onclick="editEmailMapping('${shortName}', '${emailName}')" class="btn btn-primary" style="margin-right: 0.5rem;">แก้ไข</button>
+                            <button onclick="deleteEmailMapping('${shortName}')" class="btn btn-danger">ลบ</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                 table.appendChild(tbody);
+                emailMappingList.appendChild(table);
+            } catch (error) {
+                console.error('Error loading email mapping data:', error);
+                showAlertModal('เกิดข้อผิดพลาดในการโหลดข้อมูล Email Mapping');
+            }
+        }
+            async function saveEmailMapping() {
+             const emailCustomerSelect = document.getElementById('emailCustomerSelect');
+            const emailMappingName = document.getElementById('emailMappingName');
+
+            const shortName = emailCustomerSelect.value;
+            const emailName = emailMappingName.value.trim();
+
+            if (!shortName || !emailName) {
+                showAlertModal('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+                 try {
+                const db = firebase.firestore();
+                const emailMappingsRef = db.collection('customerManagement').doc('companyEmailMappings');
+
+                // โหลดข้อมูลเดิม
+                const doc = await emailMappingsRef.get();
+                const emailMappings = doc.exists ? doc.data() : {};
+
+                // อัพเดทข้อมูล
+                emailMappings[shortName] = emailName;
+
+                // บันทึกลง Firestore
+                await emailMappingsRef.set(emailMappings);
+
+                 // รีเซ็ตฟอร์ม
+                emailCustomerSelect.value = '';
+                emailMappingName.value = '';
+
+                 // โหลดข้อมูลใหม่
+                loadEmailMappingData();
+
+                  showAlertModal('บันทึกข้อมูลสำเร็จ');
+                } catch (error) {
+                console.error('Error saving email mapping:', error);
+                showAlertModal('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+                }
+
+        }
         // โหลดข้อมูลการเรียกชื่อลูกค้า
         async function loadCallingData() {
             try {
@@ -705,7 +827,7 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                 <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${shortName}</td>
-                <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${mappings[shortName] || ''}</td>
+                <td style="padding: 1rem; border                <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${mappings[shortName] || ''}</td>
                 <td style="padding: 1rem; border-bottom: 1px solid #dee2e6;">${calling}</td>
                 <td style="padding: 1rem; border-bottom: 1px solid #dee2e6; text-align: center;">
                     <button onclick="editCalling('${shortName}', '${calling}')" class="btn btn-primary" style="margin-right: 0.5rem;">แก้ไข</button>
@@ -771,17 +893,20 @@
                 const db = firebase.firestore();
 
                 // ดึงข้อมูลทั้งหมดที่จำเป็น
-                const [typesDoc, groupsDoc, mappingsDoc, callingsDoc] = await Promise.all([
+                const [typesDoc, groupsDoc, mappingsDoc, callingsDoc, emailMappingsDoc] = await Promise.all([
                     db.collection('customerManagement').doc('companyTypes').get(),
                     db.collection('customerManagement').doc('companyGroups').get(),
                     db.collection('customerManagement').doc('companyMappings').get(),
-                    db.collection('customerManagement').doc('companyFullNames').get()
+                    db.collection('customerManagement').doc('companyFullNames').get(),
+                     db.collection('customerManagement').doc('companyEmailMappings').get()
                 ]);
 
                 const types = typesDoc.exists ? typesDoc.data() : {};
                 const groups = groupsDoc.exists ? groupsDoc.data().shifts : {};
                 const mappings = mappingsDoc.exists ? mappingsDoc.data() : {};
                 const callings = callingsDoc.exists ? callingsDoc.data() : {};
+                   const emailMappings = emailMappingsDoc.exists ? emailMappingsDoc.data() : {};
+
 
                 // สร้างข้อมูลรวม
                 const allInfo = [];
@@ -801,7 +926,8 @@
                         fullName,
                         type: types[shortName] || '-',
                         shift: customerShift || '-',
-                        calling: callings[shortName] || '-'
+                        calling: callings[shortName] || '-',
+                        emailMapping : emailMappings[shortName] || '-'
                     });
                 });
 
@@ -817,8 +943,9 @@
                 <td style="padding: 1rem;">${info.type === 'company' ? 'บริษัท' : 'โรงพยาบาล'}</td>
                 <td style="padding: 1rem;">${info.shift}</td>
                 <td style="padding: 1rem;">${info.calling}</td>
+                 <td style="padding: 1rem;">${info.emailMapping}</td>
                 <td style="padding: 1rem; text-align: center;">
-                    <button onclick="editCustomerInfo('${info.shortName}', '${info.fullName}', '${info.type}', '${info.shift}', '${info.calling}')" 
+                    <button onclick="editCustomerInfo('${info.shortName}', '${info.fullName}', '${info.type}', '${info.shift}', '${info.calling}', '${info.emailMapping}')" 
                             class="btn btn-primary" 
                             style="margin-right: 0.5rem; padding: 0.5rem 1rem;">
                         แก้ไข
@@ -836,7 +963,7 @@
         }
 
         // เพิ่มฟังก์ชันสำหรับแก้ไขข้อมูลลูกค้า
-        async function editCustomerInfo(shortName, fullName, type, shift, calling) {
+        async function editCustomerInfo(shortName, fullName, type, shift, calling, emailMapping) {
             // สร้าง modal dialog สำหรับแก้ไขข้อมูล
             const modalHtml = `
         <div id="editModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
@@ -876,6 +1003,10 @@
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">รูปแบบการเรียก</label>
                     <input type="text" id="editCalling" value="${calling}" class="form-control">
                 </div>
+                  <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email Mapping</label>
+                    <input type="text" id="editEmailMapping" value="${emailMapping}" class="form-control">
+                </div>
 
                 <div style="display: flex; justify-content: flex-end; gap: 1rem;">
                     <button onclick="closeEditModal()" class="btn" style="padding: 0.75rem 1.5rem;">ยกเลิก</button>
@@ -910,6 +1041,7 @@
                 const type = document.getElementById('editType').value;
                 const shift = document.getElementById('editShift').value;
                 const calling = document.getElementById('editCalling').value.trim();
+                const emailMapping = document.getElementById('editEmailMapping').value.trim();
 
                 if (!fullName || !type || !shift) {
                     showAlertModal('กรุณากรอกข้อมูลให้ครบถ้วน');
@@ -922,7 +1054,8 @@
                     updatedFullName: fullName,
                     updatedType: type,
                     updatedShift: shift,
-                    updatedCalling: calling
+                    updatedCalling: calling,
+                    updatedEmailMapping: emailMapping
                 });
                 const typeRef = db.collection('customerManagement').doc('companyTypes');
                 const types = (await typeRef.get()).data() || {};
@@ -972,7 +1105,13 @@
                     callings[shortName] = calling;
                     batch.set(callingsRef, callings);
                 }
-
+                  // อัพเดท email mappings
+                    if (emailMapping) {
+                    const emailMappingsRef = db.collection('customerManagement').doc('companyEmailMappings');
+                    const emailMappings = (await emailMappingsRef.get()).data() || {};
+                    emailMappings[shortName] = emailMapping;
+                    batch.set(emailMappingsRef, emailMappings);
+                }
                 // บันทึกการเปลี่ยนแปลงทั้งหมด
                 await batch.commit();
 
@@ -1015,6 +1154,8 @@
                 loadCallingData();
             } else if (tabName === 'allInfo') {
                 loadAllCustomerInfo();
+            } else if(tabName === 'emailMappings'){
+              loadEmailMappingData();
             }
         };
 
@@ -1050,6 +1191,64 @@
             document.body.insertAdjacentHTML('beforeend', modalHtml);
         }
 
+         async function editEmailMapping(shortName, currentEmailName) {
+            const mappingsDoc = await firebase.firestore().collection('customerManagement').doc('companyMappings').get();
+            const mappings = mappingsDoc.exists ? mappingsDoc.data() : {};
+            const modalHtml = `
+      <div id="editEmailMappingModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+        <div style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <h2 style="margin-bottom: 1.5rem; color: #2D2D2D;">แก้ไขชื่อใน Email Template</h2>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">รหัสลูกค้า</label>
+            <input type="text" id="editEmailMappingShortName" value="${shortName}" class="form-control" readonly>
+        </div>
+           <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">ชื่อลูกค้า</label>
+            <input type="text" id="editEmailMappingDisplayName" value="${mappings[shortName] || ''}" class="form-control" readonly>
+        </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">ชื่อใน Email Template</label>
+            <input type="text" id="editEmailMappingName" value="${currentEmailName}" class="form-control">
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+            <button onclick="closeEditEmailMappingModal()" class="btn" style="padding: 0.75rem 1.5rem;">ยกเลิก</button>
+            <button onclick="saveEditedEmailMapping('${shortName}')" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">บันทึก</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+        function closeEditEmailMappingModal() {
+            const modal = document.getElementById('editEmailMappingModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+         async function saveEditedEmailMapping(shortName) {
+            showLoadingOverlay('กำลังบันทึกข้อมูล...');
+            try {
+                const newEmailName = document.getElementById('editEmailMappingName').value.trim();
+                if (newEmailName) {
+                    const db = firebase.firestore();
+                     const emailMappingsRef = db.collection('customerManagement').doc('companyEmailMappings');
+                    const doc = await emailMappingsRef.get();
+                    const emailMappings = doc.exists ? doc.data() : {};
+                     emailMappings[shortName] = newEmailName;
+                    await emailMappingsRef.set(emailMappings);
+                    closeEditEmailMappingModal();
+                    loadEmailMappingData();
+                    closeLoadingOverlay();
+                    showAlertModal('แก้ไขข้อมูลสำเร็จ');
+                }
+            } catch (error) {
+                console.error('Error editing calling:', error);
+                closeLoadingOverlay();
+                showAlertModal('เกิดข้อผิดพลาดในการแก้ไขข้อมูล');
+            }
+        }
+
         function closeEditCallingModal() {
             const modal = document.getElementById('editCallingModal');
             if (modal) {
@@ -1081,7 +1280,24 @@
                 showAlertModal('เกิดข้อผิดพลาดในการแก้ไขข้อมูล');
             }
         }
+          async function deleteEmailMapping(shortName) {
+            if (confirm('ต้องการลบ Email Mapping นี้ใช่หรือไม่?')) {
+                try {
+                    const db = firebase.firestore();
+                     const emailMappingsRef = db.collection('customerManagement').doc('companyEmailMappings');
+                    const doc = await emailMappingsRef.get();
+                    const emailMappings = doc.exists ? doc.data() : {};
 
+                    delete emailMappings[shortName];
+                    await emailMappingsRef.set(emailMappings);
+                       loadEmailMappingData();
+                    showAlertModal('ลบข้อมูลสำเร็จ');
+                } catch (error) {
+                    console.error('Error deleting email mapping:', error);
+                    showAlertModal('เกิดข้อผิดพลาดในการลบข้อมูล');
+                }
+            }
+        }
         // ลบการเรียกชื่อ
         async function deleteCalling(shortName) {
             if (confirm('ต้องการลบการเรียกชื่อนี้ใช่หรือไม่?')) {
@@ -1123,6 +1339,8 @@
                 loadMappingData();
             } else if (tabName === 'callings') {
                 loadCallingData();
+            } else if(tabName === 'emailMappings') {
+              loadEmailMappingData();
             }
         }
 
