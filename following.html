@@ -719,11 +719,10 @@
                     template += `\n${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
                 } else {
                     template += `เรียนทีม ${companyCode}\n`;
-                    template += `\n${companyCode} Follow Incident ${formattedDate}\n\n`;
+                    template += `\n${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
                 }
 
                 if (incidents.length > 0) {
-                    template += `ขอแจ้ง Incident ที่มีสถานะยังคง Pending ครับ\n`;
                     incidents.forEach((incident, idx) => {
                         template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
                     });
