@@ -2,24 +2,24 @@
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cyfence - Following Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/components.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/components.css" />
     <style>
         :root {
-            --primary: #FDB813;
+            --primary: #fdb813;
             --primary-dark: #e5a700;
             --secondary: #404040;
-            --accent: #2D2D2D;
+            --accent: #2d2d2d;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             font-size: 10px;
         }
 
         * {
             box-sizing: border-box;
-            font-family: 'Noto Sans Thai', sans-serif;
+            font-family: "Noto Sans Thai", sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -217,7 +217,7 @@
         .company-checkbox {
             display: flex;
             align-items: center;
-             padding: 8px;
+            padding: 8px;
             margin: 2px 0;
             background: #f8f8f8;
             border-radius: 4px;
@@ -251,7 +251,6 @@
         }
 
         .preview-area {
-            background: #f8f8f8;
             padding: 1.5rem;
             border-radius: 8px;
             white-space: pre-wrap;
@@ -259,6 +258,7 @@
             min-height: 200px;
             border: 2px solid #eee;
             margin-bottom: 1rem;
+             background: #f8f8f8;
         }
 
         #dropZone {
@@ -358,14 +358,14 @@
         }
 
         .admin-btn {
-             padding: 8px 16px;
-             background: #FDB813;
-            color: #2D2D2D;
+            padding: 8px 16px;
+            background: #fdb813;
+            color: #2d2d2d;
             border: none;
-           border-radius: 4px;
-           cursor: pointer;
+            border-radius: 4px;
+            cursor: pointer;
             transition: all 0.3s;
-           font-weight: 600;
+            font-weight: 600;
         }
 
         .modal-content h3 {
@@ -420,20 +420,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-             margin-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
             padding: 0.5rem;
-           background-color: #FDB813;
+            background-color: #fdb813;
             border-radius: 4px;
-            color: #2D2D2D;
+            color: #2d2d2d;
+            cursor: pointer;
+             /* Add cursor pointer */
         }
 
-          .company-group-title {
+        .company-group-title {
             margin: 0;
             font-size: 14px;
             font-weight: 500;
-         }
+        }
+
         .select-group-btn {
-            background-color: #2D2D2D;
+            background-color: #2d2d2d;
             color: white;
             border: none;
             padding: 4px 12px;
@@ -448,12 +451,12 @@
             transform: translateY(-1px);
         }
 
-       .company-checkbox {
+        .company-checkbox {
             display: flex;
             align-items: center;
             padding: 8px;
             margin: 2px 0;
-           background: #f8f8f8;
+            background: #f8f8f8;
             border-radius: 4px;
             transition: background-color 0.2s;
             font-size: 13px;
@@ -465,9 +468,9 @@
             height: 14px;
         }
 
-      .company-checkbox:hover {
-        background: #f0f0f0;
-      }
+        .company-checkbox:hover {
+            background: #f0f0f0;
+        }
 
         .company-group-content::-webkit-scrollbar {
             width: 8px;
@@ -478,29 +481,140 @@
             border-radius: 4px;
         }
 
-       .company-group-content::-webkit-scrollbar-thumb {
-         background: #FDB813;
+        .company-group-content::-webkit-scrollbar-thumb {
+            background: #fdb813;
             border-radius: 4px;
         }
 
         .company-group-content::-webkit-scrollbar-thumb:hover {
-           background: #e5a700;
+            background: #e5a700;
         }
 
-      .province-group {
-          margin-left: 10px;
+        .province-group {
+            margin-left: 10px;
         }
 
-      .province-group-content {
+        .province-group-content {
             margin-left: 20px;
-         }
+        }
 
-       .province-group div{
-           font-size: 14px; /* Added font-size for province headers */
-             cursor: pointer;
-             padding: 4px 0;
-         }
+        .province-group div {
+            font-size: 14px;
+            /* Added font-size for province headers */
+            cursor: pointer;
+            padding: 4px 0;
+        }
+    </style>
+    <style>
+        /* Slide-out panel styles */
+        #slideOutPanel {
+            position: fixed;
+            top: 0;
+            left: -600px;
+            /* Start off-screen */
+            width: 600px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            transition: left 0.3s ease-in-out;
+            z-index: 1001;
+            padding: 1rem;
+            overflow-y: auto;
+        }
 
+        #slideOutPanel.open {
+            left: 0;
+        }
+
+        #togglePanelButton {
+            position: absolute;
+            left: 10px;
+            top: 95%;
+            transform: translateY(-50%);
+            padding: 0.75rem;
+            background: var(--primary);
+            color: var(--accent);
+            border: none;
+            border-radius: 50%;
+            /* Make it a circle */
+            cursor: pointer;
+            transition: all 0.3s ease, transform 0.2s ease;
+            z-index: 1002;
+            box-shadow: 0 2px 4px rgba(253, 184, 19, 0.4);
+            /* Added shadow */
+            display: flex;
+            /* Use flexbox for centering */
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            /* Set width and height */
+            height: 40px;
+        }
+
+        #togglePanelButton.open {
+            left: 620px;
+            transform: translateY(-50%) rotate(180deg);
+            /* Rotate when open */
+        }
+
+        #togglePanelButton:hover {
+            background: var(--primary-dark);
+            transform: translateY(-50%) translateY(-1px);
+            box-shadow: 0 4px 6px rgba(253, 184, 19, 0.6);
+        }
+
+        .toggle-icon {
+            transition: all 0.3s ease;
+        }
+
+        #togglePanelButton.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .province-button-container {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .select-province-btn,
+        .unselect-province-btn {
+            background-color: #2d2d2d;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+
+        .unselect-province-btn {
+            background-color: #404040;
+        }
+
+        .select-province-btn:hover,
+        .unselect-province-btn:hover {
+            background-color: #404040;
+            transform: translateY(-1px);
+        }
+
+        .province-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+
+        .slideout-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
     </style>
 </head>
 
@@ -514,7 +628,9 @@
             <h3 id="alertTitle">แจ้งเตือน</h3>
             <p id="alertMessage" class="alert-message"></p>
             <div class="modal-buttons">
-                <button type="button" class="save-btn" onclick="closeAlertModal()">ตกลง</button>
+                <button type="button" class="save-btn" onclick="closeAlertModal()">
+                    ตกลง
+                </button>
             </div>
         </div>
     </div>
@@ -528,84 +644,117 @@
     <div id="mainContent" style="display: none">
         <div class="header">
             <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
-                alt="Cyfence Logo" class="logo">
+                alt="Cyfence Logo" class="logo" />
             <h1>Following Report</h1>
             <div class="user-container">
                 <div class="user-info">
                     <div class="user-avatar" id="userAvatar"></div>
                     <div class="user-details">
                         <span id="userDisplayName">Loading...</span>
-                        <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+                        <span id="userRole" style="font-size: 0.8rem; color: #888"></span>
                     </div>
                 </div>
-                <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
+                <button onclick="window.location.href='dashboard.html'" class="nav-btn">
+                    กลับหน้าหลัก
+                </button>
                 <button id="customerManagementBtn" onclick="window.location.href='customer-management.html'"
-                    class="nav-btn" style="display: none;">จัดการลูกค้า</button>
+                    class="nav-btn" style="display: none">
+                    จัดการลูกค้า
+                </button>
                 <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
             </div>
         </div>
-        <div class="container">
-            <div class="card">
+        <button id="togglePanelButton">
+             <span class="toggle-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512">
+                <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.8 0-105.4 105.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
+            </svg>
+             </span>
+        </button>
+        <div id="slideOutPanel">
+            <div class="slideout-card">
                 <h2>หมายเหตุและวิธีการใช้งาน</h2>
-                <div class="info-content" style="background: #f8f8f8; padding: 1rem; border-radius: 8px;">
-                    <h3 style="color: #2D2D2D; margin: 1rem 0 0.5rem;">วิธีการใช้งาน:</h3>
-                    <ol style="list-style-type: decimal; margin-left: 1.5rem;">
+                <div class="info-content" style="background: #f8f8f8; padding: 1rem; border-radius: 8px">
+                    <h3 style="color: #2d2d2d; margin: 1rem 0 0.5rem">
+                        วิธีการใช้งาน:
+                    </h3>
+                    <ol style="list-style-type: decimal; margin-left: 1.5rem">
                         <li>เลือกวันที่ติดตาม</li>
                         <li>อัพโหลดไฟล์ Excel ที่ต้องการ</li>
                         <li>เลือกบริษัทที่ต้องการจากรายการ</li>
                         <li>กดปุ่ม "Export Excel แยกตามบริษัท" เพื่อดาวน์โหลดไฟล์</li>
                     </ol>
-                    <h3 style="color: #2D2D2D; margin-bottom: 0.5rem;">การ Export Excel:</h3>
-                    <ul style="list-style-type: disc; margin-left: 1.5rem;">
-                        <li>ระบบจะ Export เฉพาะบริษัทที่คุณเลือกในส่วน "เลือกบริษัทที่ต้องการกรอง"</li>
-                        <li>ไฟล์ Excel จะถูกแยกตามบริษัท โดยชื่อไฟล์จะเป็น: [ชื่อบริษัท]_Incidents_[วันที่].xlsx</li>
-                        <li>ข้อมูลจะถูกจัดเรียงตามลำดับ: Incident ID, Summary, Customer และข้อมูลอื่นๆ</li>
+                    <h3 style="color: #2d2d2d; margin-bottom: 0.5rem">
+                        การ Export Excel:
+                    </h3>
+                    <ul style="list-style-type: disc; margin-left: 1.5rem">
+                        <li>
+                            ระบบจะ Export เฉพาะบริษัทที่คุณเลือกในส่วน
+                            "เลือกบริษัทที่ต้องการกรอง"
+                        </li>
+                        <li>
+                            ไฟล์ Excel จะถูกแยกตามบริษัท โดยชื่อไฟล์จะเป็น:
+                            [ชื่อบริษัท]_Incidents_[วันที่].xlsx
+                        </li>
+                        <li>
+                            ข้อมูลจะถูกจัดเรียงตามลำดับ: Incident ID, Summary, Customer
+                            และข้อมูลอื่นๆ
+                        </li>
                     </ul>
                 </div>
             </div>
-
-            <div class="card">
+            <div class="slideout-card">
                 <h2>เลือกวันที่ติดตาม</h2>
                 <div class="form-group">
                     <label for="followDate">วันที่ติดตาม:</label>
-                    <input type="date" id="followDate" class="form-control">
+                    <input type="date" id="followDate" class="form-control" />
                 </div>
             </div>
-
-            <div class="card">
+            <div class="slideout-card">
                 <h2>อัพโหลดไฟล์ Excel</h2>
                 <div id="dropZone">
                     คลิกเพื่อเลือกไฟล์ (ห้ามลากไฟล์ อาจทำให้ค้างได้)
-                    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none" />
                 </div>
-                <div id="debug" class="debug-info" style="display: none;"></div>
+                <div id="debug" class="debug-info" style="display: none"></div>
             </div>
-
-            <div class="card">
+            <div class="slideout-card">
                 <h2>เลือกบริษัทที่ต้องการกรอง</h2>
                 <div class="filter-controls">
-                    <input type="text" id="searchCompany" class="search-box" placeholder="ค้นหาชื่อบริษัท...">
-                    <button onclick="selectAllCompanies()" class="nav-btn">เลือกทั้งหมด</button>
-                    <button onclick="deselectAllCompanies()" class="logout-btn">ยกเลิกทั้งหมด</button>
-                    <button onclick="exportExcelByCompany()" class="btn btn-primary">Export Excel แยกตามบริษัท</button>
+                    <input type="text" id="searchCompany" class="search-box" placeholder="ค้นหาชื่อบริษัท..." />
+                    <button onclick="selectAllCompanies()" class="nav-btn">
+                        เลือกทั้งหมด
+                    </button>
+                    <button onclick="deselectAllCompanies()" class="logout-btn">
+                        ยกเลิกทั้งหมด
+                    </button>
+                    <button onclick="exportExcelByCompany()" class="btn btn-primary">
+                        Export Excel แยกตามบริษัท
+                    </button>
                 </div>
-                <div id="companyFilters" class="company-filters">
-                </div>
+                <div id="companyFilters" class="company-filters"></div>
             </div>
-
+        </div>
+        <div class="container">
             <div class="card">
                 <h2>Template สำหรับบริษัทที่เลือก</h2>
-                <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
-                    <input type="radio" id="lineTemplate" name="templateType" value="line" checked>
-                    <label for="lineTemplate" style="cursor: pointer;">Line Template</label>
-                    <input type="radio" id="emailTemplate" name="templateType" value="email">
-                    <label for="emailTemplate" style="cursor: pointer;">Email Template</label>
+                <div style="
+              margin-bottom: 1rem;
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+            ">
+                    <input type="radio" id="lineTemplate" name="templateType" value="line" checked />
+                    <label for="lineTemplate" style="cursor: pointer">Line Template</label>
+                    <input type="radio" id="emailTemplate" name="templateType" value="email" />
+                    <label for="emailTemplate" style="cursor: pointer">Email Template</label>
                 </div>
                 <div id="allTemplates" class="preview-area">
                     โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...
                 </div>
-                <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem;">คัดลอก Template
-                    ทั้งหมด</button>
+                <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem">
+                    คัดลอก Template ทั้งหมด
+                </button>
             </div>
         </div>
     </div>
@@ -613,32 +762,43 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         const months = [
-            'January', 'February', 'March', 'April',
-            'May', 'June', 'July', 'August',
-            'September', 'October', 'November', 'December'
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
         ];
 
         let excelData = null;
         let companies = new Set();
         let selectedCompanies = new Set();
+        const togglePanelButton = document.getElementById("togglePanelButton");
+        const slideOutPanel = document.getElementById("slideOutPanel");
 
         // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
         function showAlertModal(message) {
-            document.getElementById('alertMessage').textContent = message;
-            document.getElementById('alertModal').style.display = 'flex';
+            document.getElementById("alertMessage").textContent = message;
+            document.getElementById("alertModal").style.display = "flex";
         }
 
         function closeAlertModal() {
-            document.getElementById('alertModal').style.display = 'none';
+            document.getElementById("alertModal").style.display = "none";
         }
 
         function showLoadingOverlay(message) {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById("loadingOverlay").style.display = "flex";
+            document.getElementById("loadingMessage").textContent = message;
         }
 
         function closeLoadingOverlay() {
-            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById("loadingOverlay").style.display = "none";
         }
 
         function isDataReady() {
@@ -654,7 +814,7 @@
 
         function handleFile(file) {
             if (!isDataReady()) {
-                showAlertModal('กรุณารอข้อมูลโหลดให้เสร็จก่อนอัพโหลดไฟล์');
+                showAlertModal("กรุณารอข้อมูลโหลดให้เสร็จก่อนอัพโหลดไฟล์");
                 return;
             }
         }
@@ -665,22 +825,26 @@
         }
 
         // ฟังก์ชันสำหรับจัดการการค้นหาบริษัท
-        document.getElementById('searchCompany').addEventListener('input', function (e) {
-            showLoadingOverlay('กำลังค้นหา...');
+        document.getElementById("searchCompany").addEventListener("input", function (e) {
+            showLoadingOverlay("กำลังค้นหา...");
             const searchTerm = e.target.value.toLowerCase();
-            const checkboxes = document.querySelectorAll('.company-checkbox');
+            const checkboxes = document.querySelectorAll(".company-checkbox");
 
-            checkboxes.forEach(checkbox => {
+            checkboxes.forEach((checkbox) => {
                 const companyName = checkbox.textContent.toLowerCase();
-                checkbox.style.display = companyName.includes(searchTerm) ? '' : 'none';
+                checkbox.style.display = companyName.includes(searchTerm)
+                    ? ""
+                    : "none";
             });
             closeLoadingOverlay();
         });
 
         function selectAllCompanies() {
-            showLoadingOverlay('กำลังเลือกบริษัททั้งหมด...');
-            const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
+            showLoadingOverlay("กำลังเลือกบริษัททั้งหมด...");
+            const checkboxes = document.querySelectorAll(
+                '.company-checkbox input[type="checkbox"]'
+            );
+            checkboxes.forEach((checkbox) => {
                 checkbox.checked = true;
                 selectedCompanies.add(checkbox.value);
             });
@@ -688,11 +852,12 @@
             closeLoadingOverlay();
         }
 
-
         function deselectAllCompanies() {
-            showLoadingOverlay('กำลังยกเลิกการเลือกบริษัททั้งหมด...');
-            const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
+            showLoadingOverlay("กำลังยกเลิกการเลือกบริษัททั้งหมด...");
+            const checkboxes = document.querySelectorAll(
+                '.company-checkbox input[type="checkbox"]'
+            );
+            checkboxes.forEach((checkbox) => {
                 checkbox.checked = false;
                 selectedCompanies.delete(checkbox.value);
             });
@@ -700,20 +865,25 @@
             closeLoadingOverlay();
         }
 
-       function generateTemplate(companyCode, formattedDate, incidents, templateType = 'line') {
-            const isHospital = companyTypes[companyCode] === 'hospital';
+        function generateTemplate(
+            companyCode,
+            formattedDate,
+            incidents,
+            templateType = "line"
+        ) {
+            const isHospital = companyTypes[companyCode] === "hospital";
             const emailMapping = companyEmailMappings[companyCode] || companyCode;
 
             // If no incidents and it's email template, return empty string
             if (incidents.length === 0) {
-                if (templateType === 'email') {
-                    return '';
+                if (templateType === "email") {
+                    return "";
                 }
             }
 
-            let template = '';
+            let template = "";
 
-            if (templateType === 'line') {
+            if (templateType === "line") {
                 if (isHospital) {
                     template += `เรียนทีม ${companyFullNames[companyCode]}\n`;
                     template += `\n${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
@@ -724,19 +894,21 @@
 
                 if (incidents.length > 0) {
                     incidents.forEach((incident, idx) => {
-                        template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
+                        template += `${idx + 1}. ${incident["Incident ID"]} ${incident.Summary
+                            }\n`;
                     });
                     template += `\nรายละเอียดเพิ่มเติม ส่งให้ทาง E-mail ครับ\n`;
                     template += `หากดำเนินการแก้ไขแล้ว รบกวนแจ้งปิดเคสด้วยครับ`;
                 } else {
                     template += `- ไม่พบ Incident ที่มีสถานะ pending ครับ`;
                 }
-            } else if (templateType === 'email') {
+            } else if (templateType === "email") {
                 if (incidents.length > 0) {
-                   template += `เรียนทีม ${emailMapping}\n`;
+                    template += `เรียนทีม ${emailMapping}\n`;
                     template += `\n${companyCode} Follow Incident ${formattedDate} (ติดตาม Incident ที่สถานะยังคง Pending)\n\n`;
                     incidents.forEach((incident, idx) => {
-                        template += `${idx + 1}. ${incident['Incident ID']} ${incident.Summary}\n`;
+                        template += `${idx + 1}. ${incident["Incident ID"]} ${incident.Summary
+                            }\n`;
                     });
                     template += `\nหากดำเนินการตรวจสอบแก้ไขเสร็จเรียบร้อยแล้ว รบกวนแจ้งปิด Incidents ด้วยครับ\nรายละเอียดเพิ่มเติมตามเอกสารแนบ\n\nBest regard,\nSecurity Analyst \n`;
                     template += `====================================================\n`;
@@ -746,162 +918,217 @@
             return template;
         }
         function updateCompanyFilters() {
-    const filtersContainer = document.getElementById('companyFilters');
-    filtersContainer.innerHTML = '';
+            const filtersContainer = document.getElementById("companyFilters");
+            filtersContainer.innerHTML = "";
 
-        const sortedGroups = Object.entries(companyGroups)
-            .sort((a, b) => {
-                const numA = parseInt(a[0].replace('Shift ', '')) || Infinity;
-                const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
+            const sortedGroups = Object.entries(companyGroups).sort((a, b) => {
+                const numA = parseInt(a[0].replace("Shift ", "")) || Infinity;
+                const numB = parseInt(b[0].replace("Shift ", "")) || Infinity;
                 return numA - numB;
             });
 
-
             sortedGroups.forEach(([groupId, group]) => {
-            const companies = Array.isArray(group) ? group : group.companies;
-            const groupName = Array.isArray(group) ? groupId : (group.name || groupId);
+                const companies = Array.isArray(group) ? group : group.companies;
+                const groupName = Array.isArray(group)
+                    ? groupId
+                    : group.name || groupId;
 
-            if (!companies || !Array.isArray(companies)) {
-                console.warn(`Invalid companies data for ${groupId}:`, companies);
-                return;
-            }
-            const sortedCompanies = [...companies].sort((a, b) => a.localeCompare(b, 'th'));
+                if (!companies || !Array.isArray(companies)) {
+                    console.warn(`Invalid companies data for ${groupId}:`, companies);
+                    return;
+                }
+                const sortedCompanies = [...companies].sort((a, b) =>
+                    a.localeCompare(b, "th")
+                );
 
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'company-group';
+                const groupDiv = document.createElement("div");
+                groupDiv.className = "company-group";
 
-            const header = document.createElement('div');
-            header.className = 'company-group-header';
-
-            const groupTitle = document.createElement('h3');
-            groupTitle.className = 'company-group-title';
-            groupTitle.textContent = groupName;
-            header.appendChild(groupTitle);
-
-            const buttonContainer = document.createElement('div');
-            buttonContainer.style.display = 'flex';
-            buttonContainer.style.gap = '8px';
-
-            const selectGroupBtn = document.createElement('button');
-            selectGroupBtn.textContent = 'Select All';
-            selectGroupBtn.className = 'select-group-btn';
-            selectGroupBtn.onclick = () => selectGroupCompanies(sortedCompanies);
-
-            const unselectGroupBtn = document.createElement('button');
-            unselectGroupBtn.textContent = 'Unselect All';
-            unselectGroupBtn.className = 'select-group-btn';
-            unselectGroupBtn.style.backgroundColor = '#404040';
-            unselectGroupBtn.onclick = () => unselectGroupCompanies(sortedCompanies);
-
-             buttonContainer.appendChild(selectGroupBtn);
-             buttonContainer.appendChild(unselectGroupBtn);
-            header.appendChild(buttonContainer);
-
-            groupDiv.appendChild(header);
-
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'company-group-content';
-
-
-            if (groupId === 'Shift 5') {
-                const provinceGroups = {};
-                sortedCompanies.forEach(company => {
-                    const province = company.split('-')[0];
-                    if (!provinceGroups[province]) {
-                        provinceGroups[province] = [];
+                const header = document.createElement("div");
+                header.className = "company-group-header";
+                header.addEventListener("click", function () {
+                    const contentDiv = this.nextElementSibling;
+                    if (contentDiv) {
+                        showLoadingOverlay("กำลังอัพเดต Template...");
+                        contentDiv.style.display =
+                            contentDiv.style.display === "none" ? "block" : "none";
+                        updateAllTemplates();
+                        closeLoadingOverlay();
                     }
-                    provinceGroups[province].push(company);
                 });
 
-               Object.keys(provinceGroups).forEach(province => {
-                    const provinceDiv = document.createElement('div');
-                     provinceDiv.classList.add('province-group');
-                    const provinceHeader = document.createElement('div');
-                    provinceHeader.style.cursor = 'pointer' // Add this
-                    provinceHeader.textContent = province
-                    provinceDiv.appendChild(provinceHeader)
+                const groupTitle = document.createElement("h3");
+                groupTitle.className = "company-group-title";
+                groupTitle.textContent = groupName;
+                header.appendChild(groupTitle);
 
+                const buttonContainer = document.createElement("div");
+                buttonContainer.style.display = "flex";
+                buttonContainer.style.gap = "8px";
 
-                    const provinceContentDiv = document.createElement('div');
-                    provinceContentDiv.classList.add('province-group-content');
-                    provinceContentDiv.style.display = 'none' // hide initially
+                const selectGroupBtn = document.createElement("button");
+                selectGroupBtn.textContent = "Select All";
+                selectGroupBtn.className = "select-group-btn";
+                selectGroupBtn.onclick = () => selectGroupCompanies(sortedCompanies);
 
+                const unselectGroupBtn = document.createElement("button");
+                unselectGroupBtn.textContent = "Unselect All";
+                unselectGroupBtn.className = "select-group-btn";
+                unselectGroupBtn.style.backgroundColor = "#404040";
+                unselectGroupBtn.onclick = () =>
+                    unselectGroupCompanies(sortedCompanies);
 
-                    provinceGroups[province].forEach(company => {
-                         const label = document.createElement('label');
-                          label.className = 'company-checkbox';
-                         const checkbox = document.createElement('input');
-                          checkbox.type = 'checkbox';
-                           checkbox.value = company;
-                         checkbox.checked = false;
+                buttonContainer.appendChild(selectGroupBtn);
+                buttonContainer.appendChild(unselectGroupBtn);
+                header.appendChild(buttonContainer);
 
-                          checkbox.addEventListener('change', function () {
-                             showLoadingOverlay('กำลังอัพเดต Template...');
-                              if (this.checked) {
-                                selectedCompanies.add(this.value);
-                              } else {
-                                 selectedCompanies.delete(this.value);
-                            }
-                            updateAllTemplates();
-                            closeLoadingOverlay();
-                            });
+                groupDiv.appendChild(header);
 
-                       label.appendChild(checkbox);
-                        label.appendChild(document.createTextNode(company));
-                         provinceContentDiv.appendChild(label);
+                const contentDiv = document.createElement("div");
+                contentDiv.className = "company-group-content";
+                contentDiv.style.display = "none";
+
+                if (groupId === "Shift 5") {
+                    const provinceGroups = {};
+                    sortedCompanies.forEach((company) => {
+                        const province = company.split("-")[0];
+                        if (!provinceGroups[province]) {
+                            provinceGroups[province] = [];
+                        }
+                        provinceGroups[province].push(company);
                     });
 
+                    Object.keys(provinceGroups).forEach((province) => {
+                        const provinceDiv = document.createElement("div");
+                        provinceDiv.classList.add("province-group");
+                         const provinceHeader = document.createElement("div");
+                         provinceHeader.classList.add("province-header");
+                        const provinceTitle = document.createElement("span");
+                        provinceTitle.textContent = province;
+                        provinceHeader.appendChild(provinceTitle);
 
-                     provinceDiv.appendChild(provinceContentDiv);
-                     contentDiv.appendChild(provinceDiv);
+                       const provinceButtonContainer = document.createElement("div");
+                        provinceButtonContainer.className = 'province-button-container';
+                       const selectProvinceBtn = document.createElement("button");
+                        selectProvinceBtn.textContent = 'Select All';
+                        selectProvinceBtn.className = 'select-province-btn';
+                        selectProvinceBtn.onclick = () => selectProvinceCompanies(provinceGroups[province]); // Add event listener
+                         const unselectProvinceBtn = document.createElement("button");
+                            unselectProvinceBtn.textContent = 'Unselect All';
+                            unselectProvinceBtn.className = 'unselect-province-btn';
+                         unselectProvinceBtn.onclick = () => unselectProvinceCompanies(provinceGroups[province]); // Add event listener
 
-                      provinceHeader.addEventListener('click', function () {
-                       showLoadingOverlay('กำลังอัพเดต Template...');
-                       provinceContentDiv.style.display = provinceContentDiv.style.display === 'none' ? 'block' : 'none';
+                         provinceButtonContainer.appendChild(selectProvinceBtn);
+                         provinceButtonContainer.appendChild(unselectProvinceBtn);
+                         provinceHeader.appendChild(provinceButtonContainer);
+                        provinceHeader.addEventListener("click", function () {
+                             const provinceContentDiv = this.nextElementSibling;
+                           if (provinceContentDiv) {
+                                showLoadingOverlay("กำลังอัพเดต Template...");
+                               provinceContentDiv.style.display = provinceContentDiv.style.display === "none"
+                                   ? "block"
+                                   : "none";
+                               updateAllTemplates();
+                                closeLoadingOverlay();
+                           }
+                        });
 
-                         updateAllTemplates()
-                        closeLoadingOverlay();
-                      });
-                });
-           } else {
-                sortedCompanies.forEach(company => {
-                    const label = document.createElement('label');
-                    label.className = 'company-checkbox';
-                     const checkbox = document.createElement('input');
-                      checkbox.type = 'checkbox';
+                        provinceDiv.appendChild(provinceHeader);
+
+                        const provinceContentDiv = document.createElement("div");
+                        provinceContentDiv.classList.add("province-group-content");
+                        provinceContentDiv.style.display = "none"; // hide initially
+
+                        provinceGroups[province].forEach((company) => {
+                            const label = document.createElement("label");
+                            label.className = "company-checkbox";
+                            const checkbox = document.createElement("input");
+                            checkbox.type = "checkbox";
+                            checkbox.value = company;
+                            checkbox.checked = false;
+
+                            checkbox.addEventListener("change", function () {
+                                showLoadingOverlay("กำลังอัพเดต Template...");
+                                if (this.checked) {
+                                    selectedCompanies.add(this.value);
+                                } else {
+                                    selectedCompanies.delete(this.value);
+                                }
+                                updateAllTemplates();
+                                closeLoadingOverlay();
+                            });
+
+                            label.appendChild(checkbox);
+                            label.appendChild(document.createTextNode(company));
+                            provinceContentDiv.appendChild(label);
+                        });
+
+                        provinceDiv.appendChild(provinceContentDiv);
+                        contentDiv.appendChild(provinceDiv);
+                    });
+                } else {
+                    sortedCompanies.forEach((company) => {
+                        const label = document.createElement("label");
+                        label.className = "company-checkbox";
+                        const checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
                         checkbox.value = company;
                         checkbox.checked = false;
 
-                        checkbox.addEventListener('change', function () {
-                            showLoadingOverlay('กำลังอัพเดต Template...');
+                        checkbox.addEventListener("change", function () {
+                            showLoadingOverlay("กำลังอัพเดต Template...");
                             if (this.checked) {
-                              selectedCompanies.add(this.value);
+                                selectedCompanies.add(this.value);
                             } else {
-                                 selectedCompanies.delete(this.value);
-                             }
-                              updateAllTemplates();
-                             closeLoadingOverlay();
-                         });
+                                selectedCompanies.delete(this.value);
+                            }
+                            updateAllTemplates();
+                            closeLoadingOverlay();
+                        });
 
-                     label.appendChild(checkbox);
-                    label.appendChild(document.createTextNode(company));
-                     contentDiv.appendChild(label);
-                });
-           }
+                        label.appendChild(checkbox);
+                        label.appendChild(document.createTextNode(company));
+                        contentDiv.appendChild(label);
+                    });
+                }
 
-
-            groupDiv.appendChild(contentDiv);
-             filtersContainer.appendChild(groupDiv);
-
-      });
-}
+                groupDiv.appendChild(contentDiv);
+                filtersContainer.appendChild(groupDiv);
+            });
+        }
+          function selectProvinceCompanies(provinceCompanies) {
+            showLoadingOverlay('กำลังเลือกบริษัท...');
+            provinceCompanies.forEach(company => {
+               if (companies.has(company)) {
+                   selectedCompanies.add(company);
+                   const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                   if (checkbox) checkbox.checked = true;
+             }
+         });
+           updateAllTemplates();
+           closeLoadingOverlay();
+       }
+         function unselectProvinceCompanies(provinceCompanies) {
+            showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
+            provinceCompanies.forEach(company => {
+             if (companies.has(company)) {
+              selectedCompanies.delete(company);
+              const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+              if (checkbox) checkbox.checked = false;
+              }
+          });
+           updateAllTemplates();
+           closeLoadingOverlay();
+         }
 
         function unselectGroupCompanies(groupCompanies) {
-            showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
-            groupCompanies.forEach(company => {
+            showLoadingOverlay("กำลังยกเลิกการเลือกบริษัท...");
+            groupCompanies.forEach((company) => {
                 if (companies.has(company)) {
                     selectedCompanies.delete(company);
-                    const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                    const checkbox = document.querySelector(
+                        `input[type="checkbox"][value="${company}"]`
+                    );
                     if (checkbox) checkbox.checked = false;
                 }
             });
@@ -910,11 +1137,13 @@
         }
 
         function selectGroupCompanies(groupCompanies) {
-            showLoadingOverlay('กำลังเลือกบริษัท...');
-            groupCompanies.forEach(company => {
+            showLoadingOverlay("กำลังเลือกบริษัท...");
+            groupCompanies.forEach((company) => {
                 if (companies.has(company)) {
                     selectedCompanies.add(company);
-                    const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                    const checkbox = document.querySelector(
+                        `input[type="checkbox"][value="${company}"]`
+                    );
                     if (checkbox) checkbox.checked = true;
                 }
             });
@@ -922,55 +1151,56 @@
             closeLoadingOverlay();
         }
 
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const debugDiv = document.getElementById('debug');
+        const dropZone = document.getElementById("dropZone");
+        const fileInput = document.getElementById("fileInput");
+        const debugDiv = document.getElementById("debug");
 
-        dropZone.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('dragover', (e) => {
+        dropZone.addEventListener("click", () => fileInput.click());
+        dropZone.addEventListener("dragover", (e) => {
             e.preventDefault();
-            dropZone.classList.add('dragover');
+            dropZone.classList.add("dragover");
         });
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
+        dropZone.addEventListener("dragleave", () => {
+            dropZone.classList.remove("dragover");
         });
-        dropZone.addEventListener('drop', (e) => {
+        dropZone.addEventListener("drop", (e) => {
             e.preventDefault();
-            dropZone.classList.remove('dragover');
+            dropZone.classList.remove("dragover");
             const file = e.dataTransfer.files[0];
             handleFileAndLoad(file); // Call the new function
         });
 
-        fileInput.addEventListener('change', (e) => {
+        fileInput.addEventListener("change", (e) => {
             const file = e.target.files[0];
             handleFileAndLoad(file); // Call the new function
         });
         async function handleFileAndLoad(file) {
-            showLoadingOverlay('กำลังอ่านไฟล์ Excel...');
+            showLoadingOverlay("กำลังอ่านไฟล์ Excel...");
             try {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     try {
                         const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
+                        const workbook = XLSX.read(data, { type: "array" });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                         excelData = XLSX.utils.sheet_to_json(firstSheet);
 
                         // เพิ่มบริษัททั้งหมดจาก companyMappings
                         companies = new Set([
-                            ...new Set(excelData.map(incident => getCompanyCode(incident.Customer))),
-                            ...new Set(Object.values(companyMappings))
+                            ...new Set(
+                                excelData.map((incident) => getCompanyCode(incident.Customer))
+                            ),
+                            ...new Set(Object.values(companyMappings)),
                         ]);
                         selectedCompanies.clear(); // Clear initially selected companies.
 
                         updateCompanyFilters();
                         updateAllTemplates();
 
-                        debugDiv.style.display = 'block';
+                        debugDiv.style.display = "block";
                         debugDiv.innerHTML = `อ่านข้อมูลสำเร็จ: ${excelData.length} รายการ`;
-
                     } catch (error) {
-                        debugDiv.style.display = 'block';
+                        debugDiv.style.display = "block";
                         debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
                     }
                     closeLoadingOverlay();
@@ -978,7 +1208,7 @@
                 reader.readAsArrayBuffer(file);
             } catch (error) {
                 closeLoadingOverlay();
-                debugDiv.style.display = 'block';
+                debugDiv.style.display = "block";
                 debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
             }
         }
@@ -987,182 +1217,216 @@
             return companyMappings[customerName] || customerName;
         }
 
-        document.getElementById('followDate').addEventListener('change', () => {
-            showLoadingOverlay('กำลังอัพเดต Template...');
+        document.getElementById("followDate").addEventListener("change", () => {
+            showLoadingOverlay("กำลังอัพเดต Template...");
             updateAllTemplates();
             closeLoadingOverlay();
         });
-        document.getElementById('lineTemplate').addEventListener('change', function () {
-            if (this.checked) {
-                showLoadingOverlay('กำลังอัพเดต Template...');
-                updateAllTemplates();
-                closeLoadingOverlay();
-            }
-        });
+        document
+            .getElementById("lineTemplate")
+            .addEventListener("change", function () {
+                if (this.checked) {
+                    showLoadingOverlay("กำลังอัพเดต Template...");
+                    updateAllTemplates();
+                    closeLoadingOverlay();
+                }
+            });
 
-        document.getElementById('emailTemplate').addEventListener('change', function () {
-            if (this.checked) {
-                showLoadingOverlay('กำลังอัพเดต Template...');
-                updateAllTemplates();
-                closeLoadingOverlay();
-            }
-        });
-
+        document
+            .getElementById("emailTemplate")
+            .addEventListener("change", function () {
+                if (this.checked) {
+                    showLoadingOverlay("กำลังอัพเดต Template...");
+                    updateAllTemplates();
+                    closeLoadingOverlay();
+                }
+            });
 
         function updateAllTemplates() {
-            const date = document.getElementById('followDate').value;
+            const date = document.getElementById("followDate").value;
             if (!date || !excelData) {
-                document.getElementById('allTemplates').textContent = 'โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...';
+                document.getElementById("allTemplates").textContent =
+                    "โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...";
                 return;
             }
 
             const formattedDate = formatDateToEng(date);
-            let allTemplates = '';
-            const selectedTemplateType = document.querySelector('input[name="templateType"]:checked').value;
+            let allTemplates = "";
+            const selectedTemplateType = document.querySelector(
+                'input[name="templateType"]:checked'
+            ).value;
             const selectedCompaniesArray = Array.from(selectedCompanies).sort();
 
             // Generate templates for each selected company
             const templates = selectedCompaniesArray
-                .filter(companyCode => {
-                    const checkbox = document.querySelector(`input[type="checkbox"][value="${companyCode}"]`);
+                .filter((companyCode) => {
+                    const checkbox = document.querySelector(
+                        `input[type="checkbox"][value="${companyCode}"]`
+                    );
                     return checkbox && checkbox.checked;
                 })
-                .map(companyCode => {
-                    const incidents = excelData.filter(incident =>
-                        getCompanyCode(incident.Customer) === companyCode
+                .map((companyCode) => {
+                    const incidents = excelData.filter(
+                        (incident) => getCompanyCode(incident.Customer) === companyCode
                     );
-                    const template = generateTemplate(companyCode, formattedDate, incidents, selectedTemplateType);
+                    const template = generateTemplate(
+                        companyCode,
+                        formattedDate,
+                        incidents,
+                        selectedTemplateType
+                    );
                     return template;
                 })
-                .filter(template => template.trim() !== ''); // Remove empty templates
+                .filter((template) => template.trim() !== ""); // Remove empty templates
 
             // Join templates differently based on template type
-            if (selectedTemplateType === 'line') {
-                allTemplates = templates.join('\n\n' + '='.repeat(50) + '\n\n');
+            if (selectedTemplateType === "line") {
+                allTemplates = templates.join("\n\n" + "=".repeat(50) + "\n\n");
             } else {
                 // For email template, just join with double newline, no separators
-                allTemplates = templates.join('\n\n');
+                allTemplates = templates.join("\n\n");
             }
 
-            document.getElementById('allTemplates').textContent = allTemplates || 'กรุณาเลือกบริษัทที่ต้องการดู Template';
+            document.getElementById("allTemplates").textContent =
+                allTemplates || "กรุณาเลือกบริษัทที่ต้องการดู Template";
         }
 
         function copyAllTemplates() {
-            showLoadingOverlay('กำลังคัดลอก Template...');
-            const templates = document.getElementById('allTemplates').textContent;
-            navigator.clipboard.writeText(templates)
+            showLoadingOverlay("กำลังคัดลอก Template...");
+            const templates = document.getElementById("allTemplates").textContent;
+            navigator.clipboard
+                .writeText(templates)
                 .then(() => {
                     closeLoadingOverlay();
-                    showAlertModal('คัดลอก Template ทั้งหมดสำเร็จ')
+                    showAlertModal("คัดลอก Template ทั้งหมดสำเร็จ");
                 })
-                .catch(err => {
+                .catch((err) => {
                     closeLoadingOverlay();
-                    showAlertModal('เกิดข้อผิดพลาดในการคัดลอก: ' + err);
+                    showAlertModal("เกิดข้อผิดพลาดในการคัดลอก: " + err);
                 });
         }
 
         function exportExcelByCompany() {
-            showLoadingOverlay('กำลัง Export Excel...');
+            showLoadingOverlay("กำลัง Export Excel...");
             if (!excelData || selectedCompanies.size === 0) {
                 closeLoadingOverlay();
-                showAlertModal('กรุณาอัพโหลดไฟล์ Excel และเลือกบริษัทก่อน');
+                showAlertModal("กรุณาอัพโหลดไฟล์ Excel และเลือกบริษัทก่อน");
                 return;
             }
 
-            const date = document.getElementById('followDate').value;
+            const date = document.getElementById("followDate").value;
             if (!date) {
                 closeLoadingOverlay();
-                showAlertModal('กรุณาเลือกวันที่ก่อน Export');
+                showAlertModal("กรุณาเลือกวันที่ก่อน Export");
                 return;
             }
 
             const formattedDate = formatDateToEng(date);
-            const checkboxes = document.querySelectorAll('.company-checkbox input[type="checkbox"]:checked');
+            const checkboxes = document.querySelectorAll(
+                '.company-checkbox input[type="checkbox"]:checked'
+            );
 
             if (checkboxes.length === 0) {
                 closeLoadingOverlay();
-                showAlertModal('กรุณาเลือกอย่างน้อย 1 บริษัท');
+                showAlertModal("กรุณาเลือกอย่างน้อย 1 บริษัท");
                 return;
             }
 
-            checkboxes.forEach(checkbox => {
+            checkboxes.forEach((checkbox) => {
                 const companyCode = checkbox.value;
-                const companyData = excelData.filter(incident =>
-                    getCompanyCode(incident.Customer) === companyCode
+                const companyData = excelData.filter(
+                    (incident) => getCompanyCode(incident.Customer) === companyCode
                 );
 
                 if (companyData.length === 0) return;
 
                 const header = [
-                    'Incident ID', 'Summary', 'Customer', 'Note', 'Priority', 'Status',
-                    'Submit Date', 'Resolution Date', 'Cause', 'Resolution',
-                    'Category', 'Sub Category', 'Occur Date', 'Response Date',
-                    'Response Time', 'Resolution Time'
+                    "Incident ID",
+                    "Summary",
+                    "Customer",
+                    "Note",
+                    "Priority",
+                    "Status",
+                    "Submit Date",
+                    "Resolution Date",
+                    "Cause",
+                    "Resolution",
+                    "Category",
+                    "Sub Category",
+                    "Occur Date",
+                    "Response Date",
+                    "Response Time",
+                    "Resolution Time",
                 ];
 
-                const dataRows = companyData.map(incident => {
+                const dataRows = companyData.map((incident) => {
                     return [
-                        incident['Incident ID'],
-                        incident['Summary'],
-                        incident['Customer'],
-                        incident['Note'],
-                        incident['Priority'],
-                        incident['Status'],
-                        incident['Submit Date'],
-                        incident['Resolution Date'],
-                        incident['Cause'],
-                        incident['Resolution'],
-                        incident['Category'],
-                        incident['Sub Category'],
-                        incident['Occur Date'],
-                        incident['Response Date'],
-                        incident['Response Time'],
-                        incident['Resolution Time']
+                        incident["Incident ID"],
+                        incident["Summary"],
+                        incident["Customer"],
+                        incident["Note"],
+                        incident["Priority"],
+                        incident["Status"],
+                        incident["Submit Date"],
+                        incident["Resolution Date"],
+                        incident["Cause"],
+                        incident["Resolution"],
+                        incident["Category"],
+                        incident["Sub Category"],
+                        incident["Occur Date"],
+                        incident["Response Date"],
+                        incident["Response Time"],
+                        incident["Resolution Time"],
                     ];
                 });
 
                 // Create sheet from array of arrays
                 const ws = XLSX.utils.aoa_to_sheet([header, ...dataRows], {
-                    cellDates: true
+                    cellDates: true,
                 });
 
                 // Set custom date format for each date/time column
                 const dateFormat = "dd/mm/yyyy hh:mm:ss"; // or 'yyyy-mm-dd hh:mm:ss' if you prefer
 
                 const dateColumns = [7, 8, 13, 14, 15, 16];
-                dateColumns.forEach(colIdx => {
+                dateColumns.forEach((colIdx) => {
                     for (let row = 2; row <= dataRows.length + 1; row++) {
-                        const cellRef = XLSX.utils.encode_cell({ r: row - 1, c: colIdx - 1 });
+                        const cellRef = XLSX.utils.encode_cell({
+                            r: row - 1,
+                            c: colIdx - 1,
+                        });
                         const cell = ws[cellRef];
 
                         if (cell && cell.v instanceof Date) {
-                            cell.t = 'd';
+                            cell.t = "d";
                             cell.z = dateFormat;
                         }
-
                     }
                 });
 
-
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, companyCode);
-
 
                 const fileName = `${companyCode} Follow Incident ${formattedDate}.xlsx`;
                 XLSX.writeFile(wb, fileName);
             });
             closeLoadingOverlay();
-            showAlertModal('Export Excel สำเร็จ');
+            showAlertModal("Export Excel สำเร็จ");
         }
 
         // ฟังก์ชันช่วยจัดรูปแบบวันที่สำหรับชื่อไฟล์
         function formatDateForFileName(date) {
             const d = new Date(date);
             const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
             return `${year}${month}${day}`;
         }
+
+        togglePanelButton.addEventListener("click", () => {
+            slideOutPanel.classList.toggle("open");
+            togglePanelButton.classList.toggle("open");
+        });
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -1181,81 +1445,88 @@
         let companyGroups = {};
         let companyTypes = {};
         let companyMappings = {};
-         let companyEmailMappings = {};
+        let companyEmailMappings = {};
         let companyFullNames = {};
 
         async function loadCustomerData() {
-            showLoadingOverlay('กำลังโหลดข้อมูลลูกค้า...');
+            showLoadingOverlay("กำลังโหลดข้อมูลลูกค้า...");
             try {
                 const db = firebase.firestore();
 
                 // โหลด companyGroups และ log ข้อมูลที่ได้
-                const groupsDoc = await db.collection('customerManagement')
-                    .doc('companyGroups').get();
+                const groupsDoc = await db
+                    .collection("customerManagement")
+                    .doc("companyGroups")
+                    .get();
 
                 if (groupsDoc.exists) {
                     const data = groupsDoc.data();
-                    console.log('Raw data from Firestore:', data); // ดูข้อมูลดิบที่ได้จาก Firestore
+                    console.log("Raw data from Firestore:", data); // ดูข้อมูลดิบที่ได้จาก Firestore
 
                     // ถ้าข้อมูลมี shifts อยู่แล้ว
                     if (data && data.shifts) {
                         companyGroups = data.shifts;
                     }
                     // ถ้าข้อมูลเป็น object ที่มี key เป็น Shift 1, Shift 2, etc. โดยตรง
-                    else if (data && Object.keys(data).some(key => key.startsWith('Shift'))) {
+                    else if (
+                        data &&
+                        Object.keys(data).some((key) => key.startsWith("Shift"))
+                    ) {
                         // แปลง Object เป็น Array ของ [key, value] เพื่อให้สามารถ Sort ได้
                         const sortedEntries = Object.entries(data).sort((a, b) => {
-                            const numA = parseInt(a[0].replace('Shift ', '')) || Infinity;
-                            const numB = parseInt(b[0].replace('Shift ', '')) || Infinity;
+                            const numA = parseInt(a[0].replace("Shift ", "")) || Infinity;
+                            const numB = parseInt(b[0].replace("Shift ", "")) || Infinity;
                             return numA - numB;
                         });
 
                         // แปลงกลับเป็น Object หลังจาก Sort แล้ว
                         companyGroups = Object.fromEntries(sortedEntries);
-                    }
-                    else {
-                        console.warn('No valid shifts data found');
+                    } else {
+                        console.warn("No valid shifts data found");
                         companyGroups = {};
                     }
 
-                    console.log('Processed companyGroups:', companyGroups); // ดูข้อมูลหลังจัดรูปแบบ
+                    console.log("Processed companyGroups:", companyGroups); // ดูข้อมูลหลังจัดรูปแบบ
                 }
 
                 // โหลดข้อมูลอื่นๆ เหมือนเดิม
-                const [typesDoc, mappingsDoc, fullNamesDoc, emailMappingsDoc] = await Promise.all([
-                    db.collection('customerManagement').doc('companyTypes').get(),
-                    db.collection('customerManagement').doc('companyMappings').get(),
-                    db.collection('customerManagement').doc('companyFullNames').get(),
-                     db.collection('customerManagement').doc('companyEmailMappings').get()
-                ]);
+                const [typesDoc, mappingsDoc, fullNamesDoc, emailMappingsDoc] =
+                    await Promise.all([
+                        db.collection("customerManagement").doc("companyTypes").get(),
+                        db.collection("customerManagement").doc("companyMappings").get(),
+                        db.collection("customerManagement").doc("companyFullNames").get(),
+                        db
+                            .collection("customerManagement")
+                            .doc("companyEmailMappings")
+                            .get(),
+                    ]);
 
                 companyTypes = typesDoc.exists ? typesDoc.data() : {};
                 companyMappings = mappingsDoc.exists ? mappingsDoc.data() : {};
                 companyFullNames = fullNamesDoc.exists ? fullNamesDoc.data() : {};
-                 companyEmailMappings = emailMappingsDoc.exists ? emailMappingsDoc.data() : {};
+                companyEmailMappings = emailMappingsDoc.exists
+                    ? emailMappingsDoc.data()
+                    : {};
 
-                console.log('Loaded companyTypes:', companyTypes);
-                console.log('Loaded companyMappings:', companyMappings);
-                console.log('Loaded companyFullNames:', companyFullNames);
-                 console.log('Loaded companyEmailMappings:', companyEmailMappings);
+                console.log("Loaded companyTypes:", companyTypes);
+                console.log("Loaded companyMappings:", companyMappings);
+                console.log("Loaded companyFullNames:", companyFullNames);
+                console.log("Loaded companyEmailMappings:", companyEmailMappings);
 
                 if (Object.keys(companyGroups).length > 0) {
                     updateCompanyFilters();
                 } else {
-                    document.getElementById('companyFilters').innerHTML =
-                        '<p>ไม่พบข้อมูลบริษัท กรุณาตรวจสอบการตั้งค่าข้อมูลในระบบ</p>';
+                    document.getElementById("companyFilters").innerHTML =
+                        "<p>ไม่พบข้อมูลบริษัท กรุณาตรวจสอบการตั้งค่าข้อมูลในระบบ</p>";
                 }
                 closeLoadingOverlay();
-
             } catch (error) {
-                console.error('Error loading customer data:', error);
-                document.getElementById('companyFilters').innerHTML =
-                    '<p>เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณารีเฟรชหน้าเว็บ</p>';
+                console.error("Error loading customer data:", error);
+                document.getElementById("companyFilters").innerHTML =
+                    "<p>เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณารีเฟรชหน้าเว็บ</p>";
                 closeLoadingOverlay();
             }
         }
-
-
     </script>
     <script>
         // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
@@ -1263,15 +1534,16 @@
             if (user) {
                 await loadCustomerData();
                 try {
-                    const userDoc = await firebase.firestore()
-                        .collection('users')
+                    const userDoc = await firebase
+                        .firestore()
+                        .collection("users")
                         .doc(user.uid)
                         .get();
 
                     const userData = userDoc.data();
-                    const displayElement = document.getElementById('userDisplayName');
-                    const roleElement = document.getElementById('userRole');
-                    const avatarElement = document.getElementById('userAvatar');
+                    const displayElement = document.getElementById("userDisplayName");
+                    const roleElement = document.getElementById("userRole");
+                    const avatarElement = document.getElementById("userAvatar");
 
                     if (userData?.displayName) {
                         displayElement.textContent = userData.displayName;
@@ -1282,41 +1554,45 @@
                     if (userData?.role) {
                         roleElement.textContent = `(${userData.role})`;
                     } else {
-                        roleElement.textContent = '';
+                        roleElement.textContent = "";
                     }
 
                     if (userData?.avatar) {
-                        avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
+                        avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`;
                     } else {
-                        avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+                        avatarElement.textContent = userData.displayName
+                            ? userData.displayName.charAt(0).toUpperCase()
+                            : user.email.charAt(0).toUpperCase();
                     }
 
-                    if (userData?.role === 'supervisor' || userData?.role === 'admin') {
-                        document.getElementById('customerManagementBtn').style.display = 'inline-block';
-                        const userContainer = document.querySelector('.user-container');
-                        const logoutBtn = document.querySelector('.logout-btn');
+                    if (userData?.role === "supervisor" || userData?.role === "admin") {
+                        document.getElementById("customerManagementBtn").style.display =
+                            "inline-block";
+                        const userContainer = document.querySelector(".user-container");
+                        const logoutBtn = document.querySelector(".logout-btn");
 
-                        if (!document.querySelector('.admin-btn')) {
-                            const adminBtn = document.createElement('button');
-                            adminBtn.innerHTML = 'หน้า Admin';
-                            adminBtn.className = 'admin-btn';
-                            adminBtn.onclick = () => window.location.href = 'admin.html';
+                        if (!document.querySelector(".admin-btn")) {
+                            const adminBtn = document.createElement("button");
+                            adminBtn.innerHTML = "หน้า Admin";
+                            adminBtn.className = "admin-btn";
+                            adminBtn.onclick = () => (window.location.href = "admin.html");
                             userContainer.insertBefore(adminBtn, logoutBtn);
                         }
                     }
 
-
                     // Add admin button if user has admin role
                 } catch (error) {
-                    console.error('Error fetching user data:', error);
+                    console.error("Error fetching user data:", error);
                 }
             }
         });
 
         function logout() {
-            firebase.auth().signOut()
-                .then(() => window.location.href = 'login.html')
-                .catch(error => console.error('Logout error:', error));
+            firebase
+                .auth()
+                .signOut()
+                .then(() => (window.location.href = "login.html"))
+                .catch((error) => console.error("Logout error:", error));
         }
     </script>
     <script src="auth.js"></script>
