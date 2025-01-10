@@ -258,7 +258,6 @@
             min-height: 200px;
             border: 2px solid #eee;
             margin-bottom: 1rem;
-             background: #f8f8f8;
         }
 
         #dropZone {
@@ -426,7 +425,7 @@
             border-radius: 4px;
             color: #2d2d2d;
             cursor: pointer;
-             /* Add cursor pointer */
+            /* Add cursor pointer */
         }
 
         .company-group-title {
@@ -574,7 +573,7 @@
         .province-button-container {
             display: flex;
             gap: 8px;
-            margin-left: auto;
+             margin-left: auto;
         }
 
         .select-province-btn,
@@ -614,6 +613,12 @@
             margin-bottom: 1rem;
             box-shadow: var(--shadow);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+         #selectAllToggleContainer {
+            display: flex;
+             align-items: center;
+            margin-bottom: 10px;
+             padding-left: 10px;
         }
     </style>
 </head>
@@ -719,19 +724,18 @@
                 <div id="debug" class="debug-info" style="display: none"></div>
             </div>
             <div class="slideout-card">
-                <h2>เลือกบริษัทที่ต้องการกรอง</h2>
-                <div class="filter-controls">
-                    <input type="text" id="searchCompany" class="search-box" placeholder="ค้นหาชื่อบริษัท..." />
-                    <button onclick="selectAllCompanies()" class="nav-btn">
-                        เลือกทั้งหมด
-                    </button>
-                    <button onclick="deselectAllCompanies()" class="logout-btn">
-                        ยกเลิกทั้งหมด
-                    </button>
+               <h2>เลือกบริษัทที่ต้องการกรอง</h2>
+                <div id="selectAllToggleContainer">
+                 <input type="checkbox" id="selectAllToggle" style="margin-right: 8px" />
+                    <label for="selectAllToggle" style="cursor: pointer">เลือก / ยกเลิกทั้งหมด</label>
+                   </div>
+                   <div class="filter-controls">
+                     <input type="text" id="searchCompany" class="search-box" placeholder="ค้นหาชื่อบริษัท..." />
                     <button onclick="exportExcelByCompany()" class="btn btn-primary">
-                        Export Excel แยกตามบริษัท
+                       Export Excel แยกตามบริษัท
                     </button>
-                </div>
+                    </div>
+
                 <div id="companyFilters" class="company-filters"></div>
             </div>
         </div>
@@ -781,6 +785,8 @@
         let selectedCompanies = new Set();
         const togglePanelButton = document.getElementById("togglePanelButton");
         const slideOutPanel = document.getElementById("slideOutPanel");
+        const selectAllToggle = document.getElementById("selectAllToggle");
+
 
         // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
         function showAlertModal(message) {
@@ -848,6 +854,7 @@
                 checkbox.checked = true;
                 selectedCompanies.add(checkbox.value);
             });
+             selectAllToggle.checked = true
             updateAllTemplates();
             closeLoadingOverlay();
         }
@@ -861,6 +868,7 @@
                 checkbox.checked = false;
                 selectedCompanies.delete(checkbox.value);
             });
+             selectAllToggle.checked = false
             updateAllTemplates();
             closeLoadingOverlay();
         }
@@ -917,7 +925,7 @@
 
             return template;
         }
-        function updateCompanyFilters() {
+          function updateCompanyFilters() {
             const filtersContainer = document.getElementById("companyFilters");
             filtersContainer.innerHTML = "";
 
@@ -934,7 +942,7 @@
                     : group.name || groupId;
 
                 if (!companies || !Array.isArray(companies)) {
-                    console.warn(`Invalid companies data for ${groupId}:`, companies);
+                    console.warn(`Invalid companies data for ${groupId}:`, companies);                    
                     return;
                 }
                 const sortedCompanies = [...companies].sort((a, b) =>
@@ -962,31 +970,12 @@
                 groupTitle.textContent = groupName;
                 header.appendChild(groupTitle);
 
-                const buttonContainer = document.createElement("div");
-                buttonContainer.style.display = "flex";
-                buttonContainer.style.gap = "8px";
-
-                const selectGroupBtn = document.createElement("button");
-                selectGroupBtn.textContent = "Select All";
-                selectGroupBtn.className = "select-group-btn";
-                selectGroupBtn.onclick = () => selectGroupCompanies(sortedCompanies);
-
-                const unselectGroupBtn = document.createElement("button");
-                unselectGroupBtn.textContent = "Unselect All";
-                unselectGroupBtn.className = "select-group-btn";
-                unselectGroupBtn.style.backgroundColor = "#404040";
-                unselectGroupBtn.onclick = () =>
-                    unselectGroupCompanies(sortedCompanies);
-
-                buttonContainer.appendChild(selectGroupBtn);
-                buttonContainer.appendChild(unselectGroupBtn);
-                header.appendChild(buttonContainer);
-
                 groupDiv.appendChild(header);
 
                 const contentDiv = document.createElement("div");
                 contentDiv.className = "company-group-content";
                 contentDiv.style.display = "none";
+
 
                 if (groupId === "Shift 5") {
                     const provinceGroups = {};
@@ -997,7 +986,6 @@
                         }
                         provinceGroups[province].push(company);
                     });
-
                     Object.keys(provinceGroups).forEach((province) => {
                         const provinceDiv = document.createElement("div");
                         provinceDiv.classList.add("province-group");
@@ -1005,121 +993,121 @@
                          provinceHeader.classList.add("province-header");
                         const provinceTitle = document.createElement("span");
                         provinceTitle.textContent = province;
-                        provinceHeader.appendChild(provinceTitle);
+                           const provinceButtonContainer = document.createElement('div');
+                           provinceButtonContainer.className = 'province-button-container';
 
-                       const provinceButtonContainer = document.createElement("div");
-                        provinceButtonContainer.className = 'province-button-container';
-                       const selectProvinceBtn = document.createElement("button");
-                        selectProvinceBtn.textContent = 'Select All';
-                        selectProvinceBtn.className = 'select-province-btn';
-                        selectProvinceBtn.onclick = () => selectProvinceCompanies(provinceGroups[province]); // Add event listener
-                         const unselectProvinceBtn = document.createElement("button");
+                           const selectProvinceBtn = document.createElement('button');
+                           selectProvinceBtn.textContent = 'Select All';
+                            selectProvinceBtn.className = 'select-province-btn';
+                            selectProvinceBtn.onclick = () => selectProvinceCompanies(provinceGroups[province]); // Add event listener
+                            const unselectProvinceBtn = document.createElement('button');
                             unselectProvinceBtn.textContent = 'Unselect All';
                             unselectProvinceBtn.className = 'unselect-province-btn';
-                         unselectProvinceBtn.onclick = () => unselectProvinceCompanies(provinceGroups[province]); // Add event listener
+                           unselectProvinceBtn.onclick = () => unselectProvinceCompanies(provinceGroups[province]); // Add event listener
 
-                         provinceButtonContainer.appendChild(selectProvinceBtn);
-                         provinceButtonContainer.appendChild(unselectProvinceBtn);
-                         provinceHeader.appendChild(provinceButtonContainer);
+
+                            provinceButtonContainer.appendChild(selectProvinceBtn);
+                             provinceButtonContainer.appendChild(unselectProvinceBtn);
+                          provinceHeader.appendChild(provinceTitle);
+                          provinceHeader.appendChild(provinceButtonContainer)
+
                         provinceHeader.addEventListener("click", function () {
                              const provinceContentDiv = this.nextElementSibling;
                            if (provinceContentDiv) {
-                                showLoadingOverlay("กำลังอัพเดต Template...");
-                               provinceContentDiv.style.display = provinceContentDiv.style.display === "none"
-                                   ? "block"
-                                   : "none";
-                               updateAllTemplates();
-                                closeLoadingOverlay();
+                            showLoadingOverlay("กำลังอัพเดต Template...");
+                             provinceContentDiv.style.display = provinceContentDiv.style.display === "none"
+                            ? "block"
+                             : "none";
+                           updateAllTemplates();
+                             closeLoadingOverlay();
                            }
-                        });
+                         });
 
-                        provinceDiv.appendChild(provinceHeader);
-
+                        provinceDiv.appendChild(provinceHeader)
                         const provinceContentDiv = document.createElement("div");
-                        provinceContentDiv.classList.add("province-group-content");
-                        provinceContentDiv.style.display = "none"; // hide initially
-
-                        provinceGroups[province].forEach((company) => {
+                       provinceContentDiv.classList.add("province-group-content");
+                        provinceContentDiv.style.display = "none";
+                         provinceGroups[province].forEach((company) => {
                             const label = document.createElement("label");
                             label.className = "company-checkbox";
                             const checkbox = document.createElement("input");
-                            checkbox.type = "checkbox";
+                           checkbox.type = "checkbox";
                             checkbox.value = company;
                             checkbox.checked = false;
 
                             checkbox.addEventListener("change", function () {
-                                showLoadingOverlay("กำลังอัพเดต Template...");
-                                if (this.checked) {
-                                    selectedCompanies.add(this.value);
-                                } else {
-                                    selectedCompanies.delete(this.value);
-                                }
-                                updateAllTemplates();
-                                closeLoadingOverlay();
-                            });
+                                 showLoadingOverlay("กำลังอัพเดต Template...");
+                                 if (this.checked) {
+                                     selectedCompanies.add(this.value);
+                                 } else {
+                                   selectedCompanies.delete(this.value);
+                                  }
+                                    updateAllTemplates();
+                                   closeLoadingOverlay();
+                             });
 
                             label.appendChild(checkbox);
-                            label.appendChild(document.createTextNode(company));
+                           label.appendChild(document.createTextNode(company));
                             provinceContentDiv.appendChild(label);
                         });
 
                         provinceDiv.appendChild(provinceContentDiv);
-                        contentDiv.appendChild(provinceDiv);
+                        contentDiv.appendChild(provinceDiv)
                     });
                 } else {
-                    sortedCompanies.forEach((company) => {
+                     sortedCompanies.forEach((company) => {
                         const label = document.createElement("label");
-                        label.className = "company-checkbox";
-                        const checkbox = document.createElement("input");
-                        checkbox.type = "checkbox";
-                        checkbox.value = company;
-                        checkbox.checked = false;
+                       label.className = "company-checkbox";
+                       const checkbox = document.createElement("input");
+                       checkbox.type = "checkbox";
+                       checkbox.value = company;
+                       checkbox.checked = false;
 
-                        checkbox.addEventListener("change", function () {
+                       checkbox.addEventListener("change", function () {
                             showLoadingOverlay("กำลังอัพเดต Template...");
-                            if (this.checked) {
-                                selectedCompanies.add(this.value);
-                            } else {
-                                selectedCompanies.delete(this.value);
+                         if (this.checked) {
+                              selectedCompanies.add(this.value);
+                           } else {
+                               selectedCompanies.delete(this.value);
                             }
                             updateAllTemplates();
-                            closeLoadingOverlay();
-                        });
-
-                        label.appendChild(checkbox);
+                           closeLoadingOverlay();
+                       });
+                       label.appendChild(checkbox);
                         label.appendChild(document.createTextNode(company));
-                        contentDiv.appendChild(label);
-                    });
+                       contentDiv.appendChild(label);
+                     });
                 }
 
                 groupDiv.appendChild(contentDiv);
                 filtersContainer.appendChild(groupDiv);
             });
-        }
+          }
           function selectProvinceCompanies(provinceCompanies) {
-            showLoadingOverlay('กำลังเลือกบริษัท...');
-            provinceCompanies.forEach(company => {
-               if (companies.has(company)) {
+              showLoadingOverlay('กำลังเลือกบริษัท...');
+               provinceCompanies.forEach(company => {
+                 if (companies.has(company)) {
                    selectedCompanies.add(company);
                    const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
-                   if (checkbox) checkbox.checked = true;
-             }
-         });
+                     if (checkbox) checkbox.checked = true;
+                 }
+              });
            updateAllTemplates();
            closeLoadingOverlay();
-       }
-         function unselectProvinceCompanies(provinceCompanies) {
-            showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
+           }
+          function unselectProvinceCompanies(provinceCompanies) {
+           showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
             provinceCompanies.forEach(company => {
              if (companies.has(company)) {
-              selectedCompanies.delete(company);
-              const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
-              if (checkbox) checkbox.checked = false;
-              }
-          });
+                selectedCompanies.delete(company);
+                 const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                 if (checkbox) checkbox.checked = false;
+                 }
+            });
            updateAllTemplates();
-           closeLoadingOverlay();
+            closeLoadingOverlay();
          }
+
 
         function unselectGroupCompanies(groupCompanies) {
             showLoadingOverlay("กำลังยกเลิกการเลือกบริษัท...");
@@ -1132,6 +1120,7 @@
                     if (checkbox) checkbox.checked = false;
                 }
             });
+             selectAllToggle.checked = false
             updateAllTemplates();
             closeLoadingOverlay();
         }
@@ -1147,10 +1136,26 @@
                     if (checkbox) checkbox.checked = true;
                 }
             });
+            selectAllToggle.checked = true
             updateAllTemplates();
             closeLoadingOverlay();
         }
 
+       function updateAllCheckboxes() {
+           const checkboxes = document.querySelectorAll(
+                '.company-checkbox input[type="checkbox"]'
+            );
+           checkboxes.forEach((checkbox) => {
+             if(selectAllToggle.checked){
+                 checkbox.checked = true;
+                selectedCompanies.add(checkbox.value);
+             }else{
+                 checkbox.checked = false;
+                 selectedCompanies.delete(checkbox.value)
+             }
+           });
+            updateAllTemplates();
+       }
         const dropZone = document.getElementById("dropZone");
         const fileInput = document.getElementById("fileInput");
         const debugDiv = document.getElementById("debug");
@@ -1193,7 +1198,7 @@
                             ...new Set(Object.values(companyMappings)),
                         ]);
                         selectedCompanies.clear(); // Clear initially selected companies.
-
+                          selectAllToggle.checked = false
                         updateCompanyFilters();
                         updateAllTemplates();
 
@@ -1427,6 +1432,12 @@
             slideOutPanel.classList.toggle("open");
             togglePanelButton.classList.toggle("open");
         });
+
+          selectAllToggle.addEventListener('change', () => {
+              showLoadingOverlay('กำลังอัพเดต Template...');
+               updateAllCheckboxes()
+                 closeLoadingOverlay();
+            });
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
