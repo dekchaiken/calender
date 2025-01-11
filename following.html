@@ -147,10 +147,25 @@
             flex-grow: 1;
         }
 
+        #appContainer {
+            display: flex;
+            min-height: calc(100vh - 80px)
+        }
+
+        #mainContentContainer {
+            flex: 1;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        #mainContentContainer.open {
+            margin-left: 50%;
+        }
+
         .container {
             max-width: 1800px;
             margin: 2rem auto;
             padding: 0 2rem;
+            flex: 1;
         }
 
         .card {
@@ -208,7 +223,6 @@
         }
 
         .company-filters {
-            display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1rem;
             margin: 1rem 0;
@@ -258,6 +272,7 @@
             min-height: 200px;
             border: 2px solid #eee;
             margin-bottom: 1rem;
+            background: #f8f8f8;
         }
 
         #dropZone {
@@ -415,6 +430,14 @@
             border-radius: 4px;
         }
 
+        .hospital-group-content {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
         .company-group-header {
             display: flex;
             justify-content: space-between;
@@ -427,6 +450,8 @@
             cursor: pointer;
             /* Add cursor pointer */
         }
+
+
 
         .company-group-title {
             margin: 0;
@@ -509,9 +534,9 @@
         #slideOutPanel {
             position: fixed;
             top: 0;
-            left: -600px;
+            left: -50%;
             /* Start off-screen */
-            width: 600px;
+            width: 50%;
             height: 100%;
             background: white;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
@@ -527,8 +552,8 @@
 
         #togglePanelButton {
             position: absolute;
-            left: 10px;
-            top: 95%;
+            right: 94%;
+            bottom: -850px;
             transform: translateY(-50%);
             padding: 0.75rem;
             background: var(--primary);
@@ -545,13 +570,33 @@
             /* Use flexbox for centering */
             align-items: center;
             justify-content: center;
-            width: 40px;
+            width: 50px;
             /* Set width and height */
-            height: 40px;
+            height: 50px;
+            /* Add styles for distinctive button */
+            border: 2px solid #fff;
+            font-weight: bold;
+             position: relative; /* For absolute positioning of the text */
+        }
+         #togglePanelButton::before{
+           content: "คลิกเพื่อจัดการรายงาน";
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+             background-color: #2d2d2d;
+             color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+           white-space: nowrap;
+             pointer-events: none;
+
         }
 
+
         #togglePanelButton.open {
-            left: 620px;
+            left: calc(50% + 10px);
             transform: translateY(-50%) rotate(180deg);
             /* Rotate when open */
         }
@@ -573,7 +618,7 @@
         .province-button-container {
             display: flex;
             gap: 8px;
-             margin-left: auto;
+            margin-left: auto;
         }
 
         .select-province-btn,
@@ -614,11 +659,36 @@
             box-shadow: var(--shadow);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-         #selectAllToggleContainer {
+
+        #selectAllToggleContainer {
             display: flex;
-             align-items: center;
+            align-items: center;
             margin-bottom: 10px;
-             padding-left: 10px;
+            padding-left: 10px;
+        }
+
+        /* Spotlight */
+         #spotlight {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1003;
+            pointer-events: none; /* Important! Allow clicks through the spotlight */
+          }
+       #spotlight.active{
+              display: block;
+          }
+     #spotlight-inner {
+             position: absolute;
+                width: 60px;
+                height: 60px;
+              background: rgba(0,0,0,0);
+              border-radius: 50%;
+             border: 4px solid #fff; /* Add white border */
+            transition: transform 0.2s ease-out;
+            pointer-events: none; /* Allow clicks through the inner circle */
+
         }
     </style>
 </head>
@@ -645,6 +715,9 @@
             <p id="loadingMessage">กำลังโหลดข้อมูล โปรดรอสักครู่..</p>
         </div>
     </div>
+     <div id="spotlight" >
+      <div id="spotlight-inner"></div>
+       </div>
 
     <div id="mainContent" style="display: none">
         <div class="header">
@@ -669,97 +742,102 @@
                 <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
             </div>
         </div>
-        <button id="togglePanelButton">
-             <span class="toggle-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512">
-                <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.8 0-105.4 105.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
-            </svg>
-             </span>
-        </button>
-        <div id="slideOutPanel">
-            <div class="slideout-card">
-                <h2>หมายเหตุและวิธีการใช้งาน</h2>
-                <div class="info-content" style="background: #f8f8f8; padding: 1rem; border-radius: 8px">
-                    <h3 style="color: #2d2d2d; margin: 1rem 0 0.5rem">
-                        วิธีการใช้งาน:
-                    </h3>
-                    <ol style="list-style-type: decimal; margin-left: 1.5rem">
-                        <li>เลือกวันที่ติดตาม</li>
-                        <li>อัพโหลดไฟล์ Excel ที่ต้องการ</li>
-                        <li>เลือกบริษัทที่ต้องการจากรายการ</li>
-                        <li>กดปุ่ม "Export Excel แยกตามบริษัท" เพื่อดาวน์โหลดไฟล์</li>
-                    </ol>
-                    <h3 style="color: #2d2d2d; margin-bottom: 0.5rem">
-                        การ Export Excel:
-                    </h3>
-                    <ul style="list-style-type: disc; margin-left: 1.5rem">
-                        <li>
-                            ระบบจะ Export เฉพาะบริษัทที่คุณเลือกในส่วน
-                            "เลือกบริษัทที่ต้องการกรอง"
-                        </li>
-                        <li>
-                            ไฟล์ Excel จะถูกแยกตามบริษัท โดยชื่อไฟล์จะเป็น:
-                            [ชื่อบริษัท]_Incidents_[วันที่].xlsx
-                        </li>
-                        <li>
-                            ข้อมูลจะถูกจัดเรียงตามลำดับ: Incident ID, Summary, Customer
-                            และข้อมูลอื่นๆ
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="slideout-card">
-                <h2>เลือกวันที่ติดตาม</h2>
-                <div class="form-group">
-                    <label for="followDate">วันที่ติดตาม:</label>
-                    <input type="date" id="followDate" class="form-control" />
-                </div>
-            </div>
-            <div class="slideout-card">
-                <h2>อัพโหลดไฟล์ Excel</h2>
-                <div id="dropZone">
-                    คลิกเพื่อเลือกไฟล์ (ห้ามลากไฟล์ อาจทำให้ค้างได้)
-                    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none" />
-                </div>
-                <div id="debug" class="debug-info" style="display: none"></div>
-            </div>
-            <div class="slideout-card">
-               <h2>เลือกบริษัทที่ต้องการกรอง</h2>
-                <div id="selectAllToggleContainer">
-                 <input type="checkbox" id="selectAllToggle" style="margin-right: 8px" />
-                    <label for="selectAllToggle" style="cursor: pointer">เลือก / ยกเลิกทั้งหมด</label>
-                   </div>
-                   <div class="filter-controls">
-                     <input type="text" id="searchCompany" class="search-box" placeholder="ค้นหาชื่อบริษัท..." />
-                    <button onclick="exportExcelByCompany()" class="btn btn-primary">
-                       Export Excel แยกตามบริษัท
-                    </button>
+        <div id="appContainer">
+            <div id="mainContentContainer">
+                <div class="container">
+                    <div class="card">
+                        <h2>Template สำหรับบริษัทที่เลือก</h2>
+                        <div style="
+                                margin-bottom: 1rem;
+                                display: flex;
+                                align-items: center;
+                                gap: 1rem;
+                                ">
+                            <input type="radio" id="lineTemplate" name="templateType" value="line" checked />
+                            <label for="lineTemplate" style="cursor: pointer">Line Template</label>
+                            <input type="radio" id="emailTemplate" name="templateType" value="email" />
+                            <label for="emailTemplate" style="cursor: pointer">Email Template</label>
+                        </div>
+                        <div id="allTemplates" class="preview-area">
+                            โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...
+                        </div>
+                        <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem">
+                            คัดลอก Template ทั้งหมด
+                        </button>
                     </div>
-
-                <div id="companyFilters" class="company-filters"></div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="card">
-                <h2>Template สำหรับบริษัทที่เลือก</h2>
-                <div style="
-              margin-bottom: 1rem;
-              display: flex;
-              align-items: center;
-              gap: 1rem;
-            ">
-                    <input type="radio" id="lineTemplate" name="templateType" value="line" checked />
-                    <label for="lineTemplate" style="cursor: pointer">Line Template</label>
-                    <input type="radio" id="emailTemplate" name="templateType" value="email" />
-                    <label for="emailTemplate" style="cursor: pointer">Email Template</label>
                 </div>
-                <div id="allTemplates" class="preview-area">
-                    โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...
-                </div>
-                <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem">
-                    คัดลอก Template ทั้งหมด
-                </button>
             </div>
+            <div id="slideOutPanel">
+                <div class="slideout-card">
+                    <h2>หมายเหตุและวิธีการใช้งาน</h2>
+                    <div class="info-content" style="background: #f8f8f8; padding: 1rem; border-radius: 8px">
+                        <h3 style="color: #2d2d2d; margin: 1rem 0 0.5rem">
+                            วิธีการใช้งาน:
+                        </h3>
+                        <ol style="list-style-type: decimal; margin-left: 1.5rem">
+                            <li>เลือกวันที่ติดตาม</li>
+                            <li>อัพโหลดไฟล์ Excel ที่ต้องการ</li>
+                            <li>เลือกบริษัทที่ต้องการจากรายการ</li>
+                            <li>กดปุ่ม "Export Excel แยกตามบริษัท" เพื่อดาวน์โหลดไฟล์</li>
+                        </ol>
+                        <h3 style="color: #2d2d2d; margin: 1rem 0 0.5rem">
+                            การ Export Excel:
+                        </h3>
+                        <ul style="list-style-type: disc; margin-left: 1.5rem">
+                            <li>
+                                ระบบจะ Export เฉพาะบริษัทที่คุณเลือกในส่วน
+                                "เลือกบริษัทที่ต้องการกรอง"
+                            </li>
+                            <li>
+                                ไฟล์ Excel จะถูกแยกตามบริษัท โดยชื่อไฟล์จะเป็น:
+                                [ชื่อบริษัท]_Incidents_[วันที่].xlsx
+                            </li>
+                            <li>
+                                ข้อมูลจะถูกจัดเรียงตามลำดับ: Incident ID, Summary, Customer
+                                และข้อมูลอื่นๆ
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="slideout-card">
+                    <h2>เลือกวันที่ติดตาม</h2>
+                    <div class="form-group">
+                        <label for="followDate">วันที่ติดตาม:</label>
+                        <input type="date" id="followDate" class="form-control" />
+                    </div>
+                </div>
+                <div class="slideout-card">
+                    <h2>อัพโหลดไฟล์ Excel</h2>
+                    <div id="dropZone">
+                        คลิกเพื่อเลือกไฟล์ (ห้ามลากไฟล์ อาจทำให้ค้างได้)
+                        <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none" />
+                    </div>
+                    <div id="debug" class="debug-info" style="display: none"></div>
+                </div>
+                <div class="slideout-card">
+                    <h2>เลือกบริษัทที่ต้องการกรอง</h2>
+                    <div id="selectAllToggleContainer">
+                        <input type="checkbox" id="selectAllToggle" style="margin-right: 8px" />
+                        <label for="selectAllToggle" style="cursor: pointer">เลือก / ยกเลิกทั้งหมด</label>
+                    </div>
+                    <div class="filter-controls">
+                        <input type="text" id="searchCompany" class="search-box"
+                            placeholder="ค้นหาชื่อบริษัท..." />
+                        <button onclick="exportExcelByCompany()" class="btn btn-primary">
+                            Export Excel แยกตามบริษัท
+                        </button>
+                    </div>
+                    <div id="companyFilters" class="company-filters"></div>
+                </div>
+            </div>
+            <button id="togglePanelButton">
+                <span class="toggle-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512">
+                        <path
+                            d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.8 0-105.4 105.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
+                    </svg>
+                </span>
+            </button>
         </div>
     </div>
 
@@ -785,28 +863,26 @@
         let selectedCompanies = new Set();
         const togglePanelButton = document.getElementById("togglePanelButton");
         const slideOutPanel = document.getElementById("slideOutPanel");
+        const mainContentContainer = document.getElementById("mainContentContainer");
         const selectAllToggle = document.getElementById("selectAllToggle");
-
+        const spotlight = document.getElementById('spotlight');
+        const spotlightInner = document.getElementById('spotlight-inner')
 
         // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
         function showAlertModal(message) {
             document.getElementById("alertMessage").textContent = message;
             document.getElementById("alertModal").style.display = "flex";
         }
-
         function closeAlertModal() {
             document.getElementById("alertModal").style.display = "none";
         }
-
         function showLoadingOverlay(message) {
             document.getElementById("loadingOverlay").style.display = "flex";
             document.getElementById("loadingMessage").textContent = message;
         }
-
         function closeLoadingOverlay() {
             document.getElementById("loadingOverlay").style.display = "none";
         }
-
         function isDataReady() {
             return (
                 companyGroups &&
@@ -817,25 +893,21 @@
                 companyEmailMappings
             );
         }
-
         function handleFile(file) {
             if (!isDataReady()) {
                 showAlertModal("กรุณารอข้อมูลโหลดให้เสร็จก่อนอัพโหลดไฟล์");
                 return;
             }
         }
-
         function formatDateToEng(date) {
             const d = new Date(date);
-            return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+            return`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
         }
-
         // ฟังก์ชันสำหรับจัดการการค้นหาบริษัท
         document.getElementById("searchCompany").addEventListener("input", function (e) {
             showLoadingOverlay("กำลังค้นหา...");
             const searchTerm = e.target.value.toLowerCase();
             const checkboxes = document.querySelectorAll(".company-checkbox");
-
             checkboxes.forEach((checkbox) => {
                 const companyName = checkbox.textContent.toLowerCase();
                 checkbox.style.display = companyName.includes(searchTerm)
@@ -844,7 +916,6 @@
             });
             closeLoadingOverlay();
         });
-
         function selectAllCompanies() {
             showLoadingOverlay("กำลังเลือกบริษัททั้งหมด...");
             const checkboxes = document.querySelectorAll(
@@ -854,11 +925,10 @@
                 checkbox.checked = true;
                 selectedCompanies.add(checkbox.value);
             });
-             selectAllToggle.checked = true
+            selectAllToggle.checked = true
             updateAllTemplates();
             closeLoadingOverlay();
         }
-
         function deselectAllCompanies() {
             showLoadingOverlay("กำลังยกเลิกการเลือกบริษัททั้งหมด...");
             const checkboxes = document.querySelectorAll(
@@ -868,11 +938,10 @@
                 checkbox.checked = false;
                 selectedCompanies.delete(checkbox.value);
             });
-             selectAllToggle.checked = false
+            selectAllToggle.checked = false
             updateAllTemplates();
             closeLoadingOverlay();
         }
-
         function generateTemplate(
             companyCode,
             formattedDate,
@@ -881,16 +950,13 @@
         ) {
             const isHospital = companyTypes[companyCode] === "hospital";
             const emailMapping = companyEmailMappings[companyCode] || companyCode;
-
             // If no incidents and it's email template, return empty string
             if (incidents.length === 0) {
                 if (templateType === "email") {
                     return "";
                 }
             }
-
             let template = "";
-
             if (templateType === "line") {
                 if (isHospital) {
                     template += `เรียนทีม ${companyFullNames[companyCode]}\n`;
@@ -925,7 +991,7 @@
 
             return template;
         }
-          function updateCompanyFilters() {
+        function updateCompanyFilters() {
             const filtersContainer = document.getElementById("companyFilters");
             filtersContainer.innerHTML = "";
 
@@ -942,7 +1008,7 @@
                     : group.name || groupId;
 
                 if (!companies || !Array.isArray(companies)) {
-                    console.warn(`Invalid companies data for ${groupId}:`, companies);                    
+                    console.warn(`Invalid companies data for ${groupId}:`, companies);
                     return;
                 }
                 const sortedCompanies = [...companies].sort((a, b) =>
@@ -989,65 +1055,73 @@
                     Object.keys(provinceGroups).forEach((province) => {
                         const provinceDiv = document.createElement("div");
                         provinceDiv.classList.add("province-group");
-                         const provinceHeader = document.createElement("div");
-                         provinceHeader.classList.add("province-header");
+                        const provinceHeader = document.createElement("div");
+                        provinceHeader.classList.add("province-header");
                         const provinceTitle = document.createElement("span");
                         provinceTitle.textContent = province;
-                           const provinceButtonContainer = document.createElement('div');
-                           provinceButtonContainer.className = 'province-button-container';
 
-                           const selectProvinceBtn = document.createElement('button');
-                           selectProvinceBtn.textContent = 'Select All';
-                            selectProvinceBtn.className = 'select-province-btn';
-                            selectProvinceBtn.onclick = () => selectProvinceCompanies(provinceGroups[province]); // Add event listener
-                            const unselectProvinceBtn = document.createElement('button');
-                            unselectProvinceBtn.textContent = 'Unselect All';
-                            unselectProvinceBtn.className = 'unselect-province-btn';
-                           unselectProvinceBtn.onclick = () => unselectProvinceCompanies(provinceGroups[province]); // Add event listener
+                        const provinceButtonContainer = document.createElement('div');
+                        provinceButtonContainer.className = 'province-button-container';
+
+                        const selectProvinceBtn = document.createElement('button');
+                        selectProvinceBtn.textContent = 'Select All';
+                        selectProvinceBtn.className = 'select-province-btn';
+                        selectProvinceBtn.onclick = (event) => {
+                            event.stopPropagation()
+                            selectProvinceCompanies(provinceGroups[province])
+                        }; // Add event listener
+                        const unselectProvinceBtn = document.createElement('button');
+                        unselectProvinceBtn.textContent = 'Unselect All';
+                        unselectProvinceBtn.className = 'unselect-province-btn';
+                        unselectProvinceBtn.onclick = (event) => {
+                            event.stopPropagation()
+                            unselectProvinceCompanies(provinceGroups[province])
+                        }; // Add event listener
+
+                        provinceButtonContainer.appendChild(selectProvinceBtn);
+                        provinceButtonContainer.appendChild(unselectProvinceBtn);
+                        provinceHeader.appendChild(provinceTitle);
+                        provinceHeader.appendChild(provinceButtonContainer);
+                        provinceHeader.addEventListener("click", function (event) {
+                            if (!event.target.classList.contains('select-province-btn') && !event.target.classList.contains('unselect-province-btn')) {
+                                const provinceContentDiv = this.nextElementSibling;
+                                if (provinceContentDiv) {
+                                    showLoadingOverlay("กำลังอัพเดต Template...");
+                                    provinceContentDiv.style.display = provinceContentDiv.style.display === "none"
+                                        ? "block"
+                                        : "none";
+                                    updateAllTemplates();
+                                    closeLoadingOverlay();
+                                }
+                            }
+
+                        });
 
 
-                            provinceButtonContainer.appendChild(selectProvinceBtn);
-                             provinceButtonContainer.appendChild(unselectProvinceBtn);
-                          provinceHeader.appendChild(provinceTitle);
-                          provinceHeader.appendChild(provinceButtonContainer)
-
-                        provinceHeader.addEventListener("click", function () {
-                             const provinceContentDiv = this.nextElementSibling;
-                           if (provinceContentDiv) {
-                            showLoadingOverlay("กำลังอัพเดต Template...");
-                             provinceContentDiv.style.display = provinceContentDiv.style.display === "none"
-                            ? "block"
-                             : "none";
-                           updateAllTemplates();
-                             closeLoadingOverlay();
-                           }
-                         });
-
-                        provinceDiv.appendChild(provinceHeader)
+                        provinceDiv.appendChild(provinceHeader);
                         const provinceContentDiv = document.createElement("div");
-                       provinceContentDiv.classList.add("province-group-content");
+                        provinceContentDiv.classList.add("province-group-content");
                         provinceContentDiv.style.display = "none";
-                         provinceGroups[province].forEach((company) => {
+                        provinceGroups[province].forEach((company) => {
                             const label = document.createElement("label");
                             label.className = "company-checkbox";
                             const checkbox = document.createElement("input");
-                           checkbox.type = "checkbox";
+                            checkbox.type = "checkbox";
                             checkbox.value = company;
                             checkbox.checked = false;
 
                             checkbox.addEventListener("change", function () {
-                                 showLoadingOverlay("กำลังอัพเดต Template...");
-                                 if (this.checked) {
-                                     selectedCompanies.add(this.value);
-                                 } else {
-                                   selectedCompanies.delete(this.value);
-                                  }
-                                    updateAllTemplates();
-                                   closeLoadingOverlay();
-                             });
-
+                                showLoadingOverlay("กำลังอัพเดต Template...");
+                                if (this.checked) {
+                                    selectedCompanies.add(this.value);
+                                } else {
+                                    selectedCompanies.delete(this.value);
+                                }
+                                updateAllTemplates();
+                                closeLoadingOverlay();
+                            });
                             label.appendChild(checkbox);
-                           label.appendChild(document.createTextNode(company));
+                            label.appendChild(document.createTextNode(company));
                             provinceContentDiv.appendChild(label);
                         });
 
@@ -1055,60 +1129,58 @@
                         contentDiv.appendChild(provinceDiv)
                     });
                 } else {
-                     sortedCompanies.forEach((company) => {
+                    sortedCompanies.forEach((company) => {
                         const label = document.createElement("label");
-                       label.className = "company-checkbox";
-                       const checkbox = document.createElement("input");
-                       checkbox.type = "checkbox";
-                       checkbox.value = company;
-                       checkbox.checked = false;
+                        label.className = "company-checkbox";
+                        const checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
+                        checkbox.value = company;
+                        checkbox.checked = false;
 
-                       checkbox.addEventListener("change", function () {
+                        checkbox.addEventListener("change", function () {
                             showLoadingOverlay("กำลังอัพเดต Template...");
-                         if (this.checked) {
-                              selectedCompanies.add(this.value);
-                           } else {
-                               selectedCompanies.delete(this.value);
+                            if (this.checked) {
+                                selectedCompanies.add(this.value);
+                            } else {
+                                selectedCompanies.delete(this.value);
                             }
                             updateAllTemplates();
-                           closeLoadingOverlay();
-                       });
-                       label.appendChild(checkbox);
+                            closeLoadingOverlay();
+                        });
+                        label.appendChild(checkbox);
                         label.appendChild(document.createTextNode(company));
-                       contentDiv.appendChild(label);
-                     });
+                        contentDiv.appendChild(label);
+                    });
                 }
 
                 groupDiv.appendChild(contentDiv);
                 filtersContainer.appendChild(groupDiv);
             });
-          }
-          function selectProvinceCompanies(provinceCompanies) {
-              showLoadingOverlay('กำลังเลือกบริษัท...');
-               provinceCompanies.forEach(company => {
-                 if (companies.has(company)) {
-                   selectedCompanies.add(company);
-                   const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
-                     if (checkbox) checkbox.checked = true;
-                 }
-              });
-           updateAllTemplates();
-           closeLoadingOverlay();
-           }
-          function unselectProvinceCompanies(provinceCompanies) {
-           showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
+        }
+        function selectProvinceCompanies(provinceCompanies) {
+            showLoadingOverlay('กำลังเลือกบริษัท...');
             provinceCompanies.forEach(company => {
-             if (companies.has(company)) {
-                selectedCompanies.delete(company);
-                 const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
-                 if (checkbox) checkbox.checked = false;
-                 }
+                if (companies.has(company)) {
+                    selectedCompanies.add(company);
+                    const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                    if (checkbox) checkbox.checked = true;
+                }
             });
-           updateAllTemplates();
+            updateAllTemplates();
             closeLoadingOverlay();
-         }
-
-
+        }
+        function unselectProvinceCompanies(provinceCompanies) {
+            showLoadingOverlay('กำลังยกเลิกการเลือกบริษัท...');
+            provinceCompanies.forEach(company => {
+                if (companies.has(company)) {
+                    selectedCompanies.delete(company);
+                    const checkbox = document.querySelector(`input[type="checkbox"][value="${company}"]`);
+                    if (checkbox) checkbox.checked = false;
+                }
+            });
+            updateAllTemplates();
+            closeLoadingOverlay();
+        }
         function unselectGroupCompanies(groupCompanies) {
             showLoadingOverlay("กำลังยกเลิกการเลือกบริษัท...");
             groupCompanies.forEach((company) => {
@@ -1120,11 +1192,10 @@
                     if (checkbox) checkbox.checked = false;
                 }
             });
-             selectAllToggle.checked = false
+            selectAllToggle.checked = false
             updateAllTemplates();
             closeLoadingOverlay();
         }
-
         function selectGroupCompanies(groupCompanies) {
             showLoadingOverlay("กำลังเลือกบริษัท...");
             groupCompanies.forEach((company) => {
@@ -1140,26 +1211,24 @@
             updateAllTemplates();
             closeLoadingOverlay();
         }
-
-       function updateAllCheckboxes() {
-           const checkboxes = document.querySelectorAll(
+        function updateAllCheckboxes() {
+            const checkboxes = document.querySelectorAll(
                 '.company-checkbox input[type="checkbox"]'
             );
-           checkboxes.forEach((checkbox) => {
-             if(selectAllToggle.checked){
-                 checkbox.checked = true;
-                selectedCompanies.add(checkbox.value);
-             }else{
-                 checkbox.checked = false;
-                 selectedCompanies.delete(checkbox.value)
-             }
-           });
+            checkboxes.forEach((checkbox) => {
+                if (selectAllToggle.checked) {
+                    checkbox.checked = true;
+                    selectedCompanies.add(checkbox.value);
+                } else {
+                    checkbox.checked = false;
+                    selectedCompanies.delete(checkbox.value)
+                }
+            });
             updateAllTemplates();
-       }
+        }
         const dropZone = document.getElementById("dropZone");
         const fileInput = document.getElementById("fileInput");
         const debugDiv = document.getElementById("debug");
-
         dropZone.addEventListener("click", () => fileInput.click());
         dropZone.addEventListener("dragover", (e) => {
             e.preventDefault();
@@ -1174,7 +1243,6 @@
             const file = e.dataTransfer.files[0];
             handleFileAndLoad(file); // Call the new function
         });
-
         fileInput.addEventListener("change", (e) => {
             const file = e.target.files[0];
             handleFileAndLoad(file); // Call the new function
@@ -1198,7 +1266,7 @@
                             ...new Set(Object.values(companyMappings)),
                         ]);
                         selectedCompanies.clear(); // Clear initially selected companies.
-                          selectAllToggle.checked = false
+                        selectAllToggle.checked = false
                         updateCompanyFilters();
                         updateAllTemplates();
 
@@ -1217,11 +1285,9 @@
                 debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
             }
         }
-
         function getCompanyCode(customerName) {
             return companyMappings[customerName] || customerName;
         }
-
         document.getElementById("followDate").addEventListener("change", () => {
             showLoadingOverlay("กำลังอัพเดต Template...");
             updateAllTemplates();
@@ -1246,7 +1312,6 @@
                     closeLoadingOverlay();
                 }
             });
-
         function updateAllTemplates() {
             const date = document.getElementById("followDate").value;
             if (!date || !excelData) {
@@ -1295,7 +1360,6 @@
             document.getElementById("allTemplates").textContent =
                 allTemplates || "กรุณาเลือกบริษัทที่ต้องการดู Template";
         }
-
         function copyAllTemplates() {
             showLoadingOverlay("กำลังคัดลอก Template...");
             const templates = document.getElementById("allTemplates").textContent;
@@ -1310,7 +1374,6 @@
                     showAlertModal("เกิดข้อผิดพลาดในการคัดลอก: " + err);
                 });
         }
-
         function exportExcelByCompany() {
             showLoadingOverlay("กำลัง Export Excel...");
             if (!excelData || selectedCompanies.size === 0) {
@@ -1418,7 +1481,6 @@
             closeLoadingOverlay();
             showAlertModal("Export Excel สำเร็จ");
         }
-
         // ฟังก์ชันช่วยจัดรูปแบบวันที่สำหรับชื่อไฟล์
         function formatDateForFileName(date) {
             const d = new Date(date);
@@ -1427,17 +1489,44 @@
             const day = String(d.getDate()).padStart(2, "0");
             return `${year}${month}${day}`;
         }
-
         togglePanelButton.addEventListener("click", () => {
             slideOutPanel.classList.toggle("open");
+            mainContentContainer.classList.toggle("open")
             togglePanelButton.classList.toggle("open");
         });
+        selectAllToggle.addEventListener('change', () => {
+            showLoadingOverlay('กำลังอัพเดต Template...');
+            updateAllCheckboxes()
+            closeLoadingOverlay();
+        });
 
-          selectAllToggle.addEventListener('change', () => {
-              showLoadingOverlay('กำลังอัพเดต Template...');
-               updateAllCheckboxes()
-                 closeLoadingOverlay();
-            });
+        // ปิด slideout panel เมื่อคลิกนอก panel
+        document.addEventListener('click', function (event) {
+            if (slideOutPanel.classList.contains('open')) {
+                if (!slideOutPanel.contains(event.target) && !togglePanelButton.contains(event.target)) {
+                    slideOutPanel.classList.remove('open');
+                    mainContentContainer.classList.remove('open');
+                    togglePanelButton.classList.remove('open');
+                }
+            }
+        });
+           function showSpotlight() {
+              spotlight.classList.add('active');
+            const buttonRect = togglePanelButton.getBoundingClientRect();
+              spotlightInner.style.transform = `translate(${buttonRect.left -10 }px,${buttonRect.top - 10}px) scale(1)`;
+              spotlightInner.style.width= (buttonRect.width + 20) + 'px';
+              spotlightInner.style.height = (buttonRect.height + 20) + 'px';
+            setTimeout(() => {
+              spotlight.classList.remove('active');
+             }, 1000)
+            }
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!localStorage.getItem('spotlightShown')) {
+                 showSpotlight();
+               localStorage.setItem('spotlightShown', true)
+            }
+       });
+
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
