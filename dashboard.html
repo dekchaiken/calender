@@ -6,8 +6,444 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/components.css">
+    <style>
+        :root {
+            --primary: #fdb813;
+            --primary-dark: #e5a700;
+            --secondary: #404040;
+            --accent: #2d2d2d;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            font-size: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: "Noto Sans Thai", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+            overflow-x: hidden;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            color: var(--secondary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .header h2 {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .main-content {
+            max-width: 1800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .announcements {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+              .announcements:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.12);
+               }
+
+        .announcements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .announcements-header h1 {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .view-all-btn,
+        .create-post-btn {
+            margin: 5px;
+             background: var(--primary);
+              color: var(--accent);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+              transition: all 0.2s;
+           box-shadow: 0 2px 4px rgba(253, 184, 19, 0.2);
+        }
+
+        .view-all-btn:hover,
+        .create-post-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+
+        .posts-scroll-container {
+            max-height: 650px;
+            overflow-y: auto;
+             padding-right: 10px;
+         }
+           .posts-scroll-container::-webkit-scrollbar {
+              width: 8px;
+           }
+
+           .posts-scroll-container::-webkit-scrollbar-track {
+               background: #f1f1f1;
+                border-radius: 4px;
+           }
+
+            .posts-scroll-container::-webkit-scrollbar-thumb {
+                background: var(--primary);
+                 border-radius: 4px;
+            }
+
+            .posts-scroll-container::-webkit-scrollbar-thumb:hover {
+                 background: #e5a700;
+            }
+
+
+        .system-announcement {
+            background: #f8f8f8;
+             border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+         .system-announcement-header{
+            display: flex;
+             align-items: center;
+            gap: 0.5rem;
+             margin-bottom: 0.5rem;
+          }
+        .system-announcement-badge {
+            background: #ccc;
+            color: #333;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+             font-weight: bold;
+        }
+
+        .post-card {
+            background: #fff;
+             border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+             transition: transform 0.2s ease, box-shadow 0.2s ease;
+           }
+             .post-card:hover {
+                transform: translateY(-2px);
+                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.09);
+
+               }
+            .post-card .post-header{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                 margin-bottom: 0.5rem;
+
+            }
+            .post-card .post-header .post-actions {
+                display: flex;
+               gap: 0.5rem;
+
+            }
+        .post-card .post-header .delete-post-btn {
+              background: #ff4444;
+             color: white;
+              border: none;
+               padding: 0.2rem 0.5rem;
+                border-radius: 4px;
+                cursor: pointer;
+               transition: all 0.3s;
+                font-size: 0.8rem;
+        }
+        .post-card .post-header .delete-post-btn:hover {
+            background: #cc0000;
+            transform: translateY(-1px);
+        }
+
+        .post-title {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .post-meta {
+            color: #888;
+            font-size: 0.8rem;
+             margin-bottom: 0.5rem;
+        }
+
+        .post-text {
+            line-height: 1.6;
+             margin-bottom: 0.5rem;
+        }
+        .post-image {
+              display: flex;
+                justify-content: center;
+
+         }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .menu-card:hover {
+               transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.12);
+        }
+
+         .menu-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+             transition: transform 0.2s ease;
+        }
+          .menu-card:hover .menu-icon{
+             transform: scale(1.1);
+          }
+
+        .menu-card h2 {
+            color: var(--secondary);
+             font-size: 1.2rem;
+              margin: 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+             align-items: center;
+              justify-content: center;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+             animation-name: zoom;
+             animation-duration: 0.6s;
+        }
+        .close {
+             position: absolute;
+             top: 15px;
+              right: 35px;
+            color: #f1f1f1;
+             font-size: 40px;
+            font-weight: bold;
+             cursor: pointer;
+              transition: color 0.3s ease;
+        }
+           .close:hover,
+           .close:focus{
+            color: #bbb;
+            text-decoration: none;
+             cursor: pointer;
+           }
+        @keyframes zoom{
+             from{transform: scale(0)}
+             to{ transform: scale(1)}
+        }
+          .post-skeleton {
+              background: #f8f8f8;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+          }
+           .post-skeleton .skeleton {
+               background: #ddd;
+                margin-bottom: 0.5rem;
+                border-radius: 4px;
+                  animation: skeleton-loading 1.5s linear infinite alternate;
+
+           }
+             .post-skeleton .skeleton.post-skeleton-title {
+                  height: 20px;
+                width: 70%;
+           }
+           .post-skeleton .skeleton.post-skeleton-meta{
+               height: 14px;
+               width: 50%;
+           }
+           .post-skeleton .skeleton.post-skeleton-content {
+               height: 60px;
+           }
+           @keyframes skeleton-loading{
+             0%{
+                 background-color: #ddd;
+            }
+             100%{
+                 background-color: #eee;
+            }
+        }
+         .page-transition {
+              position: fixed;
+                top: 0;
+                 left: 0;
+             width: 100%;
+                height: 100%;
+                background: var(--primary);
+                 z-index: 1000;
+                  transform: scaleX(0);
+                  transform-origin: left;
+                transition: transform 0.3s ease-in-out;
+            }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+            .menu-grid{
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+
 </head>
 
 <body>
@@ -80,7 +516,7 @@
     </div>
 
     <div id="imageModal" class="modal">
-        <span class="close">&times;</span>
+        <span class="close">×</span>
         <img class="modal-content" id="modalImage">
     </div>
 
@@ -203,8 +639,8 @@
                     const imageHtml = post.image
                         ? `
                         <div class="post-image">
-                            <img src="${post.image}" 
-                                 alt="รูปภาพประกอบ" 
+                            <img src="${post.image}"
+                                 alt="รูปภาพประกอบ"
                                  style="max-width: 300px; margin: 0.5rem; cursor: pointer;"
                                  onclick="openImageModal('${post.image}')"
                             >
@@ -226,7 +662,7 @@
                         </div>
                     </div>
                     <div class="post-meta">
-                        โพสต์โดย: ${post.authorName} | 
+                        โพสต์โดย: ${post.authorName} |
                         วันที่: ${postDate.toLocaleDateString('th-TH')}
                     </div>
                     <div class="post-content">
