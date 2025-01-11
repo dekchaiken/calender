@@ -423,7 +423,7 @@
         }
 
         .company-group-content {
-            max-height: 200px;
+            max-height: 500px;
             overflow-y: auto;
             padding-right: 10px;
             border: 1px solid #eee;
@@ -523,10 +523,14 @@
         }
 
         .province-group div {
-            font-size: 14px;
-            /* Added font-size for province headers */
-            cursor: pointer;
-            padding: 4px 0;
+            display: flex;
+    align-items: center;
+    padding: 6px;
+    margin: 2px 0;
+    background: #f8f8f8;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    font-size: 13px;
         }
     </style>
     <style>
@@ -552,7 +556,7 @@
 
         #togglePanelButton {
             position: fixed;
-            right: 94%;
+            right: 93%;
             bottom: -20px;
             transform: translateY(-50%);
             padding: 0.75rem;
@@ -578,7 +582,7 @@
             font-weight: bold; /* For absolute positioning of the text */
         }
          #togglePanelButton::before{
-           content: "คลิกเพื่อจัดการรายงาน";
+           content: "กดเพื่อย่อ/ขยายการจัดการ Report";
             position: absolute;
             bottom: calc(100% + 10px);
             left: 50%;
@@ -595,7 +599,7 @@
 
 
         #togglePanelButton.open {
-            left: calc(50% + 10px);
+            left: calc(93% + 10px);
             transform: translateY(-50%) rotate(180deg);
             /* Rotate when open */
         }
@@ -666,6 +670,21 @@
             padding-left: 10px;
         }
 
+          /* Date input style */
+        .form-group {
+          display: flex;
+          align-items: center;
+          gap: 10px; /* Space between label and input */
+          width: 100%; /* Occupy available space */
+          }
+
+        .form-group label {
+          flex: 1; /* Label takes available space */
+          cursor: pointer;
+        }
+         .form-group input[type="date"] {
+          flex: 2; /* Date input takes remaining space */
+        }
         /* Spotlight */
          #spotlight {
             display: none;
@@ -742,7 +761,7 @@
             </div>
         </div>
         <div id="appContainer">
-            <div id="mainContentContainer">
+            <div id="mainContentContainer" class="open">
                 <div class="container">
                     <div class="card">
                         <h2>Template สำหรับบริษัทที่เลือก</h2>
@@ -766,7 +785,7 @@
                     </div>
                 </div>
             </div>
-            <div id="slideOutPanel">
+            <div id="slideOutPanel" class="open">
                 <div class="slideout-card">
                     <h2>หมายเหตุและวิธีการใช้งาน</h2>
                     <div class="info-content" style="background: #f8f8f8; padding: 1rem; border-radius: 8px">
@@ -801,8 +820,8 @@
                 <div class="slideout-card">
                     <h2>เลือกวันที่ติดตาม</h2>
                     <div class="form-group">
-                        <label for="followDate">วันที่ติดตาม:</label>
-                        <input type="date" id="followDate" class="form-control" />
+                        <label for="followDate" style="display: flex; align-items: center;">วันที่ติดตาม:</label>
+                        <input type="date" id="followDate" class="form-control" style="cursor: pointer" onclick="this.showPicker()" />
                     </div>
                 </div>
                 <div class="slideout-card">
@@ -829,7 +848,7 @@
                     <div id="companyFilters" class="company-filters"></div>
                 </div>
             </div>
-            <button id="togglePanelButton">
+            <button id="togglePanelButton" class="open">
                 <span class="toggle-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512">
                         <path
@@ -1065,12 +1084,14 @@
                         const selectProvinceBtn = document.createElement('button');
                         selectProvinceBtn.textContent = 'Select All';
                         selectProvinceBtn.className = 'select-province-btn';
+                       selectProvinceBtn.style.display = "none"
                         selectProvinceBtn.onclick = (event) => {
                             event.stopPropagation()
                             selectProvinceCompanies(provinceGroups[province])
                         }; // Add event listener
                         const unselectProvinceBtn = document.createElement('button');
                         unselectProvinceBtn.textContent = 'Unselect All';
+                         unselectProvinceBtn.style.display = "none"
                         unselectProvinceBtn.className = 'unselect-province-btn';
                         unselectProvinceBtn.onclick = (event) => {
                             event.stopPropagation()
@@ -1084,11 +1105,13 @@
                         provinceHeader.addEventListener("click", function (event) {
                             if (!event.target.classList.contains('select-province-btn') && !event.target.classList.contains('unselect-province-btn')) {
                                 const provinceContentDiv = this.nextElementSibling;
-                                if (provinceContentDiv) {
+                                 if (provinceContentDiv) {
                                     showLoadingOverlay("กำลังอัพเดต Template...");
                                     provinceContentDiv.style.display = provinceContentDiv.style.display === "none"
                                         ? "block"
                                         : "none";
+                                    selectProvinceBtn.style.display = provinceContentDiv.style.display === "none" ? "none" : "block";
+                                     unselectProvinceBtn.style.display = provinceContentDiv.style.display === "none" ? "none" : "block";
                                     updateAllTemplates();
                                     closeLoadingOverlay();
                                 }

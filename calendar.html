@@ -46,14 +46,14 @@
                     </div>
                 </div>
             <button onclick="window.location.href='dashboard.html'" class="nav-btn">หน้าหลัก</button>
-            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+             <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
         </div>
     </div>
 
         <div class="container">
             <div class="team-info">
                 <div class="team-card red" onclick="toggleTeamMembers('red')">
-                    <h3>Shift A (Red Team)</h3>
+                    <h3>เวรที่ 1</h3>
                     <div class="team-leader" id="red-team-leader">
                     </div>
                     <div class="team-members" id="red-members">
@@ -63,7 +63,7 @@
 
                 <!-- Yellow Team -->
                 <div class="team-card yellow" onclick="toggleTeamMembers('yellow')">
-                    <h3>Shift D (Yellow Team)</h3>
+                    <h3>เวรที่ 2</h3>
                     <div class="team-leader" id="yellow-team-leader">
                         <!-- Leader will be populated by JavaScript -->
                     </div>
@@ -75,7 +75,7 @@
 
                 <!-- Blue Team -->
                 <div class="team-card blue" onclick="toggleTeamMembers('blue')">
-                    <h3>Shift C (Blue Team)</h3>
+                    <h3>เวรที่ 3</h3>
                     <div class="team-leader" id="blue-team-leader">
                         <!-- Leader will be populated by JavaScript -->
                     </div>
@@ -113,45 +113,45 @@
                 <div class="shift-filters">
                     <label class="shift-filter">
                         <input type="checkbox" value="red" checked class="shift-checkbox" onchange="updateFilters()" />
-                        <span class="checkmark red">Shift A - อธิราช</span>
+                        <span class="checkmark red">เวรที่ 1</span>
                     </label>
-                    <label class="shift-filter">
-                        <input type="checkbox" value="blue" checked class="shift-checkbox" onchange="updateFilters()" />
-                        <span class="checkmark blue">Shift C - กฤษฏ์</span>
-                    </label>
-                    <label class="shift-filter">
-                        <input type="checkbox" value="yellow" checked class="shift-checkbox"
+                   <label class="shift-filter">
+                       <input type="checkbox" value="yellow" checked class="shift-checkbox"
                             onchange="updateFilters()" />
-                        <span class="checkmark yellow">Shift D - พิสุทธิ์</span>
+                        <span class="checkmark yellow">เวรที่ 2</span>
                     </label>
+                    <label class="shift-filter">
+                       <input type="checkbox" value="blue" checked class="shift-checkbox" onchange="updateFilters()" />
+                       <span class="checkmark blue">เวรที่ 3</span>
+                     </label>
                     <label class="shift-filter">
                         <input type="checkbox" value="green" checked class="shift-checkbox"
                             onchange="updateFilters()" />
-                        <span class="checkmark green">เวรที่ 4</span>
-                    </label>
+                       <span class="checkmark green">เวรที่ 4</span>
+                     </label>
                 </div>
                 <div class="filter-buttons">
                     <button onclick="selectAllShifts(true)" class="filter-btn">เลือกทั้งหมด</button>
                     <button onclick="selectAllShifts(false)" class="filter-btn">ยกเลิกทั้งหมด</button>
                 </div>
-            </div>
+           </div>
 
-            <div class="export-controls">
+             <div class="export-controls">
                 <div class="date-range">
                     <div>
-                        <label>วันที่เริ่มต้น:</label>
-                        <select id="startMonthSelect" class="month-select"></select>
-                        <select id="startYearSelect" class="year-select"></select>
+                         <label>วันที่เริ่มต้น:</label>
+                         <select id="startMonthSelect" class="month-select"></select>
+                       <select id="startYearSelect" class="year-select"></select>
                     </div>
                     <div>
-                        <label>วันที่สิ้นสุด:</label>
+                         <label>วันที่สิ้นสุด:</label>
                         <select id="endMonthSelect" class="month-select"></select>
-                        <select id="endYearSelect" class="year-select"></select>
-                    </div>
+                       <select id="endYearSelect" class="year-select"></select>
+                   </div>
                 </div>
                 <button onclick="exportToPDF()" class="export-btn">Export to PDF</button>
                 <button onclick="printCalendar()" class="export-btn">Print Calendar</button>
-            </div>
+           </div>
             <div id="calendar-container"></div>
         </div>
         <div id="teamModal" class="modal">
@@ -159,22 +159,22 @@
                 <span class="close-modal">×</span>
                 <h3 class="modal-title"></h3>
                 <div class="team-time"></div>
-                <div class="team-details"></div>
+               <div class="team-details"></div>
             </div>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script>
         firebase.initializeApp({
             apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
-            authDomain: "cyfencedevbyken.firebaseapp.com",
+             authDomain: "cyfencedevbyken.firebaseapp.com",
             projectId: "cyfencedevbyken",
             storageBucket: "cyfencedevbyken.appspot.com",
             messagingSenderId: "632813871756",
-            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+             appId: "1:632813871756:web:57d674643f258ddd2e11a9",
         });
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
@@ -182,17 +182,20 @@
                     const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
                     const userData = userDoc.data();
                     const displayElement = document.getElementById('userDisplayName');
-
-                    if (userData?.displayName) {
-                        displayElement.textContent = userData.displayName;
+                     if (userData?.displayName) {
+                       displayElement.textContent = userData.displayName;
                     } else {
-                        displayElement.textContent = user.email;
+                         displayElement.textContent = user.email;
+                   }
+                    const roleElement = document.getElementById('userRole');
+                        if (userData?.role) {
+                        roleElement.textContent = `(${userData.role})`;
                     }
                 } catch (error) {
-                    console.error('Error fetching user data:', error);
+                     console.error('Error fetching user data:', error);
                 }
-            }
-        });
+           }
+         });
     </script>
     <script src="auth.js"></script>
     <script src="script.js"></script>

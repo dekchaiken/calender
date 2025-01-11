@@ -97,23 +97,14 @@
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s, transform 0.2s;
         }
-
-        .nav-btn {
-            padding: 0.5rem 1rem;
-            background: #f0f0f0;
-            color: var(--secondary);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
+          .logout-btn:hover {
             background: #cc0000;
-            transform: translateY(-2px);
+             transform: translateY(-2px);
+         }
+         .logout-btn:active{
+             transform: translateY(1px);
         }
 
 
@@ -222,224 +213,286 @@
              border: 1px solid #eee;
             border-radius: 8px;
             padding: 1rem;
-            margin-bottom: 1rem;
+             margin-bottom: 1rem;
         }
          .system-announcement-header{
             display: flex;
-             align-items: center;
+            align-items: center;
             gap: 0.5rem;
-             margin-bottom: 0.5rem;
-          }
+            margin-bottom: 0.5rem;
+         }
         .system-announcement-badge {
-            background: #ccc;
+           background: #ccc;
             color: #333;
-            padding: 0.2rem 0.5rem;
+           padding: 0.2rem 0.5rem;
             border-radius: 4px;
-            font-size: 0.8rem;
+           font-size: 0.8rem;
              font-weight: bold;
-        }
+         }
 
         .post-card {
             background: #fff;
              border: 1px solid #eee;
             border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            position: relative;
+             padding: 1rem;
+           margin-bottom: 1rem;
+             position: relative;
              transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+           .post-card:hover {
+               transform: translateY(-2px);
+             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.09);
+
+          }
+          .post-card .post-header{
+              display: flex;
+             justify-content: space-between;
+              align-items: center;
+              margin-bottom: 0.5rem;
+
+         }
+          .post-card .post-header .post-actions {
+              display: flex;
+              gap: 0.5rem;
+
            }
-             .post-card:hover {
-                transform: translateY(-2px);
-                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.09);
-
-               }
-            .post-card .post-header{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                 margin-bottom: 0.5rem;
-
-            }
-            .post-card .post-header .post-actions {
-                display: flex;
-               gap: 0.5rem;
-
-            }
         .post-card .post-header .delete-post-btn {
               background: #ff4444;
              color: white;
-              border: none;
-               padding: 0.2rem 0.5rem;
-                border-radius: 4px;
-                cursor: pointer;
-               transition: all 0.3s;
-                font-size: 0.8rem;
-        }
-        .post-card .post-header .delete-post-btn:hover {
-            background: #cc0000;
-            transform: translateY(-1px);
+            border: none;
+              padding: 0.2rem 0.5rem;
+               border-radius: 4px;
+             cursor: pointer;
+            transition: all 0.3s;
+             font-size: 0.8rem;
+       }
+       .post-card .post-header .delete-post-btn:hover {
+           background: #cc0000;
+           transform: translateY(-1px);
         }
 
-        .post-title {
+       .post-title {
             color: var(--secondary);
-            margin: 0;
+             margin: 0;
         }
 
         .post-meta {
-            color: #888;
+           color: #888;
             font-size: 0.8rem;
-             margin-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        .post-text {
-            line-height: 1.6;
-             margin-bottom: 0.5rem;
-        }
-        .post-image {
-              display: flex;
-                justify-content: center;
+         .post-text {
+           line-height: 1.6;
+            margin-bottom: 0.5rem;
+       }
+         .post-image {
+           display: flex;
+               justify-content: center;
 
          }
-
-        .menu-grid {
+       .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .menu-card {
-            background: white;
+             gap: 2rem;
+       }
+       .menu-card {
+             background: white;
             border-radius: 12px;
             padding: 2rem;
-            display: flex;
-            flex-direction: column;
+           display: flex;
+           flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
+           justify-content: center;
+           text-align: center;
             cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+          box-shadow: var(--shadow);
+             transition: transform 0.2s ease, box-shadow 0.2s ease;
+         }
         .menu-card:hover {
-               transform: translateY(-2px);
-            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.12);
+                transform: translateY(-2px);
+              box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.12);
         }
 
-         .menu-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+          .menu-icon {
+           font-size: 3rem;
+             margin-bottom: 1rem;
             color: var(--primary);
              transition: transform 0.2s ease;
         }
           .menu-card:hover .menu-icon{
              transform: scale(1.1);
-          }
+         }
 
         .menu-card h2 {
-            color: var(--secondary);
-             font-size: 1.2rem;
-              margin: 0;
+             color: var(--secondary);
+            font-size: 1.2rem;
+             margin: 0;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
+       .modal {
+           display: none;
+           position: fixed;
             z-index: 1;
-            left: 0;
+             left: 0;
             top: 0;
-            width: 100%;
+             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.8);
-             align-items: center;
-              justify-content: center;
-        }
+             overflow: auto;
+           background-color: rgba(0, 0, 0, 0.8);
+              align-items: center;
+            justify-content: center;
+       }
 
-        .modal-content {
-            margin: auto;
-            display: block;
-            max-width: 90%;
-            max-height: 90%;
-             animation-name: zoom;
+       .modal-content {
+           margin: auto;
+           display: block;
+           max-width: 90%;
+             max-height: 90%;
+              animation-name: zoom;
              animation-duration: 0.6s;
-        }
-        .close {
-             position: absolute;
+       }
+      .close {
+            position: absolute;
              top: 15px;
-              right: 35px;
-            color: #f1f1f1;
+             right: 35px;
+             color: #f1f1f1;
              font-size: 40px;
-            font-weight: bold;
+             font-weight: bold;
              cursor: pointer;
               transition: color 0.3s ease;
-        }
-           .close:hover,
-           .close:focus{
+      }
+        .close:hover,
+        .close:focus{
             color: #bbb;
-            text-decoration: none;
+           text-decoration: none;
              cursor: pointer;
-           }
-        @keyframes zoom{
-             from{transform: scale(0)}
-             to{ transform: scale(1)}
-        }
-          .post-skeleton {
-              background: #f8f8f8;
-            border: 1px solid #eee;
-            border-radius: 8px;
+       }
+         @keyframes zoom{
+           from{transform: scale(0)}
+            to{ transform: scale(1)}
+       }
+        .post-skeleton {
+            background: #f8f8f8;
+             border: 1px solid #eee;
+           border-radius: 8px;
             padding: 1rem;
-            margin-bottom: 1rem;
-          }
-           .post-skeleton .skeleton {
-               background: #ddd;
-                margin-bottom: 0.5rem;
-                border-radius: 4px;
+           margin-bottom: 1rem;
+        }
+          .post-skeleton .skeleton {
+            background: #ddd;
+           margin-bottom: 0.5rem;
+              border-radius: 4px;
                   animation: skeleton-loading 1.5s linear infinite alternate;
 
+          }
+            .post-skeleton .skeleton.post-skeleton-title {
+                height: 20px;
+              width: 70%;
            }
-             .post-skeleton .skeleton.post-skeleton-title {
-                  height: 20px;
-                width: 70%;
-           }
-           .post-skeleton .skeleton.post-skeleton-meta{
+            .post-skeleton .skeleton.post-skeleton-meta{
                height: 14px;
                width: 50%;
-           }
-           .post-skeleton .skeleton.post-skeleton-content {
-               height: 60px;
-           }
-           @keyframes skeleton-loading{
+          }
+         .post-skeleton .skeleton.post-skeleton-content {
+                height: 60px;
+            }
+        @keyframes skeleton-loading{
              0%{
-                 background-color: #ddd;
+                   background-color: #ddd;
             }
-             100%{
+              100%{
                  background-color: #eee;
-            }
-        }
-         .page-transition {
-              position: fixed;
-                top: 0;
-                 left: 0;
-             width: 100%;
-                height: 100%;
-                background: var(--primary);
-                 z-index: 1000;
-                  transform: scaleX(0);
-                  transform-origin: left;
-                transition: transform 0.3s ease-in-out;
-            }
+           }
+      }
+        .page-transition {
+             position: fixed;
+               top: 0;
+                left: 0;
+            width: 100%;
+               height: 100%;
+              background: var(--primary);
+               z-index: 1000;
+                transform: scaleX(0);
+               transform-origin: left;
+             transition: transform 0.3s ease-in-out;
+       }
 
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
                 padding: 0 1rem;
+           }
+           .menu-grid{
+                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             }
-            .menu-grid{
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
+       }
+          .logout-modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+             justify-content: center;
+              align-items: center;
+        }
+         .logout-modal-content{
+             background: white;
+             padding: 2rem;
+             border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+             animation: fadeIn 0.3s ease-in-out;
+        }
+         @keyframes fadeIn {
+            from {
+                opacity: 0;
+                 transform: translateY(-20px);
+           }
+           to {
+               opacity: 1;
+                transform: translateY(0);
+             }
+        }
+         .logout-modal-content p{
+             color: var(--secondary);
+           margin-bottom: 1.5rem;
+             line-height: 1.6;
+         }
+       .logout-modal-buttons{
+           display: flex;
+            justify-content: center;
+            gap: 1rem;
+         }
+       .logout-modal-buttons button{
+            padding: 0.75rem 1.5rem;
+           border: none;
+             border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+           transition: all 0.2s ease;
+       }
+       .logout-modal-buttons .cancel-btn{
+           background-color: #f0f0f0;
+           color: var(--secondary);
+        }
+         .logout-modal-buttons .confirm-btn{
+           background-color: var(--primary);
+           color: var(--accent);
+        }
+         .logout-modal-buttons .cancel-btn:hover{
+           background-color: #e0e0e0;
+            transform: translateY(-2px);
+       }
+         .logout-modal-buttons .confirm-btn:hover{
+            background-color: var(--primary-dark);
+             transform: translateY(-2px);
         }
     </style>
-
 </head>
 
 <body>
@@ -460,7 +513,7 @@
                     <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
                 </div>
             </div>
-            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+            <button onclick="showLogoutModal()" class="logout-btn">ออกจากระบบ</button>
         </div>
     </div>
 
@@ -515,6 +568,15 @@
         <span class="close">×</span>
         <img class="modal-content" id="modalImage">
     </div>
+    <div id="logoutModal" class="logout-modal">
+          <div class="logout-modal-content">
+              <p>คุณต้องการออกจากระบบหรือไม่?</p>
+                <div class="logout-modal-buttons">
+                    <button class="cancel-btn" onclick="closeLogoutModal()">ยกเลิก</button>
+                     <button class="confirm-btn" onclick="logout()">ตกลง</button>
+               </div>
+          </div>
+      </div>
 
     <footer style="text-align: center; padding: 1rem; background: #f0f0f0; color: #666; font-size: 0.9rem;">
         Dashboard เวอร์ชัน 1.0.0 | © 2024 Cyfence | จัดทำโดยทีมพัฒนา NT
@@ -764,9 +826,15 @@
                 }
             }
         });
-
+          function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'flex';
+         }
+        function closeLogoutModal() {
+             document.getElementById('logoutModal').style.display = 'none';
+         }
 
         function logout() {
+            document.getElementById('logoutModal').style.display = 'none';
             firebase.auth().signOut()
                 .then(() => window.location.href = 'login.html')
                 .catch(error => console.error('Logout error:', error));
