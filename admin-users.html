@@ -7,8 +7,11 @@
     <title>Cyfence - User Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        :root {
+                :root {
             --primary: #FDB813;
             --primary-dark: #e5a700;
             --secondary: #404040;
@@ -17,6 +20,7 @@
             --warning: #ffc107;
             --danger: #dc3545;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease-in-out;
         }
 
         * {
@@ -60,7 +64,13 @@
             padding: 1.5rem;
             border-radius: 8px;
             box-shadow: var(--shadow);
+            transition: var(--transition);
         }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
 
         .stat-number {
             font-size: 2rem;
@@ -149,7 +159,7 @@
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
 
         .nav-btn:hover {
@@ -164,7 +174,12 @@
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: #dd3333;
+            transform: translateY(-1px);
         }
 
         .admin-container {
@@ -187,6 +202,9 @@
             margin-bottom: 1.5rem;
             border-bottom: 2px solid var(--primary);
             padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .user-list {
@@ -199,7 +217,13 @@
             padding: 0.75rem;
             text-align: left;
             border-bottom: 1px solid #eee;
+            transition: background-color 0.2s ease;
         }
+
+        .user-list tbody tr:hover td {
+            background-color: #f9f9f9;
+        }
+
 
         .user-list th {
             background: #f8f8f8;
@@ -216,7 +240,14 @@
             cursor: pointer;
             margin-bottom: 1rem;
             font-weight: 600;
+            transition: var(--transition);
         }
+
+        .add-user-btn:hover {
+            background: #e5a700;
+            transform: translateY(-1px);
+        }
+
 
         .modal {
             display: none;
@@ -225,7 +256,38 @@
             background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
+            z-index: 1001; /* ให้ Modal มี z-index ที่สูงกว่า */
+            animation: fadeIn 0.3s ease forwards;
         }
+        .modal.hide {
+            animation: fadeOut 0.3s ease forwards;
+        }
+
+        #alertModal {
+            z-index: 1002; /* ให้ Alert Modal มี z-index สูงกว่า Modal อื่นๆ */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+
 
         .modal-content {
             background: white;
@@ -233,6 +295,19 @@
             border-radius: 8px;
             width: 100%;
             max-width: 500px;
+            animation: scaleUp 0.3s ease forwards;
+        }
+
+        @keyframes scaleUp {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .modal-content h3 {
@@ -282,7 +357,19 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
+            transition: var(--transition);
         }
+
+        .save-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .cancel-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
+        }
+
 
         .user-container {
             display: flex;
@@ -324,6 +411,7 @@
             cursor: pointer;
             font-size: 0.875rem;
             margin: 0 0.25rem;
+            transition: var(--transition);
         }
 
         .edit-btn {
@@ -331,9 +419,19 @@
             color: var(--accent);
         }
 
+        .edit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
         .delete-btn {
             background: #ff4444;
             color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dd3333;
+            transform: translateY(-1px);
         }
 
         .container {
@@ -422,9 +520,30 @@
             </div>
         </div>
         <div class="admin-container">
+            <div class="user-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">ผู้ใช้งานทั้งหมด</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeUsers">0</div>
+                    <div class="stat-label">ผู้ใช้งานที่เปิดใช้งาน</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="inactiveUsers">0</div>
+                    <div class="stat-label">ผู้ใช้งานที่ปิดใช้งาน</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingUsers">0</div>
+                    <div class="stat-label">ผู้ใช้งานที่รออนุมัติ</div>
+                </div>
+            </div>
             <div class="admin-card">
-                <h2>จัดการผู้ใช้งาน</h2>
-                <button onclick="showAddUserModal()" class="add-user-btn">เพิ่มผู้ใช้งานใหม่</button>
+                <h2>จัดการผู้ใช้งาน
+                    <button onclick="showAddUserModal()" class="add-user-btn">
+                        <i class="fas fa-plus"></i> เพิ่มผู้ใช้งานใหม่
+                    </button>
+                </h2>
                 <table class="user-list">
                     <thead>
                         <tr>
