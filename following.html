@@ -7,6 +7,7 @@
     <title>Cyfence - Following Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/components.css" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"> -->
     <style>
         :root {
             --primary: #fdb813;
@@ -177,11 +178,6 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.12);
-        }
-
         .card h2 {
             color: var(--secondary);
             margin-bottom: 1.5rem;
@@ -267,12 +263,25 @@
         .preview-area {
             padding: 1.5rem;
             border-radius: 8px;
-            white-space: pre-wrap;
-            font-family: monospace;
             min-height: 200px;
             border: 2px solid #eee;
             margin-bottom: 1rem;
             background: #f8f8f8;
+            overflow-y: auto;
+            max-height: 610px;
+            white-space: pre-wrap;
+        }
+
+        .preview-area pre {
+            margin: 0;
+            font-size: 14px;
+            font-family: monospace;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            background: #ffffff;
+            border-radius: 4px;
+            padding: 1rem;
         }
 
         #dropZone {
@@ -361,6 +370,7 @@
             background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
+            z-index: 10000; /* Ensure the modal is above other elements */
         }
 
         .modal-content {
@@ -524,13 +534,13 @@
 
         .province-group div {
             display: flex;
-    align-items: center;
-    padding: 6px;
-    margin: 2px 0;
-    background: #f8f8f8;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-    font-size: 13px;
+            align-items: center;
+            padding: 6px;
+            margin: 2px 0;
+            background: #f8f8f8;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            font-size: 13px;
         }
     </style>
     <style>
@@ -579,21 +589,23 @@
             height: 50px;
             /* Add styles for distinctive button */
             border: 2px solid #fff;
-            font-weight: bold; /* For absolute positioning of the text */
+            font-weight: bold;
+            /* For absolute positioning of the text */
         }
-         #togglePanelButton::before{
-           content: "กดเพื่อย่อ/ขยายการจัดการ Report";
+
+        #togglePanelButton::before {
+            content: "กดเพื่อย่อ/ขยายการจัดการ Report";
             position: absolute;
             bottom: calc(100% + 10px);
             left: 50%;
             transform: translateX(-50%);
-             background-color: #2d2d2d;
-             color: white;
+            background-color: #2d2d2d;
+            color: white;
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 12px;
-           white-space: nowrap;
-             pointer-events: none;
+            white-space: nowrap;
+            pointer-events: none;
 
         }
 
@@ -670,42 +682,53 @@
             padding-left: 10px;
         }
 
-          /* Date input style */
+        /* Date input style */
         .form-group {
-          display: flex;
-          align-items: center;
-          gap: 10px; /* Space between label and input */
-          width: 100%; /* Occupy available space */
-          }
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            /* Space between label and input */
+            width: 100%;
+            /* Occupy available space */
+        }
 
         .form-group label {
-          flex: 1; /* Label takes available space */
-          cursor: pointer;
+            flex: 1;
+            /* Label takes available space */
+            cursor: pointer;
         }
-         .form-group input[type="date"] {
-          flex: 2; /* Date input takes remaining space */
+
+        .form-group input[type="date"] {
+            flex: 2;
+            /* Date input takes remaining space */
         }
+
         /* Spotlight */
-         #spotlight {
+        #spotlight {
             display: none;
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.5);
             z-index: 1003;
-            pointer-events: none; /* Important! Allow clicks through the spotlight */
-          }
-       #spotlight.active{
-              display: block;
-          }
-     #spotlight-inner {
-             position: absolute;
-                width: 60px;
-                height: 60px;
-              background: rgba(0,0,0,0);
-              border-radius: 50%;
-             border: 4px solid #fff; /* Add white border */
+            pointer-events: none;
+            /* Important! Allow clicks through the spotlight */
+        }
+
+        #spotlight.active {
+            display: block;
+        }
+
+        #spotlight-inner {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0);
+            border-radius: 50%;
+            border: 4px solid #fff;
+            /* Add white border */
             transition: transform 0.2s ease-out;
-            pointer-events: none; /* Allow clicks through the inner circle */
+            pointer-events: none;
+            /* Allow clicks through the inner circle */
 
         }
     </style>
@@ -733,10 +756,18 @@
             <p id="loadingMessage">กำลังโหลดข้อมูล โปรดรอสักครู่..</p>
         </div>
     </div>
-     <div id="spotlight" >
-      <div id="spotlight-inner"></div>
-       </div>
-
+    <div id="spotlight">
+        <div id="spotlight-inner"></div>
+    </div>
+     <div id="fullscreenModal" class="modal" style="display: none">
+        <div class="modal-content">
+            <h3>คำแนะนำ</h3>
+            <p>เพื่อประสบการณ์การใช้งานที่ดีที่สุด แนะนำให้ใช้โหมด Full screen เพื่อป้องกันการแสดงผลที่ผิดเพี้ยน</p>
+            <div class="modal-buttons">
+                <button class="save-btn" onclick="closeFullscreenModal()">รับทราบ</button>
+            </div>
+        </div>
+    </div>
     <div id="mainContent" style="display: none">
         <div class="header">
             <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
@@ -777,7 +808,7 @@
                             <label for="emailTemplate" style="cursor: pointer">Email Template</label>
                         </div>
                         <div id="allTemplates" class="preview-area">
-                            โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...
+                            <pre><code class="plaintext"> โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...</code></pre>
                         </div>
                         <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem">
                             คัดลอก Template ทั้งหมด
@@ -821,7 +852,8 @@
                     <h2>เลือกวันที่ติดตาม</h2>
                     <div class="form-group">
                         <label for="followDate" style="display: flex; align-items: center;">วันที่ติดตาม:</label>
-                        <input type="date" id="followDate" class="form-control" style="cursor: pointer" onclick="this.showPicker()" />
+                        <input type="date" id="followDate" class="form-control" style="cursor: pointer"
+                            onclick="this.showPicker()" />
                     </div>
                 </div>
                 <div class="slideout-card">
@@ -858,10 +890,14 @@
             </button>
         </div>
     </div>
+    <div id="copyNotification" style="position: fixed; bottom: 20px; left: 20px; background: #4CAF50; color: white; padding: 10px 20px; border-radius: 4px; display: none;">คัดลอกสำเร็จ!
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
     <script>
-        const months = [
+         const months = [
             "January",
             "February",
             "March",
@@ -875,7 +911,6 @@
             "November",
             "December",
         ];
-
         let excelData = null;
         let companies = new Set();
         let selectedCompanies = new Set();
@@ -884,7 +919,9 @@
         const mainContentContainer = document.getElementById("mainContentContainer");
         const selectAllToggle = document.getElementById("selectAllToggle");
         const spotlight = document.getElementById('spotlight');
-        const spotlightInner = document.getElementById('spotlight-inner')
+        const spotlightInner = document.getElementById('spotlight-inner');
+        const copyNotification = document.getElementById('copyNotification');
+
 
         // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
         function showAlertModal(message) {
@@ -899,7 +936,7 @@
             document.getElementById("loadingMessage").textContent = message;
         }
         function closeLoadingOverlay() {
-            document.getElementById("loadingOverlay").style.display = "none";
+            document.getElementById("loadingOverlay").style.display            = "none";
         }
         function isDataReady() {
             return (
@@ -919,11 +956,21 @@
         }
         function formatDateToEng(date) {
             const d = new Date(date);
-            return`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+            return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
+        function debounce(func, delay) {
+            let timeout;
+            return function (...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
         }
         // ฟังก์ชันสำหรับจัดการการค้นหาบริษัท
-        document.getElementById("searchCompany").addEventListener("input", function (e) {
-            showLoadingOverlay("กำลังค้นหา...");
+        const searchCompanyInput = document.getElementById('searchCompany');
+        const searchHandler = debounce(function (e) {
+             showLoadingOverlay("กำลังค้นหา...");
             const searchTerm = e.target.value.toLowerCase();
             const checkboxes = document.querySelectorAll(".company-checkbox");
             checkboxes.forEach((checkbox) => {
@@ -933,7 +980,8 @@
                     : "none";
             });
             closeLoadingOverlay();
-        });
+        }, 300); // Delay 300ms
+         searchCompanyInput.addEventListener('input', searchHandler);
         function selectAllCompanies() {
             showLoadingOverlay("กำลังเลือกบริษัททั้งหมด...");
             const checkboxes = document.querySelectorAll(
@@ -1084,14 +1132,14 @@
                         const selectProvinceBtn = document.createElement('button');
                         selectProvinceBtn.textContent = 'Select All';
                         selectProvinceBtn.className = 'select-province-btn';
-                       selectProvinceBtn.style.display = "none"
+                        selectProvinceBtn.style.display = "none"
                         selectProvinceBtn.onclick = (event) => {
                             event.stopPropagation()
                             selectProvinceCompanies(provinceGroups[province])
                         }; // Add event listener
                         const unselectProvinceBtn = document.createElement('button');
                         unselectProvinceBtn.textContent = 'Unselect All';
-                         unselectProvinceBtn.style.display = "none"
+                        unselectProvinceBtn.style.display = "none"
                         unselectProvinceBtn.className = 'unselect-province-btn';
                         unselectProvinceBtn.onclick = (event) => {
                             event.stopPropagation()
@@ -1105,13 +1153,13 @@
                         provinceHeader.addEventListener("click", function (event) {
                             if (!event.target.classList.contains('select-province-btn') && !event.target.classList.contains('unselect-province-btn')) {
                                 const provinceContentDiv = this.nextElementSibling;
-                                 if (provinceContentDiv) {
+                                if (provinceContentDiv) {
                                     showLoadingOverlay("กำลังอัพเดต Template...");
                                     provinceContentDiv.style.display = provinceContentDiv.style.display === "none"
                                         ? "block"
                                         : "none";
                                     selectProvinceBtn.style.display = provinceContentDiv.style.display === "none" ? "none" : "block";
-                                     unselectProvinceBtn.style.display = provinceContentDiv.style.display === "none" ? "none" : "block";
+                                    unselectProvinceBtn.style.display = provinceContentDiv.style.display === "none" ? "none" : "block";
                                     updateAllTemplates();
                                     closeLoadingOverlay();
                                 }
@@ -1263,49 +1311,52 @@
             e.preventDefault();
             dropZone.classList.remove("dragover");
             const file = e.dataTransfer.files[0];
-            handleFileAndLoad(file); // Call the new function
+            handleFileAndLoad(file);
         });
         fileInput.addEventListener("change", (e) => {
             const file = e.target.files[0];
-            handleFileAndLoad(file); // Call the new function
+            handleFileAndLoad(file);
         });
         async function handleFileAndLoad(file) {
             showLoadingOverlay("กำลังอ่านไฟล์ Excel...");
             try {
                 const reader = new FileReader();
-                reader.onload = function (e) {
+                reader.onload = async function (e) {
                     try {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: "array" });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                         excelData = XLSX.utils.sheet_to_json(firstSheet);
 
-                        // เพิ่มบริษัททั้งหมดจาก companyMappings
                         companies = new Set([
                             ...new Set(
                                 excelData.map((incident) => getCompanyCode(incident.Customer))
                             ),
                             ...new Set(Object.values(companyMappings)),
                         ]);
-                        selectedCompanies.clear(); // Clear initially selected companies.
-                        selectAllToggle.checked = false
+                        selectedCompanies.clear();
+                        selectAllToggle.checked = false;
                         updateCompanyFilters();
                         updateAllTemplates();
-
                         debugDiv.style.display = "block";
                         debugDiv.innerHTML = `อ่านข้อมูลสำเร็จ: ${excelData.length} รายการ`;
+
                     } catch (error) {
                         debugDiv.style.display = "block";
                         debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
+                    } finally {
+                        closeLoadingOverlay()
                     }
-                    closeLoadingOverlay();
+
                 };
                 reader.readAsArrayBuffer(file);
+
             } catch (error) {
                 closeLoadingOverlay();
                 debugDiv.style.display = "block";
                 debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
             }
+
         }
         function getCompanyCode(customerName) {
             return companyMappings[customerName] || customerName;
@@ -1337,8 +1388,8 @@
         function updateAllTemplates() {
             const date = document.getElementById("followDate").value;
             if (!date || !excelData) {
-                document.getElementById("allTemplates").textContent =
-                    "โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...";
+                document.getElementById("allTemplates").innerHTML =
+                    `<pre><code class="plaintext">โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...</code></pre>`;
                 return;
             }
 
@@ -1349,7 +1400,6 @@
             ).value;
             const selectedCompaniesArray = Array.from(selectedCompanies).sort();
 
-            // Generate templates for each selected company
             const templates = selectedCompaniesArray
                 .filter((companyCode) => {
                     const checkbox = document.querySelector(
@@ -1369,27 +1419,34 @@
                     );
                     return template;
                 })
-                .filter((template) => template.trim() !== ""); // Remove empty templates
-
-            // Join templates differently based on template type
+                .filter((template) => template.trim() !== "");
+            let combinedTemplate = "";
             if (selectedTemplateType === "line") {
-                allTemplates = templates.join("\n\n" + "=".repeat(50) + "\n\n");
+                combinedTemplate = templates.join("\n\n" + "=".repeat(50) + "\n\n");
             } else {
-                // For email template, just join with double newline, no separators
-                allTemplates = templates.join("\n\n");
+                combinedTemplate = templates.join("\n\n");
             }
 
-            document.getElementById("allTemplates").textContent =
-                allTemplates || "กรุณาเลือกบริษัทที่ต้องการดู Template";
+            document.getElementById("allTemplates").innerHTML =
+                `<pre><code class="plaintext">${combinedTemplate || "กรุณาเลือกบริษัทที่ต้องการดู Template"}</code></pre>`;
+            hljs.highlightAll();
+        }
+        function showCopyNotification() {
+            copyNotification.style.display = 'block';
+            setTimeout(() => {
+                copyNotification.style.display = 'none';
+            }, 3000); // Hide after 3 seconds
         }
         function copyAllTemplates() {
             showLoadingOverlay("กำลังคัดลอก Template...");
-            const templates = document.getElementById("allTemplates").textContent;
+            const templates = document.querySelector("#allTemplates pre code").textContent;
+
             navigator.clipboard
                 .writeText(templates)
                 .then(() => {
                     closeLoadingOverlay();
                     showAlertModal("คัดลอก Template ทั้งหมดสำเร็จ");
+                    showCopyNotification()
                 })
                 .catch((err) => {
                     closeLoadingOverlay();
@@ -1521,7 +1578,6 @@
             updateAllCheckboxes()
             closeLoadingOverlay();
         });
-
         // ปิด slideout panel เมื่อคลิกนอก panel
         document.addEventListener('click', function (event) {
             if (slideOutPanel.classList.contains('open')) {
@@ -1532,23 +1588,33 @@
                 }
             }
         });
-           function showSpotlight() {
-              spotlight.classList.add('active');
-            const buttonRect = togglePanelButton.getBoundingClientRect();
-              spotlightInner.style.transform = `translate(${buttonRect.left -10 }px,${buttonRect.top - 10}px) scale(1)`;
-              spotlightInner.style.width= (buttonRect.width + 20) + 'px';
-              spotlightInner.style.height = (buttonRect.height + 20) + 'px';
-            setTimeout(() => {
-              spotlight.classList.remove('active');
-             }, 1000)
-            }
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!localStorage.getItem('spotlightShown')) {
-                 showSpotlight();
-               localStorage.setItem('spotlightShown', true)
-            }
-       });
 
+        function showSpotlight() {
+            spotlight.classList.add('active');
+            const buttonRect = togglePanelButton.getBoundingClientRect();
+            spotlightInner.style.transform = `translate(${buttonRect.left - 10}px,${buttonRect.top - 10}px) scale(1)`;
+            spotlightInner.style.width = (buttonRect.width + 20) + 'px';
+            spotlightInner.style.height = (buttonRect.height + 20) + 'px';
+            setTimeout(() => {
+                spotlight.classList.remove('active');
+            }, 1000)
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+           const fullscreenModal = document.getElementById('fullscreenModal');
+           if (!localStorage.getItem('fullscreenModalShown')) {
+             fullscreenModal.style.display = 'flex';
+            }
+
+            if (!localStorage.getItem('spotlightShown')) {
+                showSpotlight();
+                localStorage.setItem('spotlightShown', true)
+            }
+        });
+        function closeFullscreenModal() {
+          const fullscreenModal = document.getElementById('fullscreenModal');
+            fullscreenModal.style.display = 'none';
+            localStorage.setItem('fullscreenModalShown', true);
+        }
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -1654,7 +1720,7 @@
         // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
-                await loadCustomerData();
+               await loadCustomerData();
                 try {
                     const userDoc = await firebase
                         .firestore()

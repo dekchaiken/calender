@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Post Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         :root {
             --primary: #FDB813;
@@ -17,6 +19,7 @@
             --warning: #ffc107;
             --danger: #dc3545;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            font-size: 10px;
         }
 
         * {
@@ -78,6 +81,11 @@
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: #cc0000;
         }
 
         .admin-container {
@@ -92,6 +100,7 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .admin-card h2 {
@@ -129,6 +138,11 @@
             cursor: pointer;
             margin-bottom: 1rem;
             font-weight: 600;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .add-post-btn:hover {
+            background-color: var(--primary-dark);
         }
 
         .action-btn {
@@ -138,6 +152,7 @@
             cursor: pointer;
             margin: 0 0.25rem;
             font-size: 0.875rem;
+            transition: all 0.2s;
         }
 
         .edit-btn {
@@ -150,6 +165,17 @@
             color: white;
         }
 
+        .edit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+            transform: translateY(-1px);
+        }
+
+
         .modal {
             display: none;
             position: fixed;
@@ -157,6 +183,7 @@
             background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
+            z-index: 1000;
         }
 
         .modal-content {
@@ -300,7 +327,9 @@
     <div class="admin-container">
         <div class="admin-card">
             <h2>จัดการประกาศทั้งหมด</h2>
-            <button onclick="showAddPostModal()" class="add-post-btn">เพิ่มประกาศใหม่</button>
+            <button onclick="showAddPostModal()" class="add-post-btn">
+                <i class="fas fa-plus"></i> เพิ่มประกาศใหม่
+            </button>
             <table class="posts-table">
                 <thead>
                     <tr>
@@ -392,16 +421,20 @@
                     const postDate = post.createdAt ? new Date(post.createdAt.seconds * 1000) : new Date();
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                <td>${post.title}</td>
-                <td class="post-content">${post.content}</td>
-                <td>${post.authorName || 'ไม่ระบุชื่อ'}</td>
-                <td>${postDate.toLocaleDateString('th-TH')}</td>
-                <td>${post.image ? '<img src="' + post.image + '" style="max-width: 50px;">' : 'ไม่มีรูปภาพ'}</td>
-                <td>
-                    <button onclick="editPost('${post.id}')" class="action-btn edit-btn">แก้ไข</button>
-                    <button onclick="deletePost('${post.id}')" class="action-btn delete-btn">ลบ</button>
-                </td>
-            `;
+                    <td>${post.title}</td>
+                    <td class="post-content">${post.content}</td>
+                    <td>${post.authorName || 'ไม่ระบุชื่อ'}</td>
+                    <td>${postDate.toLocaleDateString('th-TH')}</td>
+                    <td>${post.image ? '<img src="' + post.image + '" style="max-width: 50px;">' : 'ไม่มีรูปภาพ'}</td>
+                    <td>
+                        <button onclick="editPost('${post.id}')" class="action-btn edit-btn">
+                        <i class="fas fa-edit"></i> แก้ไข
+                        </button>
+                        <button onclick="deletePost('${post.id}')" class="action-btn delete-btn">
+                        <i class="fas fa-trash-alt"></i> ลบ
+                        </button>
+                    </td>
+                `;
                     postsTableBody.appendChild(row);
                 });
 
