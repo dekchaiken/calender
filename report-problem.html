@@ -24,12 +24,13 @@
         }
 
         body {
-            background: #f5f5f5;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             align-items: center;
             justify-content: center;
+            overflow-x: hidden;
         }
 
         .report-container {
@@ -73,224 +74,316 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.3s, transform 0.2s;
         }
 
         button:hover {
             background: var(--primary-dark);
+            transform: translateY(-1px);
         }
+         button:active {
+            transform: translateY(1px);
+        }
+
 
         .header {
             display: flex;
             align-items: center;
             padding: 1rem 2rem;
             background: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+             margin-bottom: 2rem;
             width: 100%;
             position: fixed;
             top: 0;
-        }
+         }
 
-        .logo {
-            height: 40px;
-            margin-right: 2rem;
+         .logo {
+             height: 40px;
+             margin-right: 2rem;
         }
 
         .back-btn {
-            background: #ddd;
-            color: #2D2D2D;
+             background: #ddd;
+           color: #2D2D2D;
             padding: 0.75rem 1.5rem;
-            border: none;
+           border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: 600;
+             font-weight: 600;
             margin-left: auto;
-            transition: all 0.3s;
+           transition: all 0.3s;
         }
-
         .back-btn:hover {
-            background: #ccc;
-        }
+             background: #ccc;
+           transform: translateY(-1px);
+       }
 
-        .loading-overlay {
-            display: none;
+       .loading-overlay {
+             display: none;
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 9999;
+             z-index: 9999;
             justify-content: center;
             align-items: center;
         }
 
         .loading-content {
             background: white;
-            padding: 2rem;
+             padding: 2rem;
             border-radius: 8px;
             text-align: center;
         }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
+       .loading-spinner {
+           width: 40px;
+           height: 40px;
             border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
+             border-top: 4px solid var(--primary);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
+             animation: spin 1s linear infinite;
+           margin: 0 auto 1rem;
+        }
+         @keyframes spin {
+            to {
+                 transform: rotate(360deg);
+           }
+       }
+         .user-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        .user-info {
+            display: flex;
+            align-items: center;
+           gap: 0.5rem;
+        }
+        .user-avatar {
+            width: 32px;
+           height: 32px;
+           background: #ddd;
+            border-radius: 50%;
+            display: flex;
+           align-items: center;
+            justify-content: center;
+           font-weight: bold;
+            color: #666;
+       }
+       /* เพิ่มสไตล์สำหรับ modal */
+       .success-modal {
+           display: none;
+           position: fixed;
+             z-index: 1000;
+             left: 0;
+           top: 0;
+           width: 100%;
+            height: 100%;
+           overflow: auto;
+          background-color: rgba(0, 0, 0, 0.5);
+           align-items: center;
+            justify-content: center;
+           opacity: 0; /* ซ่อน modal เริ่มต้น */
+          transition: opacity 0.3s ease;
+      }
+
+      .success-modal.active {
+            opacity: 1;
+            pointer-events: all;
+      }
+        .success-modal .modal-content {
+             background: white;
+            padding: 2rem;
+             border-radius: 8px;
+              text-align: center;
+           max-width: 400px;
+           transform: translateY(-20px);
+           transition: transform 0.3s, opacity 0.3s ease-in-out;
+        }
+
+       .success-modal.active .modal-content {
+           transform: translateY(0px);
+      }
+        .success-modal h3{
+            color: var(--secondary);
+          margin-bottom: 1rem;
+        }
+        .success-modal button{
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+             color: var(--accent);
+            border: none;
+             border-radius: 4px;
+            cursor: pointer;
+           font-weight: 600;
+           transition: all 0.3s, transform 0.2s;
+       }
+         .success-modal button:hover{
+           background: var(--primary-dark);
+            transform: translateY(-1px);
         }
     </style>
 </head>
 
 <body>
+    <div id="loadingOverlay" class="loading-overlay">
+         <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingMessage">กำลังดำเนินการ...</p>
+        </div>
+    </div>
+    <div id="successModal" class="success-modal">
+        <div class="modal-content">
+            <h3>ส่งรายงานปัญหาสำเร็จ</h3>
+           <button onclick="closeSuccessModal()">ตกลง</button>
+        </div>
+    </div>
     <div class="header">
         <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
             alt="Cyfence Logo" class="logo">
-        <h1>Report Bug</h1>
-        <div class="user-container">
+        <h1>แจ้งปัญหา</h1>
+         <div class="user-container">
             <div class="user-info">
-                <div class="user-avatar" id="userAvatar"></div>
-                <div class="user-details">
-                    <span id="userDisplayName">Loading...</span>
-                    <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
+               <div class="user-avatar" id="userAvatar"></div>
+                 <div class="user-details">
+                     <span id="userDisplayName">Loading...</span>
+                     <span id="userRole" style="font-size: 0.8rem; color:#888"></span>
                 </div>
             </div>
             <button onclick="window.location.href='dashboard.html'" class="nav-btn">กลับหน้าหลัก</button>
-            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
-        </div>
+           <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
+       </div>
     </div>
+
     <div class="report-container">
         <form id="reportForm">
             <div class="form-group">
                 <label for="title">หัวข้อปัญหา:</label>
-                <input type="text" id="title" required>
-            </div>
-            <div class="form-group">
-                <label for="description">รายละเอียดปัญหา:</label>
-                <textarea id="description" required></textarea>
-            </div>
+               <input type="text" id="title" required>
+          </div>
+          <div class="form-group">
+                 <label for="description">รายละเอียดปัญหา:</label>
+               <textarea id="description" required></textarea>
+             </div>
             <button type="submit">ส่งรายงาน</button>
-        </form>
-    </div>
+       </form>
+   </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
-    <script>
+     <script>
         // Firebase initialization
-        firebase.initializeApp({
-            apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
-            authDomain: "cyfencedevbyken.firebaseapp.com",
-            projectId: "cyfencedevbyken",
-            storageBucket: "cyfencedevbyken.appspot.com",
-            messagingSenderId: "632813871756",
-            appId: "1:632813871756:web:57d674643f258ddd2e11a9",
-        });
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+               apiKey: "AIzaSyAcb9q1eX1QM9Gl_W6U9WZNbeg6M-uyhpk",
+                authDomain: "cyfencedevbyken.firebaseapp.com",
+               projectId: "cyfencedevbyken",
+               storageBucket: "cyfencedevbyken.appspot.com",
+                messagingSenderId: "632813871756",
+                appId: "1:632813871756:web:57d674643f258ddd2e11a9",
+           });
+        }
 
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingMessage = document.getElementById('loadingMessage');
+         const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const successModal = document.getElementById('successModal');
+
 
         function showLoading(message = 'กำลังดำเนินการ...') {
-            loadingMessage.textContent = message;
-            loadingOverlay.style.display = 'flex';
+             loadingMessage.textContent = message;
+             loadingOverlay.style.display = 'flex';
+         }
+         function hideLoading() {
+           loadingOverlay.style.display = 'none';
         }
-        function hideLoading() {
-            loadingOverlay.style.display = 'none';
-        }
-        document.getElementById('reportForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            showLoading('กำลังส่งรายงาน...');
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-            const currentUser = firebase.auth().currentUser;
+         function showSuccessModal() {
+              successModal.style.display = 'flex';
+               setTimeout(()=> successModal.classList.add('active'), 10)
+           }
 
-            if (!currentUser) {
-                alert('โปรดเข้าสู่ระบบก่อนทำการแจ้งปัญหา');
-                window.location.href = 'login.html';
-                return;
+         function closeSuccessModal() {
+             successModal.classList.remove('active');
+            setTimeout(()=> successModal.style.display = 'none', 300)
+       }
+
+         document.getElementById('reportForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+              showLoading('กำลังส่งรายงาน...');
+            const title = document.getElementById('title').value;
+             const description = document.getElementById('description').value;
+           const currentUser = firebase.auth().currentUser;
+
+             if (!currentUser) {
+                 alert('โปรดเข้าสู่ระบบก่อนทำการแจ้งปัญหา');
+               window.location.href = 'login.html';
+               return;
             }
             firebase.firestore().collection('bugReports').add({
                 title: title,
                 description: description,
                 userId: currentUser.uid,
-                userEmail: currentUser.email,
+               userEmail: currentUser.email,
                 status: 'open',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                alert('ส่งรายงานปัญหาสำเร็จ');
-                document.getElementById('reportForm').reset(); // Clear the form
-                window.location.href = 'dashboard.html'; // Redirect to dashboard
-            }).catch((error) => {
+               createdAt: firebase.firestore.FieldValue.serverTimestamp()
+           }).then(() => {
+               hideLoading();
+                showSuccessModal();
+                 document.getElementById('reportForm').reset(); // Clear the form
+           }).catch((error) => {
                 console.error('Error adding report: ', error);
                 alert('เกิดข้อผิดพลาดในการส่งรายงาน กรุณาลองใหม่อีกครั้ง');
-            }).finally(() => {
-                hideLoading();
-            });
-        });
-    </script>
-    <script>
-        // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
+           }).finally(() => {
+              hideLoading();
+          });
+      });
+     </script>
+       <script>
+         // อัปเดตข้อมูลผู้ใช้เมื่อโหลดหน้า
         firebase.auth().onAuthStateChanged(async (user) => {
-            if (user) {
+             if (user) {
                 try {
-                    const userDoc = await firebase.firestore()
-                        .collection('users')
+                     const userDoc = await firebase.firestore()
+                       .collection('users')
                         .doc(user.uid)
                         .get();
 
-                    const userData = userDoc.data();
+                     const userData = userDoc.data();
                     const displayElement = document.getElementById('userDisplayName');
-                    const roleElement = document.getElementById('userRole');
-                    const avatarElement = document.getElementById('userAvatar');
+                     const roleElement = document.getElementById('userRole');
+                      const avatarElement = document.getElementById('userAvatar');
 
                     if (userData?.displayName) {
                         displayElement.textContent = userData.displayName;
                     } else {
-                        displayElement.textContent = user.email;
-                    }
+                       displayElement.textContent = user.email;
+                     }
 
                     if (userData?.role) {
-                        roleElement.textContent = `(${userData.role})`;
-                    } else {
+                         roleElement.textContent = `(${userData.role})`;
+                     } else {
                         roleElement.textContent = '';
                     }
 
-                    if (userData?.avatar) {
-                        avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
-                    } else {
-                        avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+                     if (userData?.avatar) {
+                         avatarElement.innerHTML = `<img src="${userData.avatar}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%;">`
+                   } else {
+                       avatarElement.textContent = userData.displayName ? userData.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
                     }
-
-                    if (userData?.role === 'supervisor' || userData?.role === 'admin') {
-                        document.getElementById('customerManagementBtn').style.display = 'inline-block';
-                        const userContainer = document.querySelector('.user-container');
-                        const logoutBtn = document.querySelector('.logout-btn');
-
-                        if (!document.querySelector('.admin-btn')) {
-                            const adminBtn = document.createElement('button');
-                            adminBtn.innerHTML = 'หน้า Admin';
-                            adminBtn.className = 'admin-btn';
-                            adminBtn.onclick = () => window.location.href = 'admin.html';
-                            userContainer.insertBefore(adminBtn, logoutBtn);
-                        }
-                    }
-
-
-                    // Add admin button if user has admin role
-                } catch (error) {
-                    console.error('Error fetching user data:', error);
+                 } catch (error) {
+                     console.error('Error fetching user data:', error);
                 }
-            }
+           }
         });
 
-        function logout() {
-            firebase.auth().signOut()
+         function logout() {
+             firebase.auth().signOut()
                 .then(() => window.location.href = 'login.html')
                 .catch(error => console.error('Logout error:', error));
         }
