@@ -1,43 +1,43 @@
 let adminPasswordResolve = null;
 
 function showPasswordModal() {
-  return new Promise((resolve) => {
-    adminPasswordResolve = resolve;
-    document.getElementById("passwordModal").style.display = "flex";
-    document.getElementById("adminPassword").value = "";
-    document.getElementById("passwordForm").onsubmit = handlePasswordSubmit;
-  });
+    return new Promise((resolve) => {
+        adminPasswordResolve = resolve;
+        document.getElementById("passwordModal").style.display = "flex";
+        document.getElementById("adminPassword").value = "";
+        document.getElementById("passwordForm").onsubmit = handlePasswordSubmit;
+    });
 }
 
 function closePasswordModal() {
-  document.getElementById("passwordModal").style.display = "none";
-  if (adminPasswordResolve) {
-    adminPasswordResolve(null);
-    adminPasswordResolve = null;
-  }
+    document.getElementById("passwordModal").style.display = "none";
+    if (adminPasswordResolve) {
+        adminPasswordResolve(null);
+        adminPasswordResolve = null;
+    }
 }
 
 function handlePasswordSubmit(event) {
-  event.preventDefault();
-  const password = document.getElementById("adminPassword").value;
-  document.getElementById("passwordModal").style.display = "none";
-  if (adminPasswordResolve) {
-    adminPasswordResolve(password);
-    adminPasswordResolve = null;
-  }
+    event.preventDefault();
+    const password = document.getElementById("adminPassword").value;
+    document.getElementById("passwordModal").style.display = "none";
+    if (adminPasswordResolve) {
+        adminPasswordResolve(password);
+        adminPasswordResolve = null;
+    }
 }
 
 // เพิ่มฟังก์ชันจัดการ Modal
 function showAddUserModal() {
-  document.getElementById("userModal").style.display = "flex";
-  document.getElementById("modalTitle").textContent = "เพิ่มผู้ใช้งานใหม่";
-  document.getElementById("userForm").onsubmit = handleUserSubmit; // กำหนดให้เรียก handleUserSubmit
-  document.getElementById("userForm").reset();
+    document.getElementById("userModal").style.display = "flex";
+    document.getElementById("modalTitle").textContent = "เพิ่มผู้ใช้งานใหม่";
+    document.getElementById("userForm").onsubmit = handleUserSubmit; // กำหนดให้เรียก handleUserSubmit
+    document.getElementById("userForm").reset();
 }
 
 function closeModal() {
-  document.getElementById("userModal").style.display = "none";
-  document.getElementById("userForm").reset();
+    document.getElementById("userModal").style.display = "none";
+    document.getElementById("userForm").reset();
 }
 
 function showLoadingOverlay(message) {
@@ -70,17 +70,17 @@ function hideLoading() {
 
 // แก้ไขฟังก์ชัน showAlert
 async function showAlert(message, title = "แจ้งเตือน") {
-  return new Promise((resolve) => {
-    document.getElementById("alertTitle").textContent = title;
-    document.getElementById("alertMessage").textContent = message;
-    document.getElementById("alertModal").style.display = "flex";
-    document.getElementById("alertModal").onclick = (e) => {
-      if (e.target === document.getElementById("alertModal")) {
-        closeAlertModal();
-        resolve();
-      }
-    };
-  });
+    return new Promise((resolve) => {
+        document.getElementById("alertTitle").textContent = title;
+        document.getElementById("alertMessage").textContent = message;
+        document.getElementById("alertModal").style.display = "flex";
+        document.getElementById("alertModal").onclick = (e) => {
+            if (e.target === document.getElementById("alertModal")) {
+                closeAlertModal();
+                resolve();
+            }
+        };
+    });
 }
 
 // แก้ไขฟังก์ชัน handleUserSubmit ให้เป็น async
@@ -99,27 +99,27 @@ async function handleUserSubmit(event) {
         let adminPassword;
 
         // ขอรหัสผ่านผ่าน modal
-        while(true) {
+        while (true) {
             adminPassword = await showPasswordModal();
-    
+
             if (!adminPassword) {
-              await showAlert("กรุณากรอกรหัสผ่านเพื่อดำเนินการต่อ");
-              return;
+                await showAlert("กรุณากรอกรหัสผ่านเพื่อดำเนินการต่อ");
+                return;
             }
             showLoadingOverlay("กำลังตรวจสอบรหัสผ่าน Admin...")
-          try{
-            await firebase.auth().signInWithEmailAndPassword(adminEmail, adminPassword);
-            closeLoadingOverlay();
-            break;
-          }catch(error){
-            closeLoadingOverlay()
-            if(error.code === "auth/invalid-credential"){
-             await showAlert("รหัสผ่าน Admin ไม่ถูกต้อง กรุณาลองอีกครั้ง", "ข้อผิดพลาด");
-             continue
-            }else{
-              throw error
+            try {
+                await firebase.auth().signInWithEmailAndPassword(adminEmail, adminPassword);
+                closeLoadingOverlay();
+                break;
+            } catch (error) {
+                closeLoadingOverlay()
+                if (error.code === "auth/invalid-credential") {
+                    await showAlert("รหัสผ่าน Admin ไม่ถูกต้อง กรุณาลองอีกครั้ง", "ข้อผิดพลาด");
+                    continue
+                } else {
+                    throw error
+                }
             }
-          }
         }
 
 
@@ -147,23 +147,23 @@ async function handleUserSubmit(event) {
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         });
-         // Sign out the newly created user
-         await firebase.auth().signOut();
+        // Sign out the newly created user
+        await firebase.auth().signOut();
 
         // ล็อกอินกลับเข้าไปด้วยบัญชี admin
         await firebase.auth().signInWithEmailAndPassword(adminEmail, adminPassword);
         closeModal();
         closeLoadingOverlay();
         await showAlert("เพิ่มผู้ใช้งานสำเร็จ และส่งอีเมลตั้งรหัสผ่านแล้ว", "สำเร็จ");
-         // เพิ่มการเรียกฟังก์ชัน updateUserData เพื่ออัปเดตข้อมูล
-         window.dispatchEvent(new CustomEvent('userUpdated'));
+        // เพิ่มการเรียกฟังก์ชัน updateUserData เพื่ออัปเดตข้อมูล
+        window.dispatchEvent(new CustomEvent('userUpdated'));
 
 
     } catch (error) {
         console.error("Error adding user:", error);
 
         if (error.code === "auth/wrong-password") {
-          await showAlert("รหัสผ่าน admin ไม่ถูกต้อง", "ข้อผิดพลาด");
+            await showAlert("รหัสผ่าน admin ไม่ถูกต้อง", "ข้อผิดพลาด");
             // พยายามขอรหัสผ่านใหม่
             const retryPassword = await showPasswordModal();
             if (retryPassword) {
@@ -180,7 +180,7 @@ async function handleUserSubmit(event) {
         }
 
         if (error.code === "permission-denied") {
-          await showAlert("ไม่มีสิทธิ์ในการเพิ่มผู้ใช้ กรุณาล็อกอินใหม่", "ข้อผิดพลาด");
+            await showAlert("ไม่มีสิทธิ์ในการเพิ่มผู้ใช้ กรุณาล็อกอินใหม่", "ข้อผิดพลาด");
             await firebase.auth().signOut();
             window.location.href = "login.html";
             return;
@@ -193,13 +193,13 @@ async function handleUserSubmit(event) {
 async function toggleUserApproval(userId, approve) {
     showLoadingOverlay("กำลังดำเนินการ...");
     try {
-      await firebase.firestore().collection("users").doc(userId).update({
-        isApproved: approve,
-      });
-      closeLoadingOverlay();
-      await window.dispatchEvent(new CustomEvent('userUpdated'));
+        await firebase.firestore().collection("users").doc(userId).update({
+            isApproved: approve,
+        });
+        closeLoadingOverlay();
+        await window.dispatchEvent(new CustomEvent('userUpdated'));
         await showAlertModal(
-        approve ? "อนุมัติผู้ใช้งานสำเร็จ" : "ไม่อนุมัติบัญชีผู้ใช้งาน"
+            approve ? "อนุมัติผู้ใช้งานสำเร็จ" : "ไม่อนุมัติบัญชีผู้ใช้งาน"
         );
     } catch (error) {
         console.error("Error toggling user approval:", error);
@@ -212,7 +212,7 @@ async function toggleUserApproval(userId, approve) {
 
 async function approveUser(userId) {
     try {
-      const userRef = firebase.firestore().collection("users").doc(userId);
+        const userRef = firebase.firestore().collection("users").doc(userId);
 
         await userRef.update({
             isApproved: true,
@@ -252,22 +252,6 @@ async function editUser(userId) {
     }
 }
 
-// เพิ่มฟังก์ชันอนุมัติผู้ใช้
-// async function approveUser(userId) {
-//     try {
-//         await firebase.firestore().collection("users").doc(userId).update({
-//             isApproved: true,
-//             status: "active",
-//             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-//         });
-
-//         await loadUsers();
-//         alert("อนุมัติผู้ใช้งานสำเร็จ");
-//     } catch (error) {
-//         console.error("Error approving user:", error);
-//         alert("เกิดข้อผิดพลาดในการอนุมัติผู้ใช้งาน: " + error.message);
-//     }
-// }
 
 async function handleEditSubmit(event, userId) {
     event.preventDefault();
@@ -286,23 +270,23 @@ async function handleEditSubmit(event, userId) {
         await showAlert("อัปเดตข้อมูลผู้ใช้สำเร็จ", "สำเร็จ");
     } catch (error) {
         console.error("Error updating user:", error);
-      await showAlert("เกิดข้อผิดพลาดในการอัปเดตข้อมูลผู้ใช้", "ข้อผิดพลาด");
+        await showAlert("เกิดข้อผิดพลาดในการอัปเดตข้อมูลผู้ใช้", "ข้อผิดพลาด");
     }
 }
 
 async function deleteUser(userId) {
     if (confirm("คุณแน่ใจหรือไม่ที่จะลบผู้ใช้งานนี้?")) {
         try {
-          showLoadingOverlay("กำลังลบผู้ใช้งาน...");
+            showLoadingOverlay("กำลังลบผู้ใช้งาน...");
             // 1. ลบผู้ใช้จาก Firestore
             await firebase.firestore().collection("users").doc(userId).delete();
-           await window.dispatchEvent(new CustomEvent('userUpdated'));
+            await window.dispatchEvent(new CustomEvent('userUpdated'));
             closeLoadingOverlay();
             await showAlert("ลบผู้ใช้งานสำเร็จ", "สำเร็จ");
         } catch (error) {
             console.error("Error deleting user:", error);
             closeLoadingOverlay();
-          await showAlert("เกิดข้อผิดพลาด: " + error.message, "ข้อผิดพลาด");
+            await showAlert("เกิดข้อผิดพลาด: " + error.message, "ข้อผิดพลาด");
         }
     }
 }

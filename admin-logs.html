@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyfence - Admin Logs</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         :root {
             --primary: #FDB813;
@@ -14,6 +16,8 @@
             --secondary: #404040;
             --accent: #2D2D2D;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease-in-out;
+            font-size: 10px;
         }
 
         * {
@@ -24,7 +28,36 @@
         }
 
         body {
-            background: #f5f5f5;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%);
+        }
+
+
+         #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .header {
@@ -38,12 +71,7 @@
         .logo {
             height: 40px;
             margin-right: 2rem;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
+              transition: transform 0.3s ease;
         }
 
         .admin-title {
@@ -72,21 +100,34 @@
             background: #f0f0f0;
             color: var(--secondary);
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+             padding: 0.75rem 1.5rem;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+              transition: var(--transition);
+        }
+         .nav-btn:hover {
+            background: #e0e0e0;
+              transform: translateY(-1px);
         }
 
         .logout-btn {
             background: #ff4444;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+             padding: 0.75rem 1.5rem;
+            border-radius: 8px;
             cursor: pointer;
+            transition: var(--transition);
+        }
+        .logout-btn:hover {
+           background: #cc0000;
+             transform: translateY(-1px);
         }
 
+        .container {
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
 
         .filters-container {
             background: white;
@@ -97,11 +138,11 @@
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
+            transition: var(--transition);
         }
 
         .filter-group {
             flex: 1 1 200px;
-            /* Allow items to wrap */
         }
 
         .filter-group label {
@@ -126,6 +167,8 @@
             background: white;
             border-radius: 8px;
             box-shadow: var(--shadow);
+             transition: var(--transition);
+            overflow-x: auto; /* Make table scrollable */
         }
 
         .logs-table th,
@@ -134,8 +177,14 @@
             text-align: left;
             border-bottom: 1px solid #eee;
             vertical-align: top;
-            /* Align text to the top */
+            transition: background-color 0.2s ease;
+             white-space: nowrap;
+
         }
+          .logs-table tbody tr:hover td {
+            background-color: #f9f9f9;
+        }
+
 
         .logs-table th {
             background: #f8f8f8;
@@ -158,8 +207,7 @@
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
-
+            transition: var(--transition);
         }
 
         .page-btn.active {
@@ -174,7 +222,7 @@
             font-weight: bold;
         }
 
-        .loading-overlay {
+          .loading-overlay {
             display: none;
             position: fixed;
             inset: 0;
@@ -207,89 +255,163 @@
             }
         }
 
-        .log-details {
+          .log-details {
             white-space: pre-wrap;
             word-wrap: break-word;
             overflow-wrap: break-word;
             max-width: 350px;
-            /* Set your preferred max-width */
 
+        }
+        .log-details.collapsed {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .log-details-button {
+            background: #f0f0f0;
+            color: var(--secondary);
+            border: none;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+              transition: var(--transition);
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+        .log-details-button:hover {
+            background: #e0e0e0;
+        }
+           .alert-message {
+            margin: 1rem 0;
+            line-height: 1.5;
+             color: var(--secondary);
+        }
+         .modal {
+           display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+             z-index: 1002;
+              animation: fadeIn 0.3s ease forwards;
+        }
+            .modal.hide {
+            animation: fadeOut 0.3s ease forwards;
+        }
+
+         @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p id="loadingMessage">กำลังโหลดข้อมูล...</p>
-        </div>
-    </div>
-    <div class="header">
-        <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
-            alt="Cyfence Logo" class="logo">
-        <div class="user-container">
-            <span class="user-name" id="userDisplayName">Loading...</span>
-            <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
-            <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
-        </div>
+      <div id="loadingScreen">
+        <div class="spinner"></div>
+        <div id="loadingMessage">กำลังตรวจสอบสิทธิ์...</div>
     </div>
 
-    <div class="container">
-        <div class="filters-container">
-            <div class="filter-group">
-                <label for="startDate">จากวันที่</label>
-                <input type="date" id="startDate">
+    <div id="mainContent" style="display: none">
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p id="loadingMessage">กำลังโหลดข้อมูล...</p>
             </div>
-            <div class="filter-group">
-                <label for="endDate">ถึงวันที่</label>
-                <input type="date" id="endDate">
+        </div>
+        <div class="header">
+            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+                alt="Cyfence Logo" class="logo">
+             <h1 class="admin-title">บันทึกกิจกรรม</h1>
+            <div class="user-container">
+                <span class="user-name" id="userDisplayName">Loading...</span>
+                <button onclick="window.location.href='admin.html'" class="nav-btn">กลับหน้าแอดมิน</button>
+                <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
             </div>
-            <div class="filter-group">
-                <label for="userFilter">ผู้ใช้งาน</label>
-                <select id="userFilter">
-                    <option value="">ทั้งหมด</option>
-
-                </select>
+        </div>
+        <div id="alertModal" class="modal">
+            <div class="modal-content">
+                <h3 id="alertTitle">แจ้งเตือน</h3>
+                <p id="alertMessage" class="alert-message"></p>
+                <div class="modal-buttons">
+                    <button type="button" class="save-btn" onclick="closeAlertModal()">ตกลง</button>
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="actionFilter">การกระทำ</label>
-                <select id="actionFilter">
-                    <option value="">ทั้งหมด</option>
-                    <option value="login">เข้าสู่ระบบ</option>
-                    <option value="logout">ออกจากระบบ</option>
-                    <option value="page_access">เข้าถึงหน้า</option>
-                    <option value="add_user">เพิ่มผู้ใช้งาน</option>
-                    <option value="delete_user">ลบผู้ใช้งาน</option>
-                    <option value="edit_user">แก้ไขผู้ใช้งาน</option>
-                    <option value="create_post">สร้างประกาศ</option>
-                    <option value="delete_post">ลบประกาศ</option>
-                    <option value="update_following">แก้ไข Following</option>
-                    <option value="access_menu">เข้าเมนู</option>
-                </select>
-            </div>
-            <button onclick="applyFilters()"
-                style=" margin-top: 20px; padding: 10px 20px; background: #FDB813; border: none; border-radius: 4px; color: black; font-weight: 600; cursor: pointer; transition: all 0.3s;">กรองข้อมูล</button>
-            <button onclick="resetFilters()"
-                style=" margin-top: 20px; padding: 10px 20px; background: #ddd; border: none; border-radius: 4px; color: #404040; font-weight: 600; cursor: pointer; transition: all 0.3s;">รีเซ็ต</button>
         </div>
 
-        <table class="logs-table">
-            <thead>
-                <tr>
-                    <th>เวลา</th>
-                    <th>ผู้ใช้งาน</th>
-                    <th>การกระทำ</th>
-                    <th>รายละเอียด</th>
-                    <th>อุปกรณ์</th>
-                </tr>
-            </thead>
-            <tbody id="logsTableBody">
-            </tbody>
-        </table>
+        <div class="container">
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="startDate">จากวันที่</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-group">
+                    <label for="endDate">ถึงวันที่</label>
+                    <input type="date" id="endDate">
+                </div>
+                <div class="filter-group">
+                    <label for="userFilter">ผู้ใช้งาน</label>
+                    <select id="userFilter">
+                        <option value="">ทั้งหมด</option>
 
-        <div class="pagination" id="pagination">
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="actionFilter">การกระทำ</label>
+                    <select id="actionFilter">
+                        <option value="">ทั้งหมด</option>
+                        <option value="login">เข้าสู่ระบบ</option>
+                        <option value="logout">ออกจากระบบ</option>
+                        <option value="page_access">เข้าถึงหน้า</option>
+                        <option value="add_user">เพิ่มผู้ใช้งาน</option>
+                        <option value="delete_user">ลบผู้ใช้งาน</option>
+                        <option value="edit_user">แก้ไขผู้ใช้งาน</option>
+                        <option value="create_post">สร้างประกาศ</option>
+                        <option value="delete_post">ลบประกาศ</option>
+                        <option value="update_following">แก้ไข Following</option>
+                         <option value="access_menu">เข้าเมนู</option>
+                    </select>
+                </div>
+                <button onclick="applyFilters()"
+                    style=" margin-top: 20px; padding: 10px 20px; background: #FDB813; border: none; border-radius: 4px; color: black; font-weight: 600; cursor: pointer; transition: all 0.3s;">กรองข้อมูล</button>
+                <button onclick="resetFilters()"
+                    style=" margin-top: 20px; padding: 10px 20px; background: #ddd; border: none; border-radius: 4px; color: #404040; font-weight: 600; cursor: pointer; transition: all 0.3s;">รีเซ็ต</button>
+            </div>
 
+            <table class="logs-table">
+                <thead>
+                    <tr>
+                        <th>เวลา</th>
+                        <th>ผู้ใช้งาน</th>
+                        <th>การกระทำ</th>
+                        <th>รายละเอียด</th>
+                         <th>อุปกรณ์</th>
+                    </tr>
+                </thead>
+                <tbody id="logsTableBody">
+                </tbody>
+            </table>
+
+            <div class="pagination" id="pagination">
+
+            </div>
         </div>
     </div>
 
@@ -299,11 +421,12 @@
     <script src="firebase-config.js"></script>
     <script>
         // ตัวแปรสำหรับการแบ่งหน้า
-        const LOGS_PER_PAGE = 15;
+        const LOGS_PER_PAGE = 30;
         let currentPage = 1;
         let totalPages = 1;
         let allLogs = [];
         let lastVisible = null;
+        let filters = {};
 
         function showLoadingOverlay(message) {
             document.getElementById('loadingOverlay').style.display = 'flex';
@@ -313,6 +436,38 @@
         function closeLoadingOverlay() {
             document.getElementById('loadingOverlay').style.display = 'none';
         }
+         function showLoading() {
+            document.getElementById("loadingScreen").style.display = "flex";
+        }
+
+         function hideLoading() {
+            document.getElementById("loadingScreen").style.display = "none";
+        }
+        // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
+        function showAlertModal(message) {
+            document.getElementById("alertMessage").textContent = message;
+            document.getElementById("alertModal").style.display = "flex";
+        }
+
+        function closeAlertModal() {
+            document.getElementById("alertModal").style.display = "none";
+        }
+
+        // แก้ไขฟังก์ชัน showAlert
+        async function showAlert(message, title = "แจ้งเตือน") {
+            return new Promise((resolve) => {
+                document.getElementById("alertTitle").textContent = title;
+                document.getElementById("alertMessage").textContent = message;
+                document.getElementById("alertModal").style.display = "flex";
+                document.getElementById("alertModal").onclick = (e) => {
+                    if (e.target === document.getElementById("alertModal")) {
+                        closeAlertModal();
+                        resolve();
+                    }
+                };
+            });
+        }
+
 
         async function loadUsers() {
             const userFilter = document.getElementById('userFilter');
@@ -328,7 +483,7 @@
                 });
             } catch (error) {
                 console.error('Error loading users:', error);
-                alert('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้');
+               await showAlert('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้', "ข้อผิดพลาด");
             } finally {
                 closeLoadingOverlay();
             }
@@ -336,7 +491,7 @@
 
         // ฟังชันก์ loadLogs
         async function loadLogs(page = 1, filters = {}) {
-            showLoadingOverlay('กำลังโหลดข้อมูล Log...');
+             showLoadingOverlay('กำลังโหลดข้อมูล Log...');
             const logsTableBody = document.getElementById('logsTableBody');
             const startDate = filters.startDate ? new Date(filters.startDate) : null;
             const endDate = filters.endDate ? new Date(filters.endDate) : null;
@@ -363,8 +518,9 @@
 
                 const snapshot = await query.get();
 
-                allLogs = snapshot.docs;
+                 allLogs = snapshot.docs;
                 totalPages = Math.ceil(allLogs.length / LOGS_PER_PAGE);
+
                 let paginatedDocs = [];
                 if (page === 1) {
                     paginatedDocs = snapshot.docs.slice(0, LOGS_PER_PAGE);
@@ -374,15 +530,20 @@
                     const end = start + LOGS_PER_PAGE;
                     paginatedDocs = snapshot.docs.slice(start, end);
                 }
+
+
                 logsTableBody.innerHTML = '';
 
                 paginatedDocs.forEach(doc => {
                     const log = doc.data();
                     const timestamp = log.timestamp ? log.timestamp.toDate() : new Date();
-                    let details = log.details;
-                    if (typeof details === 'object') {
+                     let details = log.details;
+                      if (typeof details === 'object') {
                         details = JSON.stringify(details, null, 2);
                     }
+                      const detailsHTML = `<div class="log-details collapsed" id="details-${doc.id}">${details || 'ไม่มี'}</div>`;
+
+                       const buttonHTML =  details &&  details.length > 300 ? `<button class="log-details-button" onclick="toggleDetails('details-${doc.id}')">ดูเพิ่มเติม</button>` : "";
 
 
                     const row = document.createElement('tr');
@@ -390,67 +551,72 @@
                         <td style="white-space: nowrap;">${timestamp.toLocaleString()}</td>
                         <td>${log.userId || 'ไม่ระบุ'}</td>
                         <td>${log.action || 'ไม่ระบุ'}</td>
-                         <td class="log-details">${details || 'ไม่มี'}</td>
+                         <td>${detailsHTML}${buttonHTML}</td>
                           <td style="white-space: nowrap;">${log.userAgent || 'ไม่ระบุ'}</td>
                        `;
                     logsTableBody.appendChild(row);
 
-                    if (isSuspiciousLog(log)) {
-                        row.classList.add('anomaly');
-                    }
+                     if (isSuspiciousLog(log)) {
+                         row.classList.add('anomaly');
+                     }
+
                 });
 
                 currentPage = page;
                 updatePagination();
             } catch (error) {
                 console.error('Error loading logs:', error);
-                alert('เกิดข้อผิดพลาดในการโหลด Log');
+                 await showAlert("เกิดข้อผิดพลาดในการโหลด Log", "ข้อผิดพลาด");
             } finally {
                 closeLoadingOverlay();
             }
         }
-        function isSuspiciousLog(log) {
-            const isLoginLogout = log.action === 'login' || log.action === 'logout';
-            if (isLoginLogout && log.userAgent.includes("headless")) {
-                return true;
-            }
+         function isSuspiciousLog(log) {
+             const isLoginLogout = log.action === 'login' || log.action === 'logout';
+            if (isLoginLogout && log.userAgent && log.userAgent.includes("headless")) {
+                 return true;
+             }
 
-            const pageAccess = log.action === 'page_access';
-            if (pageAccess && log.details && log.details.includes("admin")) {
-                return true;
-            }
+             const pageAccess = log.action === 'page_access';
+            if (pageAccess && log.details && typeof log.details === 'string' && log.details.includes("admin")) {
+                 return true;
+             }
 
             const addUser = log.action === 'add_user';
-            if (addUser && log.userAgent.includes("headless")) {
-                return true;
+            if (addUser && log.userAgent && log.userAgent.includes("headless")) {
+                 return true;
             }
-            const deleteUser = log.action === 'delete_user';
-            if (deleteUser && log.userAgent.includes("headless")) {
-                return true;
-            }
-            const editUser = log.action === 'edit_user';
-            if (editUser && log.userAgent.includes("headless")) {
-                return true;
-            }
-            const createPost = log.action === 'create_post';
-            if (createPost && log.userAgent.includes("headless")) {
-                return true;
-            }
-            const deletePost = log.action === 'delete_post';
-            if (deletePost && log.userAgent.includes("headless")) {
-                return true;
-            }
-            const updateFollowing = log.action === 'update_following';
-            if (updateFollowing && log.userAgent.includes("headless")) {
-                return true;
-            }
-            const accessMenu = log.action === 'access_menu';
-            if (accessMenu && log.userAgent.includes("headless")) {
+             const deleteUser = log.action === 'delete_user';
+            if (deleteUser && log.userAgent && log.userAgent.includes("headless")) {
+               return true;
+           }
+           const editUser = log.action === 'edit_user';
+            if (editUser && log.userAgent && log.userAgent.includes("headless")) {
+              return true;
+           }
+           const createPost = log.action === 'create_post';
+           if (createPost && log.userAgent && log.userAgent.includes("headless")) {
+               return true;
+           }
+           const deletePost = log.action === 'delete_post';
+           if (deletePost && log.userAgent && log.userAgent.includes("headless")) {
+               return true;
+           }
+           const updateFollowing = log.action === 'update_following';
+           if (updateFollowing && log.userAgent && log.userAgent.includes("headless")) {
+              return true;
+           }
+             const accessMenu = log.action === 'access_menu';
+            if (accessMenu && log.userAgent && log.userAgent.includes("headless")) {
                 return true;
             }
             return false;
-        }
+         }
 
+        function toggleDetails(detailsId) {
+             const detailsDiv = document.getElementById(detailsId);
+           detailsDiv.classList.toggle('collapsed');
+        }
         function updatePagination() {
             const pagination = document.getElementById('pagination');
             pagination.innerHTML = '';
@@ -459,8 +625,8 @@
                 const prevBtn = document.createElement('button');
                 prevBtn.className = 'page-btn';
                 prevBtn.textContent = 'ก่อนหน้า';
-                prevBtn.onclick = () => {
-                    loadLogs(currentPage - 1, filters);
+                 prevBtn.onclick = () => {
+                loadLogs(currentPage - 1, filters);
                 };
                 pagination.appendChild(prevBtn);
             }
@@ -469,7 +635,7 @@
                 pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
                 pageBtn.textContent = i;
                 pageBtn.onclick = () => {
-                    loadLogs(i, filters);
+                   loadLogs(i, filters);
                 };
                 pagination.appendChild(pageBtn);
             }
@@ -477,13 +643,13 @@
                 const nextBtn = document.createElement('button');
                 nextBtn.className = 'page-btn';
                 nextBtn.textContent = 'ถัดไป';
-                nextBtn.onclick = () => {
-                    loadLogs(currentPage + 1, filters);
+                  nextBtn.onclick = () => {
+                     loadLogs(currentPage + 1, filters);
                 };
                 pagination.appendChild(nextBtn);
             }
         }
-        let filters = {};
+
         function applyFilters() {
             filters = {
                 startDate: document.getElementById('startDate').value,
@@ -493,6 +659,7 @@
             };
             loadLogs(1, filters);
         }
+
         function resetFilters() {
             document.getElementById('startDate').value = '';
             document.getElementById('endDate').value = '';
@@ -518,8 +685,15 @@
                         displayElement.textContent = user.email;
                     }
 
-                    loadUsers();
-                    loadLogs();
+                        const hasAccess = await checkAdminAccess();
+                        if (hasAccess) {
+                            document.getElementById("loadingScreen").style.display = "none";
+                            document.getElementById("mainContent").style.display = "block";
+                         loadUsers();
+                         loadLogs();
+                         }
+
+
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                 }
@@ -531,6 +705,43 @@
                 .then(() => window.location.href = 'login.html')
                 .catch(error => console.error('Logout error:', error));
         }
+            // แก้ไขฟังก์ชัน checkAdminAccess
+        async function checkAdminAccess() {
+            return new Promise((resolve) => {
+                const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+                    if (!user) {
+                        window.location.href = "login.html";
+                        resolve(false);
+                        return;
+                    }
+
+                    try {
+                        const userDoc = await firebase.firestore().collection("users").doc(user.uid).get();
+                        const userData = userDoc.data();
+
+                        if (!userData || userData.role !== "admin") {
+                            await showAlert("คุณไม่มีสิทธิ์เข้าถึงหน้านี้", "ข้อผิดพลาด");
+                            window.location.href = "dashboard.html";
+                             resolve(false);
+                            return;
+                        }
+                        resolve(true)
+                    } catch (error) {
+                        console.error("Error checking admin access:", error);
+                         resolve(false);
+                    }
+                    unsubscribe();
+                });
+            });
+        }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const hasAccess = await checkAdminAccess();
+        if (hasAccess) {
+            document.getElementById("loadingScreen").style.display = "none";
+            document.getElementById("mainContent").style.display = "block";
+        }
+});
     </script>
 </body>
 
