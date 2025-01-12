@@ -86,109 +86,101 @@ async function showAlert(message, title = "แจ้งเตือน") {
 // แก้ไขฟังก์ชัน handleUserSubmit ให้เป็น async
 async function handleUserSubmit(event) {
     event.preventDefault();
-
+  
     const email = document.getElementById("email").value;
     const displayName = document.getElementById("displayName").value;
     const role = document.getElementById("role").value;
     const status = document.getElementById("status").value;
-
+  
     try {
-        // เก็บข้อมูล admin user ไว้ก่อน
-        const adminUser = firebase.auth().currentUser;
-        let adminEmail = adminUser.email;
-        let adminPassword;
-
-        // ขอรหัสผ่านผ่าน modal
-        while (true) {
-            adminPassword = await showPasswordModal();
-
-            if (!adminPassword) {
-                await showAlert("กรุณากรอกรหัสผ่านเพื่อดำเนินการต่อ");
-                return;
-            }
-            showLoadingOverlay("กำลังตรวจสอบรหัสผ่าน Admin...")
-            try {
-                await firebase.auth().signInWithEmailAndPassword(adminEmail, adminPassword);
-                closeLoadingOverlay();
-                break;
-            } catch (error) {
-                closeLoadingOverlay()
-                if (error.code === "auth/invalid-credential") {
-                    await showAlert("รหัสผ่าน Admin ไม่ถูกต้อง กรุณาลองอีกครั้ง", "ข้อผิดพลาด");
-                    continue
-                } else {
-                    throw error
-                }
-            }
+      // เก็บข้อมูล admin user ไว้ก่อน
+      const adminUser = firebase.auth().currentUser;
+      let adminEmail = adminUser.email;
+      let adminPassword;
+  
+      // ขอรหัสผ่านผ่าน modal
+      while (true) {
+        adminPassword = await showPasswordModal();
+  
+        if (!adminPassword) {
+          await showAlert("กรุณากรอกรหัสผ่านเพื่อดำเนินการต่อ");
+          return;
         }
-
-
-
-        showLoadingOverlay("กำลังเพิ่มผู้ใช้งาน...");
-        // สร้าง user ใหม่
-        const userCredential = await firebase
-            .auth()
-            .createUserWithEmailAndPassword(
-                email,
-                Math.random().toString(36).slice(-8)
-            );
-        const userId = userCredential.user.uid;
-
-        // ส่งอีเมลรีเซ็ตรหัสผ่าน
-        await firebase.auth().sendPasswordResetEmail(email);
-
-        // เพิ่มข้อมูลใน Firestore
-        await firebase.firestore().collection("users").doc(userId).set({
-            email,
-            displayName,
-            role,
-            status,
-            isApproved: false,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-        // Sign out the newly created user
-        await firebase.auth().signOut();
-
-        // ล็อกอินกลับเข้าไปด้วยบัญชี admin
-        await firebase.auth().signInWithEmailAndPassword(adminEmail, adminPassword);
-        closeModal();
-        closeLoadingOverlay();
-        await showAlert("เพิ่มผู้ใช้งานสำเร็จ และส่งอีเมลตั้งรหัสผ่านแล้ว", "สำเร็จ");
-        // เพิ่มการเรียกฟังก์ชัน updateUserData เพื่ออัปเดตข้อมูล
-        window.dispatchEvent(new CustomEvent('userUpdated'));
-
-
+        showLoadingOverlay("กำลังตรวจสอบรหัสผ่าน Admin...");
+        try {
+          await firebase.auth().signInWithEmailAndPassword(adminEmail, adminPassword);
+          closeLoadingOverlay();
+          break;
+        } catch (error) {
+          closeLoadingOverlay();
+          if (error.code === "auth/invalid-credential") {
+            await showAlert("รหัสผ่าน Admin ไม่ถูกต้อง กรุณาลองอีกครั้ง", "ข้อผิดพลาด");
+            continue;
+          } else {
+            throw error;
+          }
+        }
+      }
+  
+      showLoadingOverlay("กำลังเพิ่มผู้ใช้งาน...");
+      // สร้าง user ใหม่
+      const userCredential = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, Math.random().toString(36).slice(-8));
+      const userId = userCredential.user.uid;
+  
+      // ส่งอีเมลรีเซ็ตรหัสผ่าน
+      await firebase.auth().sendPasswordResetEmail(email);
+  
+      // เพิ่มข้อมูลใน Firestore
+      await firebase.firestore().collection("users").doc(userId).set({
+        email,
+        displayName,
+        role,
+        status,
+        isApproved: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+  
+        // Sign in admin กลับ
+      await firebase.auth().signInWithEmailAndPassword(adminEmail, adminPassword);
+  
+      closeModal();
+      closeLoadingOverlay();
+      await showAlert("เพิ่มผู้ใช้งานสำเร็จ และส่งอีเมลตั้งรหัสผ่านแล้ว", "สำเร็จ");
+      // เพิ่มการเรียกฟังก์ชัน updateUserData เพื่ออัปเดตข้อมูล
+      window.dispatchEvent(new CustomEvent("userUpdated"));
     } catch (error) {
-        console.error("Error adding user:", error);
-
-        if (error.code === "auth/wrong-password") {
-            await showAlert("รหัสผ่าน admin ไม่ถูกต้อง", "ข้อผิดพลาด");
-            // พยายามขอรหัสผ่านใหม่
-            const retryPassword = await showPasswordModal();
-            if (retryPassword) {
-                try {
-                    await firebase
-                        .auth()
-                        .signInWithEmailAndPassword(adminEmail, retryPassword);
-                } catch (retryError) {
-                    await showAlert("ไม่สามารถล็อกอินกลับได้ กรุณาล็อกอินใหม่", "ข้อผิดพลาด");
-                    window.location.href = "login.html";
-                }
-            }
-            return;
-        }
-
-        if (error.code === "permission-denied") {
-            await showAlert("ไม่มีสิทธิ์ในการเพิ่มผู้ใช้ กรุณาล็อกอินใหม่", "ข้อผิดพลาด");
-            await firebase.auth().signOut();
+      console.error("Error adding user:", error);
+  
+      if (error.code === "auth/wrong-password") {
+        await showAlert("รหัสผ่าน admin ไม่ถูกต้อง", "ข้อผิดพลาด");
+        // พยายามขอรหัสผ่านใหม่
+        const retryPassword = await showPasswordModal();
+        if (retryPassword) {
+          try {
+            await firebase
+              .auth()
+              .signInWithEmailAndPassword(adminEmail, retryPassword);
+          } catch (retryError) {
+            await showAlert("ไม่สามารถล็อกอินกลับได้ กรุณาล็อกอินใหม่", "ข้อผิดพลาด");
             window.location.href = "login.html";
-            return;
+          }
         }
-
-        await showAlert("เกิดข้อผิดพลาด: " + error.message, "ข้อผิดพลาด");
+        return;
+      }
+  
+      if (error.code === "permission-denied") {
+        await showAlert("ไม่มีสิทธิ์ในการเพิ่มผู้ใช้ กรุณาล็อกอินใหม่", "ข้อผิดพลาด");
+        await firebase.auth().signOut();
+        window.location.href = "login.html";
+        return;
+      }
+  
+      await showAlert("เกิดข้อผิดพลาด: " + error.message, "ข้อผิดพลาด");
     }
-}
+  }
 
 async function toggleUserApproval(userId, approve) {
     showLoadingOverlay("กำลังดำเนินการ...");

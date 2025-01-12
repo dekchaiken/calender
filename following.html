@@ -7,7 +7,6 @@
     <title>Cyfence - Following Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/components.css" />
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"> -->
     <style>
         :root {
             --primary: #fdb813;
@@ -292,6 +291,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 15px;
         }
 
         #dropZone:hover {
@@ -370,7 +370,7 @@
             background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
-            z-index: 10000; /* Ensure the modal is above other elements */
+            z-index: 10000;
         }
 
         .modal-content {
@@ -458,10 +458,7 @@
             border-radius: 4px;
             color: #2d2d2d;
             cursor: pointer;
-            /* Add cursor pointer */
         }
-
-
 
         .company-group-title {
             margin: 0;
@@ -544,12 +541,107 @@
         }
     </style>
     <style>
-        /* Slide-out panel styles */
+        #reportModal {
+             display: none;
+              position: fixed;
+              inset: 0;
+             background: rgba(0, 0, 0, 0.5);
+              align-items: center;
+             justify-content: center;
+              z-index: 10001;
+          }
+          #reportModal .modal-content {
+                background: white;
+              padding: 2rem;
+               border-radius: 8px;
+                width: 90%;
+               max-width: 800px;
+             max-height: 90%;
+              overflow-y: auto;
+          }
+          #reportModal .form-group {
+               margin-bottom: 1.5rem;
+          }
+           #reportModal label {
+               display: block;
+             margin-bottom: 0.5rem;
+               font-weight: 600;
+         }
+  
+          #reportModal input[type="text"],
+           #reportModal textarea {
+             width: 100%;
+              padding: 0.75rem;
+               border: 1px solid #ddd;
+              border-radius: 4px;
+             font-size: 1rem;
+              font-family: 'Noto Sans Thai', sans-serif;
+          }
+  
+          #reportModal textarea {
+               height: 150px;
+         }
+          #reportModal button {
+               background: var(--primary);
+             color: var(--accent);
+              padding: 0.75rem 1.5rem;
+              border: none;
+               border-radius: 4px;
+              cursor: pointer;
+             transition: all 0.3s, transform 0.2s;
+          }
+  
+          #reportModal button:hover {
+             background: var(--primary-dark);
+             transform: translateY(-1px);
+          }
+  
+           #togglePanelButtonReport {
+             position: fixed;
+              right: 50px;
+              bottom: 5px;
+              padding: 0.75rem;
+              background: var(--primary);
+               color: var(--accent);
+              border: none;
+              border-radius: 50%;
+             cursor: pointer;
+              transition: all 0.3s ease, transform 0.2s ease;
+               z-index: 1002;
+              box-shadow: 0 2px 4px rgba(253, 184, 19, 0.4);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 50px;
+              height: 50px;
+              border: 2px solid #fff;
+              font-weight: bold;
+          }
+         #togglePanelButtonReport::before {
+               content: "กดเพื่อแจ้งปัญหา";
+               position: absolute;
+              bottom: calc(100% + 10px);
+              left: 50%;
+              transform: translateX(-50%);
+               background-color: #2d2d2d;
+              color: white;
+             padding: 2px 6px;
+               border-radius: 4px;
+             font-size: 12px;
+              white-space: nowrap;
+               pointer-events: none;
+          }
+          #togglePanelButtonReport:hover {
+             background: var(--primary-dark);
+               transform: translateY(-1%) translateY(-1px);
+              box-shadow: 0 4px 6px rgba(253, 184, 19, 0.6);
+          }
+      </style>
+    <style>
         #slideOutPanel {
             position: fixed;
             top: 0;
             left: -50%;
-            /* Start off-screen */
             width: 50%;
             height: 100%;
             background: white;
@@ -574,23 +666,17 @@
             color: var(--accent);
             border: none;
             border-radius: 50%;
-            /* Make it a circle */
             cursor: pointer;
             transition: all 0.3s ease, transform 0.2s ease;
             z-index: 1002;
             box-shadow: 0 2px 4px rgba(253, 184, 19, 0.4);
-            /* Added shadow */
             display: flex;
-            /* Use flexbox for centering */
             align-items: center;
             justify-content: center;
             width: 50px;
-            /* Set width and height */
             height: 50px;
-            /* Add styles for distinctive button */
             border: 2px solid #fff;
             font-weight: bold;
-            /* For absolute positioning of the text */
         }
 
         #togglePanelButton::before {
@@ -606,14 +692,11 @@
             font-size: 12px;
             white-space: nowrap;
             pointer-events: none;
-
         }
 
-
         #togglePanelButton.open {
-            left: calc(93% + 10px);
+            left: calc(193% + 10px);
             transform: translateY(-50%) rotate(180deg);
-            /* Rotate when open */
         }
 
         #togglePanelButton:hover {
@@ -682,28 +765,21 @@
             padding-left: 10px;
         }
 
-        /* Date input style */
         .form-group {
-            display: flex;
             align-items: center;
             gap: 10px;
-            /* Space between label and input */
             width: 100%;
-            /* Occupy available space */
         }
 
         .form-group label {
             flex: 1;
-            /* Label takes available space */
             cursor: pointer;
         }
 
         .form-group input[type="date"] {
             flex: 2;
-            /* Date input takes remaining space */
         }
 
-        /* Spotlight */
         #spotlight {
             display: none;
             position: fixed;
@@ -711,7 +787,6 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 1003;
             pointer-events: none;
-            /* Important! Allow clicks through the spotlight */
         }
 
         #spotlight.active {
@@ -725,11 +800,63 @@
             background: rgba(0, 0, 0, 0);
             border-radius: 50%;
             border: 4px solid #fff;
-            /* Add white border */
             transition: transform 0.2s ease-out;
             pointer-events: none;
-            /* Allow clicks through the inner circle */
+        }
 
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 150px;
+            background-color: #2d2d2d;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 10001;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #2d2d2d transparent transparent transparent;
+        }
+        .help-btn {
+            background: var(--primary);
+            color: var(--accent);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            padding: 8px 16px;
+             margin-right: 10px;
+
+         }
+         .help-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -781,7 +908,7 @@
                         <span id="userRole" style="font-size: 0.8rem; color: #888"></span>
                     </div>
                 </div>
-                <button onclick="window.location.href='dashboard.html'" class="nav-btn">
+                 <button onclick="window.location.href='dashboard.html'" class="nav-btn">
                     กลับหน้าหลัก
                 </button>
                 <button id="customerManagementBtn" onclick="window.location.href='customer-management.html'"
@@ -791,43 +918,27 @@
                 <button onclick="logout()" class="logout-btn">ออกจากระบบ</button>
             </div>
         </div>
-        <div id="appContainer">
-            <div id="mainContentContainer" class="open">
-                <div class="container">
-                    <div class="card">
-                        <h2>Template สำหรับบริษัทที่เลือก</h2>
-                        <div style="
-                                margin-bottom: 1rem;
-                                display: flex;
-                                align-items: center;
-                                gap: 1rem;
-                                ">
-                            <input type="radio" id="lineTemplate" name="templateType" value="line" checked />
-                            <label for="lineTemplate" style="cursor: pointer">Line Template</label>
-                            <input type="radio" id="emailTemplate" name="templateType" value="email" />
-                            <label for="emailTemplate" style="cursor: pointer">Email Template</label>
-                        </div>
-                        <div id="allTemplates" class="preview-area">
-                            <pre><code class="plaintext"> โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...</code></pre>
-                        </div>
-                        <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem">
-                            คัดลอก Template ทั้งหมด
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div id="slideOutPanel" class="open">
-                <div class="slideout-card">
-                    <h2>หมายเหตุและวิธีการใช้งาน</h2>
-                    <div class="info-content" style="background: #f8f8f8; padding: 1rem; border-radius: 8px">
+         <div id="helpModal" class="modal" style="display: none">
+            <div class="modal-content">
+                <h1>คำแนะนำการใช้งาน</h1>
+                   <div class="info-content" style="background: #f8f8f8; padding: 1rem; border-radius: 8px">
                         <h3 style="color: #2d2d2d; margin: 1rem 0 0.5rem">
                             วิธีการใช้งาน:
                         </h3>
                         <ol style="list-style-type: decimal; margin-left: 1.5rem">
+                            <li>กด Icon ล่างซ้ายเข้าเมนู : ย่อ/ขยายการจัดการ Report</li>
                             <li>เลือกวันที่ติดตาม</li>
                             <li>อัพโหลดไฟล์ Excel ที่ต้องการ</li>
-                            <li>เลือกบริษัทที่ต้องการจากรายการ</li>
+                            <li>เลือกบริษัทที่ต้องการจากรายการ และสามารถดูรีวิว Template ได้จากทางขวามือ</li>
                             <li>กดปุ่ม "Export Excel แยกตามบริษัท" เพื่อดาวน์โหลดไฟล์</li>
+                        </ol>
+                        <h3 style="color: #2d2d2d; margin: 1rem 0 0.5rem">
+                            สำหรับ Template จะมีให้เลือก 2 แบบ ได้แก่:
+                        </h3>
+                        <ol style="list-style-type: decimal; margin-left: 1.5rem">
+                            <li>Line Template</li>
+                            <li>Email Template</li>
+
                         </ol>
                         <h3 style="color: #2d2d2d; margin: 1rem 0 0.5rem">
                             การ Export Excel:
@@ -845,9 +956,46 @@
                                 ข้อมูลจะถูกจัดเรียงตามลำดับ: Incident ID, Summary, Customer
                                 และข้อมูลอื่นๆ
                             </li>
+                            <li>กรณีอัพโหลดไฟล์ CSV ระบบจะทำการแปลงข้อมูล Date time ให้ถูกต้อง</li>
                         </ul>
                     </div>
+                <div class="modal-buttons">
+                    <button class="save-btn" onclick="closeHelpModal()">ปิด</button>
                 </div>
+            </div>
+        </div>
+        <div id="appContainer">
+            <div id="mainContentContainer" class="open">
+                <div class="container">
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h2>Template สำหรับบริษัทที่เลือก</h2>
+                            <button class="help-btn tooltip" onclick="showHelpModal()" style="margin-right: 0px; margin-bottom: 10px;">
+                                วิธีใช้งาน
+                                <span class="tooltiptext">คลิกเพื่อดูคำแนะนำ</span>
+                            </button>
+                        </div>
+                        <div style="
+                            margin-bottom: 1rem;
+                            display: flex;
+                            align-items: center;
+                            gap: 1rem;
+                        ">
+                            <input type="radio" id="lineTemplate" name="templateType" value="line" checked />
+                            <label for="lineTemplate" style="cursor: pointer">Line Template</label>
+                            <input type="radio" id="emailTemplate" name="templateType" value="email" />
+                            <label for="emailTemplate" style="cursor: pointer">Email Template</label>
+                        </div>
+                        <div id="allTemplates" class="preview-area">
+                            <pre><code class="plaintext"> โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...</code></pre>
+                        </div>
+                        <button onclick="copyAllTemplates()" class="btn btn-primary" style="margin-top: 1rem">
+                            คัดลอก Template ทั้งหมด
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="slideOutPanel" class="open">
                 <div class="slideout-card">
                     <h2>เลือกวันที่ติดตาม</h2>
                     <div class="form-group">
@@ -858,11 +1006,12 @@
                 </div>
                 <div class="slideout-card">
                     <h2>อัพโหลดไฟล์ Excel</h2>
-                    <div id="dropZone">
-                        คลิกเพื่อเลือกไฟล์ (ห้ามลากไฟล์ อาจทำให้ค้างได้)
-                        <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none" />
-                    </div>
-                    <div id="debug" class="debug-info" style="display: none"></div>
+                        <div id="dropZone">
+                            คลิกเพื่อเลือกไฟล์ (ห้ามลากไฟล์ อาจทำให้ค้างได้)
+                            <input type="file" id="fileInput" accept=".xlsx" style="display: none" />
+                        </div>
+                        <div style="color: red; margin-top: 5px;">*หมายเหตุ: แนบได้เฉพาะไฟล์ .xlsx เท่านั้น</div>
+                        <div id="debug" class="debug-info" style="display: none"></div>
                 </div>
                 <div class="slideout-card">
                     <h2>เลือกบริษัทที่ต้องการกรอง</h2>
@@ -880,6 +1029,27 @@
                     <div id="companyFilters" class="company-filters"></div>
                 </div>
             </div>
+            <div id="reportModal" class="modal">
+                <div class="modal-content">
+                    <h1>แจ้งปัญหาการใช้งาน</h1>
+                     <form id="reportForm">
+                        <div class="form-group">
+                             <label for="title">หัวข้อปัญหา:</label>
+                           <input type="text" id="title" required>
+                        </div>
+                        <div class="form-group">
+                             <label for="description">รายละเอียดปัญหา:</label>
+                            <textarea id="description" required></textarea>
+                       </div>
+                         <button type="submit">ส่งรายงาน</button>
+                    </form>
+                 </div>
+            </div>
+            <button id="togglePanelButtonReport">
+                 <span >
+                      <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc. --><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM344 176L168 352l-40-40 176-176 40 40z"/></svg>
+                   </span>
+            </button>
             <button id="togglePanelButton" class="open">
                 <span class="toggle-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512">
@@ -890,12 +1060,13 @@
             </button>
         </div>
     </div>
-    <div id="copyNotification" style="position: fixed; bottom: 20px; left: 20px; background: #4CAF50; color: white; padding: 10px 20px; border-radius: 4px; display: none;">คัดลอกสำเร็จ!
+    <div id="copyNotification" style="position: fixed; bottom: 20px; left: 20px; background: #4CAF50; color: white; padding:    10px 20px; border-radius: 4px; display: none;">คัดลอกสำเร็จ!
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
          const months = [
             "January",
@@ -921,6 +1092,7 @@
         const spotlight = document.getElementById('spotlight');
         const spotlightInner = document.getElementById('spotlight-inner');
         const copyNotification = document.getElementById('copyNotification');
+        let isCsv = false;
 
 
         // เพิ่มฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
@@ -1317,47 +1489,77 @@
             const file = e.target.files[0];
             handleFileAndLoad(file);
         });
+         function parseCsv(file) {
+            return new Promise((resolve, reject) => {
+                Papa.parse(file, {
+                    header: true,
+                    complete: function(results) {
+                        resolve(results.data);
+                    },
+                     error: function(error) {
+                        reject(error);
+                    }
+                });
+            });
+        }
         async function handleFileAndLoad(file) {
-            showLoadingOverlay("กำลังอ่านไฟล์ Excel...");
-            try {
+        showLoadingOverlay("กำลังอ่านไฟล์...");
+        debugDiv.style.display = "none";
+        try {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            if (fileExtension === 'xlsx') {
+                isCsv = false;
                 const reader = new FileReader();
                 reader.onload = async function (e) {
                     try {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: "array" });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                        excelData = XLSX.utils.sheet_to_json(firstSheet);
-
-                        companies = new Set([
-                            ...new Set(
-                                excelData.map((incident) => getCompanyCode(incident.Customer))
-                            ),
-                            ...new Set(Object.values(companyMappings)),
-                        ]);
-                        selectedCompanies.clear();
-                        selectAllToggle.checked = false;
-                        updateCompanyFilters();
-                        updateAllTemplates();
-                        debugDiv.style.display = "block";
-                        debugDiv.innerHTML = `อ่านข้อมูลสำเร็จ: ${excelData.length} รายการ`;
-
+                        excelData = XLSX.utils.sheet_to_json(firstSheet, { raw: false, dateNF: 'dd/mm/yyyy hh:mm:ss' });
                     } catch (error) {
                         debugDiv.style.display = "block";
                         debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
                     } finally {
-                        closeLoadingOverlay()
+                         if(excelData){
+                                companies = new Set([
+                                   ...new Set(
+                                       excelData.map((incident) => getCompanyCode(incident.Customer))
+                                   ),
+                                   ...new Set(Object.values(companyMappings)),
+                               ]);
+                               selectedCompanies.clear();
+                               selectAllToggle.checked = false;
+                               updateCompanyFilters();
+                               updateAllTemplates();
+                              debugDiv.style.display = "block";
+                             debugDiv.innerHTML = `อ่านข้อมูลสำเร็จ: ${excelData.length} รายการ`;
+                           }
+                         closeLoadingOverlay();
                     }
-
                 };
                 reader.readAsArrayBuffer(file);
 
-            } catch (error) {
+            } else {
                 closeLoadingOverlay();
-                debugDiv.style.display = "block";
-                debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
+                showAlertModal("กรุณาเลือกไฟล์นามสกุล .xlsx เท่านั้น");
             }
-
-        }
+         }
+        catch (error) {
+           closeLoadingOverlay();
+           debugDiv.style.display = "block";
+           debugDiv.innerHTML = `เกิดข้อผิดพลาด: ${error.message}`;
+         }
+    }
+       dropZone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropZone.classList.remove("dragover");
+            const file = e.dataTransfer.files[0];
+            if (file.name.split('.').pop().toLowerCase() !== 'xlsx') {
+                showAlertModal("กรุณาเลือกไฟล์นามสกุล .xlsx เท่านั้น");
+                 return;
+             }
+             handleFileAndLoad(file);
+        });
         function getCompanyCode(customerName) {
             return companyMappings[customerName] || customerName;
         }
@@ -1389,7 +1591,7 @@
             const date = document.getElementById("followDate").value;
             if (!date || !excelData) {
                 document.getElementById("allTemplates").innerHTML =
-                    `<pre><code class="plaintext">โปรดเลือกวันที่และอัพโหลดไฟล์ Excel...</code></pre>`;
+                    `<pre><code class="plaintext">โปรดเลือกวันที่และอัพโหลดไฟล์ Excel หรือ CSV...</code></pre>`;
                 return;
             }
 
@@ -1453,11 +1655,43 @@
                     showAlertModal("เกิดข้อผิดพลาดในการคัดลอก: " + err);
                 });
         }
-        function exportExcelByCompany() {
+        function convertDates(data) {
+        const columns = [
+                "Submit Date",
+                "Resolution Date",
+                "Occur Date",
+                "Response Date"
+            ];
+
+        return data.map(row => {
+            columns.forEach(column => {
+                if (row[column] && typeof row[column] === 'string') {
+                    try {
+                        const dateValue = new Date(row[column]);
+                        if (!isNaN(dateValue)) {
+                            // Format date to yyyy-mm-dd hh:mm:ss
+                            const year = dateValue.getFullYear();
+                            const month = String(dateValue.getMonth() + 1).padStart(2, '0');
+                            const day = String(dateValue.getDate()).padStart(2, '0');
+                            const hours = String(dateValue.getHours()).padStart(2, '0');
+                            const minutes = String(dateValue.getMinutes()).padStart(2, '0');
+                            const seconds = String(dateValue.getSeconds()).padStart(2, '0');
+
+                            row[column] = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                        }
+                    } catch (error) {
+                        console.error("Error parsing date:", row[column], error);
+                    }
+                }
+            });
+            return row;
+        });
+    }
+    function exportExcelByCompany() {
             showLoadingOverlay("กำลัง Export Excel...");
             if (!excelData || selectedCompanies.size === 0) {
                 closeLoadingOverlay();
-                showAlertModal("กรุณาอัพโหลดไฟล์ Excel และเลือกบริษัทก่อน");
+                showAlertModal("กรุณาอัพโหลดไฟล์ Excel หรือ CSV และเลือกบริษัทก่อน");
                 return;
             }
 
@@ -1479,9 +1713,13 @@
                 return;
             }
 
+             let processedData = excelData;
+             if(isCsv){
+                 processedData = convertDates(excelData);
+             }
             checkboxes.forEach((checkbox) => {
                 const companyCode = checkbox.value;
-                const companyData = excelData.filter(
+                const companyData = processedData.filter(
                     (incident) => getCompanyCode(incident.Customer) === companyCode
                 );
 
@@ -1502,7 +1740,7 @@
                     "Sub Category",
                     "Occur Date",
                     "Response Date",
-                    "Response Time",
+                     "Response Time",
                     "Resolution Time",
                 ];
 
@@ -1518,42 +1756,19 @@
                         incident["Resolution Date"],
                         incident["Cause"],
                         incident["Resolution"],
-                        incident["Category"],
-                        incident["Sub Category"],
+                         incident["Category"],
+                         incident["Sub Category"],
                         incident["Occur Date"],
                         incident["Response Date"],
-                        incident["Response Time"],
+                          incident["Response Time"],
                         incident["Resolution Time"],
                     ];
                 });
-
-                // Create sheet from array of arrays
                 const ws = XLSX.utils.aoa_to_sheet([header, ...dataRows], {
                     cellDates: true,
                 });
-
-                // Set custom date format for each date/time column
-                const dateFormat = "dd/mm/yyyy hh:mm:ss"; // or 'yyyy-mm-dd hh:mm:ss' if you prefer
-
-                const dateColumns = [7, 8, 13, 14, 15, 16];
-                dateColumns.forEach((colIdx) => {
-                    for (let row = 2; row <= dataRows.length + 1; row++) {
-                        const cellRef = XLSX.utils.encode_cell({
-                            r: row - 1,
-                            c: colIdx - 1,
-                        });
-                        const cell = ws[cellRef];
-
-                        if (cell && cell.v instanceof Date) {
-                            cell.t = "d";
-                            cell.z = dateFormat;
-                        }
-                    }
-                });
-
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, companyCode);
-
                 const fileName = `${companyCode} Follow Incident ${formattedDate}.xlsx`;
                 XLSX.writeFile(wb, fileName);
             });
@@ -1589,6 +1804,64 @@
             }
         });
 
+        const reportModal = document.getElementById('reportModal');
+    const togglePanelButtonReport = document.getElementById('togglePanelButtonReport');
+
+       function showReportModal() {
+            reportModal.style.display = 'flex';
+        }
+        function closeReportModal() {
+           reportModal.style.display = 'none';
+      }
+       togglePanelButtonReport.addEventListener('click', () => {
+         showReportModal();
+       });
+      document.addEventListener('click', function (event) {
+          if (reportModal.style.display === 'flex') {
+               if (!reportModal.querySelector('.modal-content').contains(event.target) && !togglePanelButtonReport.contains(event.target)) {
+                    closeReportModal();
+               }
+           }
+        });
+
+    document.getElementById('reportForm').addEventListener('submit', async function (event) {
+       event.preventDefault();
+         showLoadingOverlay('กำลังส่งรายงาน...');
+          const title = document.getElementById('reportModal').querySelector('#title').value;
+        const description = document.getElementById('reportModal').querySelector('#description').value;
+        const currentUser = firebase.auth().currentUser;
+
+        if (!currentUser) {
+           showAlertModal('โปรดเข้าสู่ระบบก่อนทำการแจ้งปัญหา');
+            window.location.href = 'login.html';
+            return;
+         }
+        firebase.firestore().collection('bugReports').add({
+            title: title,
+           description: description,
+           userId: currentUser.uid,
+            userEmail: currentUser.email,
+           status: 'open',
+           createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+           closeLoadingOverlay();
+           showAlertModal('ส่งรายงานปัญหาสำเร็จ');
+             closeReportModal();
+            document.getElementById('reportForm').reset();
+         }).catch((error) => {
+              console.error('Error adding report: ', error);
+           showAlertModal('เกิดข้อผิดพลาดในการส่งรายงาน กรุณาลองใหม่อีกครั้ง');
+         }).finally(() => {
+            closeLoadingOverlay();
+         });
+      });
+
+         function showHelpModal() {
+            document.getElementById('helpModal').style.display = 'flex';
+        }
+         function closeHelpModal() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
         function showSpotlight() {
             spotlight.classList.add('active');
             const buttonRect = togglePanelButton.getBoundingClientRect();
@@ -1753,7 +2026,7 @@
                             : user.email.charAt(0).toUpperCase();
                     }
 
-                    if (userData?.role === "supervisor" || userData?.role === "admin") {
+                    if (userData?.role === "admin") {
                         document.getElementById("customerManagementBtn").style.display =
                             "inline-block";
                         const userContainer = document.querySelector(".user-container");
