@@ -753,7 +753,7 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <p id="loadingMessage">กำลังโหลดข้อมูล โปรดรอสักครู่..</p>
+            <p id="loadingMessage">กำลังโหลดข้อมูล โปรดรอสักครู่.. (หากนานเกินไปโปรดรีเฟรช)</p>
         </div>
     </div>
     <div id="spotlight">
@@ -1050,7 +1050,7 @@
                         template += `${idx + 1}. ${incident["Incident ID"]} ${incident.Summary
                             }\n`;
                     });
-                    template += `\nหากดำเนินการตรวจสอบแก้ไขเสร็จเรียบร้อยแล้ว รบกวนแจ้งปิด Incidents ด้วยครับ\nรายละเอียดเพิ่มเติมตามเอกสารแนบ\n\nBest regard,\nSecurity Analyst \n`;
+                    template += `\nหากดำเนินการตรวจสอบแก้ไขเสร็จเรียบร้อยแล้ว รบกวนแจ้งปิด Incidents ด้วยครับ\nรายละเอียดเพิ่มเติมตามเอกสารแนบ\n\nBest regards,\nSecurity Analyst \n`;
                     template += `====================================================\n`;
                 }
             }
