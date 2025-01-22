@@ -22,6 +22,8 @@ const thaiMonths = [
   "ธันวาคม",
 ];
 
+
+
 // ฟังก์ชันอัพเดทฟิลเตอร์ (เก็บไว้เหมือนเดิม)
 function updateFilters() {
   const checkboxes = document.querySelectorAll(".shift-checkbox");
@@ -106,52 +108,61 @@ function initializeSelectors() {
 
 // ดึงข้อมูลทีมจาก Firestore
 async function loadTeamData() {
-    const teams = ["red", "green", "blue", "yellow"];
-  const teamData = {};
+  const teams = ["red", "green", "blue", "yellow"];
+const teamData = {};
 
-    for (const team of teams) {
-      try {
-           const snapshot = await firebase.firestore()
-             .collection("teams")
-               .doc(team)
-                .collection("members")
-              .get();
+  for (const team of teams) {
+    try {
+         const snapshot = await firebase.firestore()
+           .collection("teams")
+             .doc(team)
+              .collection("members")
+            .get();
 
-           const members = [];
-            let leader = "";
+         const members = [];
+          let leader = "";
 
-          for (const doc of snapshot.docs) {
-               const data = doc.data();
-                const userRef = firebase.firestore()
-                    .collection("users")
-                    .doc(data.userId);
+        for (const doc of snapshot.docs) {
+             const data = doc.data();
+              const userRef = firebase.firestore()
+                  .collection("users")
+                  .doc(data.userId);
 
-               const userPromise = userRef.get().then((userDoc) => {
-                  const userData = userDoc.data();
-                    if(userData){
-                      if (data.role === "leader") {
-                          leader = userData.displayName || userData.email;
-                       } else {
-                        members.push(userData.displayName || userData.email);
-                   }
-                  }
-                   });
-                members.push(userPromise);
-           }
-          await Promise.all(members);
+             const userPromise = userRef.get().then((userDoc) => {
+                const userData = userDoc.data();
+                  if(userData){
+                    if (data.role === "leader") {
+                        leader = userData.displayName || userData.email;
+                     } else {
+                      members.push(userData.displayName || userData.email);
+                 }
+                }
+                 });
+              members.push(userPromise);
+         }
+        await Promise.all(members);
 
-            teamData[team] = {
-                name: `Shift ${team.toUpperCase()} (${
-                    team.charAt(0).toUpperCase() + team.slice(1)
-                } Team)`,
-              leader: leader,
-              members: members.filter((m) => typeof m === "string"),
-            };
-        } catch (error) {
-          console.error(`Error loading ${team} team data:`, error);
-        }
-   }
-  return teamData;
+          teamData[team] = {
+              name: `Team ${
+                  team === "red" ? "B" :
+                      team === "green" ? "D" :
+                          team === "blue" ? "C" :
+                              team === "yellow" ? "A" : ""
+                 }`,
+                code: `3S1B-${
+                  team === "red" ? "2" :
+                      team === "green" ? "4" :
+                          team === "blue" ? "3" :
+                              team === "yellow" ? "1" : ""
+              }`,
+               leader: leader,
+            members: members.filter((m) => typeof m === "string"),
+          };
+      } catch (error) {
+        console.error(`Error loading ${team} team data:`, error);
+      }
+ }
+return teamData;
 }
 
 // สร้างรูปแบบกะ
@@ -456,87 +467,228 @@ function changeMonth(offset) {
 
 // ฟังก์ชัน Export PDF (ปรับใช้ข้อมูลจาก Firestore)
 async function exportToPDF() {
-    showLoadingOverlay("กำลัง Export PDF...");
-   if (!firebase.auth().currentUser) return;
-    const startMonth = parseInt(
-        document.getElementById("startMonthSelect").value
-    );
-     const startYear = parseInt(document.getElementById("startYearSelect").value);
-    const endMonth = parseInt(document.getElementById("endMonthSelect").value);
-    const endYear = parseInt(document.getElementById("endYearSelect").value);
+  showLoadingOverlay("กำลัง Export PDF...");
+if (!firebase.auth().currentUser) return;
+  const startMonth = parseInt(
+      document.getElementById("startMonthSelect").value
+  );
+  const startYear = parseInt(document.getElementById("startYearSelect").value);
+  const endMonth = parseInt(document.getElementById("endMonthSelect").value);
+  const endYear = parseInt(document.getElementById("endYearSelect").value);
 
-     // ตรวจสอบช่วงเวลาที่เลือก
-    if (startYear > endYear || (startYear === endYear && startMonth > endMonth)) {
-        closeLoadingOverlay();
-        showAlertModal("กรุณาเลือกช่วงเวลาให้ถูกต้อง");
-       return;
-    }
+  if (startYear > endYear || (startYear === endYear && startMonth > endMonth)) {
+      closeLoadingOverlay();
+      showAlertModal("กรุณาเลือกช่วงเวลาให้ถูกต้อง");
+     return;
+  }
 
-     const pdfContainer = document.createElement("div");
-    pdfContainer.className = "pdf-container";
-
-      const teamDetailsSection = document.createElement("div");
+  const pdfContainer = document.createElement("div");
+  pdfContainer.className = "pdf-container";
+   // Start Page 1 Content (Team Details)
+    const teamDetailsSection = document.createElement("div");
     teamDetailsSection.innerHTML = `
-        <div class="export-header">
-           <h2>ตารางเวรการปฏิบัติงาน</h2>
-            <p>ประจำเดือน ${thaiMonths[startMonth]} - ${thaiMonths[endMonth]} ${
-            startYear + 543
-        }</p>
-        </div>
-         ${Object.entries(teamData)
-          .map(
-                ([color, team]) => `
-           <div class="team-section ${color}">
-                 <h3>${team.name}</h3>
-                  <p><strong>หัวหน้าทีม:</strong> ${team.leader}</p>
-                 <p><strong>สมาชิกทีม:</strong></p>
-                  <ul>
-                     ${team.members
-                      .map((member) => `<li>${member}</li>`)
-                        .join("")}
-                  </ul>
-             </div>
-           `
-            )
-            .join("")}
-    `;
-    pdfContainer.appendChild(teamDetailsSection);
+         <div class="export-header">
+              <h2>ตารางเวรการปฏิบัติงาน</h2>
+               <p>ประจำเดือน ${thaiMonths[startMonth]} - ${thaiMonths[endMonth]} ${
+                  startYear + 543
+             }</p>
+       </div>
+        <table class="pdf-team-table">
+               <thead>
+                   <tr>
+                      <th>Shift</th>
+                       <th>หัวหน้าทีม</th>
+                       <th>สมาชิกทีม</th>
+                   </tr>
+             </thead>
+             <tbody>
+                  ${Object.entries(teamData)
+                     .map(
+                         ([color, team]) => `
+                             <tr>
+                                  <td>${team.name} <br>(${team.code})</td>
+                                   <td>${team.leader}</td>
+                                   <td>
+                                       <ul>
+                                            ${team.members
+                                              .map((member) => `<li>${member}</li>`)
+                                              .join("")}
+                                     </ul>
+                                </td>
+                           </tr>
+                      `
+                     )
+                     .join("")}
+           </tbody>
+     </table>
+`;
+  pdfContainer.appendChild(teamDetailsSection);
 
-   let currentYear = startYear;
-    let currentMonth = startMonth;
+  let currentYear = startYear;
+  let currentMonth = startMonth;
+   while (
+      currentYear < endYear ||
+        (currentYear === endYear && currentMonth <= endMonth)
+  ) {
+     const calendarPage = document.createElement("div");
+    calendarPage.classList.add("pdf-calendar-page");
 
-      // สร้างปฏิทินทุกเดือนในช่วงที่เลือก
-    while (
-       currentYear < endYear ||
-       (currentYear === endYear && currentMonth <= endMonth)
-   ) {
-        pdfContainer.appendChild(createCalendarMonth(currentYear, currentMonth));
+     const firstDay = new Date(currentYear, currentMonth, 1);
+       const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const totalDays = lastDay.getDate();
+      const startingDay = firstDay.getDay();
+      const monthName = thaiMonths[currentMonth];
+     const yearThai = currentYear + 543;
 
-         currentMonth++;
+     const monthTable = document.createElement("table");
+      monthTable.className = "pdf-calendar";
+
+    const monthHeaderRow = monthTable.insertRow();
+    const monthHeaderCell = monthHeaderRow.insertCell();
+       monthHeaderCell.colSpan = 7;
+     monthHeaderCell.textContent = `${monthName} ${yearThai}`;
+      monthHeaderCell.classList.add("pdf-month-header");
+
+      const headerRow = monthTable.insertRow();
+      ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"].forEach(
+         (day) => {
+               const headerCell = headerRow.insertCell();
+              headerCell.textContent = day;
+            headerCell.classList.add("pdf-calendar-header");
+       }
+     );
+
+     let dayCounter = 1;
+    for (let i = 0; i < 6; i++) {
+         const weekRow = monthTable.insertRow();
+          for (let j = 0; j < 7; j++) {
+            const dayCell = weekRow.insertCell();
+                if (i === 0 && j < startingDay) {
+                     dayCell.classList.add("pdf-empty-day");
+                 } else if (dayCounter > totalDays) {
+                    dayCell.classList.add("pdf-empty-day");
+                 } else {
+                       const date = new Date(currentYear, currentMonth, dayCounter);
+                     const shifts = getShiftsForDay(date);
+                       dayCell.textContent = dayCounter;
+                     shifts.forEach((shift) => {
+                         const shiftDiv = document.createElement("div");
+                           shiftDiv.className = `pdf-shift pdf-shift-${shift.color}`;
+                            // Create HTML content with time and all member names
+                         const allMembers = [teamData[shift.color].leader, ...teamData[shift.color].members]
+                            .map(name => name.split(" ")[0]);
+                             const memberRows = [];
+                           for(let k = 0; k < allMembers.length; k += 3) {
+                              const row = allMembers.slice(k, k + 3).join(" , ");
+                               memberRows.push(row);
+                            }
+
+                           shiftDiv.innerHTML = `
+                                 <span class="pdf-time">${shift.time}</span>
+                                  <span class="pdf-name">${memberRows.join("<br>")}</span>
+                           `;
+                          dayCell.appendChild(shiftDiv);
+                      });
+                    dayCounter++;
+             }
+         }
+      }
+      calendarPage.appendChild(monthTable);
+   pdfContainer.appendChild(calendarPage);
+       currentMonth++;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear++;
+      }
+  }
+
+const opt = {
+  margin: 10,
+  filename: `ตารางเวร_${thaiMonths[startMonth]}_${startYear + 543}.pdf`,
+  image: { type: "jpeg", quality: 0.98 },
+  html2canvas: { scale: 2 },
+   jsPDF: { unit: 'mm', format: "a4", orientation: "landscape" },
+  };
+
+  try {
+      await html2pdf().set(opt).from(pdfContainer).save();
+       closeLoadingOverlay();
+     showAlertModal("Export PDF สำเร็จ");
+  } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการสร้าง PDF:", error);
+       closeLoadingOverlay();
+     showAlertModal("เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง");
+ }
+}
+
+function exportToCSV() {
+  showLoadingOverlay("กำลัง Export CSV...");
+
+  const startMonth = parseInt(
+      document.getElementById("startMonthSelect").value
+  );
+  const startYear = parseInt(document.getElementById("startYearSelect").value);
+  const endMonth = parseInt(document.getElementById("endMonthSelect").value);
+  const endYear = parseInt(document.getElementById("endYearSelect").value);
+
+  if (startYear > endYear || (startYear === endYear && startMonth > endMonth)) {
+       closeLoadingOverlay();
+       showAlertModal("กรุณาเลือกช่วงเวลาให้ถูกต้อง");
+      return;
+  }
+  
+  let csvContent = "\ufeff"; // Add UTF-8 BOM
+  // สร้าง header CSV แบบไดนามิก โดยดึงจาก teamData
+  let headerRow = "วันที่,เวลา,ทีม,ชื่อหัวหน้าทีม";
+   Object.values(teamData).forEach((team, index) => {
+        headerRow += `,สมาชิกทีมที่ ${index + 1}`;
+  });
+  csvContent += headerRow + "\n";
+
+
+  let currentYear = startYear;
+  let currentMonth = startMonth;
+  while (
+      currentYear < endYear ||
+      (currentYear === endYear && currentMonth <= endMonth)
+  ) {
+     const firstDay = new Date(currentYear, currentMonth, 1);
+     const lastDay = new Date(currentYear, currentMonth + 1, 0);
+      const totalDays = lastDay.getDate();
+      for (let day = 1; day <= totalDays; day++) {
+          const date = new Date(currentYear, currentMonth, day);
+          const shifts = getShiftsForDay(date);
+          const formattedDate = `${day}/${currentMonth + 1}/${currentYear}`;
+
+          shifts.forEach((shift) => {
+                let row = `${formattedDate},${shift.time},${shift.color},${shift.name}`;
+              const team = teamData[shift.color];
+                  if (team && team.members) {
+                      team.members.forEach((member) => {
+                           row += `,${member}`;
+                    });
+                  }
+                    csvContent += row + "\n";
+           });
+      }
+       currentMonth++;
         if (currentMonth > 11) {
            currentMonth = 0;
-           currentYear++;
+         currentYear++;
        }
-    }
-      // กำหนดค่าการส่งออก PDF
-  const opt = {
-        margin: 10,
-        filename: `ตารางเวร_${thaiMonths[startMonth]}_${startYear + 543}.pdf`,
-       image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
-
-   try {
-        await html2pdf().set(opt).from(pdfContainer).save();
-         closeLoadingOverlay();
-         showAlertModal("Export PDF สำเร็จ");
-    } catch (error) {
-         console.error("เกิดข้อผิดพลาดในการสร้าง PDF:", error);
-        closeLoadingOverlay();
-         showAlertModal("เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง");
-    }
+  }
+  
+  const encodedUri = encodeURIComponent(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", `data:text/csv;charset=utf-8,${encodedUri}`); // กำหนด charset
+  link.setAttribute("download", `ตารางเวร_${thaiMonths[startMonth]}_${startYear + 543}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+   closeLoadingOverlay();
+  showAlertModal("Export CSV สำเร็จ");
 }
+
 // ฟังก์ชัน Print
  function printCalendar() {
       const printWindow = window.open("", "_blank");
@@ -570,10 +722,10 @@ async function exportToPDF() {
                            .calendar-day:last-child { border-bottom: none; }
                          .calendar-day.empty-day { background: #fafafa;  border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; }
                            .shift { font-size: 0.9em; padding: 0.5rem;  border-radius: 4px; margin: 2px; display: block; }
-                           .shift-red { background-color: rgba(255, 99, 99, 0.2); color: #404040;}
+                            .shift-yellow {background-color: rgba(255, 206, 86, 0.2);  color: #404040; }
                             .shift-green { background-color: rgba(75, 192, 75, 0.2);  color: #404040; }
+                            .shift-red { background-color: rgba(255, 99, 99, 0.2); color: #404040;}
                           .shift-blue { background-color: rgba(99, 148, 255, 0.2); color: #404040; }
-                           .shift-yellow {background-color: rgba(255, 206, 86, 0.2);  color: #404040; }
                        </style>
                    </head>
                  <body>

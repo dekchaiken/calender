@@ -48,6 +48,157 @@
     transform: scale(1.05);
     }
     
+/* เพิ่ม CSS สำหรับ table team */
+.pdf-team-table {
+    width: 90%;
+    max-width: 90%;
+    border-collapse: collapse;
+     margin-bottom: 10px;
+     font-size: 1.1em;
+ }
+
+ .pdf-team-table th,
+ .pdf-team-table td {
+      border: 1px solid #ddd;
+    padding: 10px;
+   text-align: left;
+   vertical-align: top;
+}
+.pdf-team-table th {
+    background-color: #f0f0f0;
+}
+.pdf-team-table ul {
+     margin: 0;
+     padding-left: 20px;
+}
+.pdf-team-table li{
+    margin-bottom: 0.2em;
+}
+/* ปรับปรุง CSS สำหรับ calendar */
+.pdf-calendar {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+     margin-bottom: 10px;
+    font-size: 0.93em;
+}
+
+.pdf-month-header {
+    text-align: center;
+    font-size: 1.3em;
+     font-weight: bold;
+    padding: 10px 0;
+     background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.pdf-calendar-header {
+    text-align: center;
+   padding: 8px;
+    background: #f0f0f0;
+   border: 1px solid #ddd;
+ }
+.pdf-calendar td {
+    padding: 8px;
+ border: 1px solid #ddd;
+    vertical-align: top;
+    position: relative;
+  }
+ .pdf-calendar .pdf-empty-day {
+    background: #fafafa;
+     border: 1px solid #ddd;
+ }
+ .pdf-shift {
+    font-size: 0.8em;
+    padding: 0.2rem;
+    border-radius: 4px;
+    margin: 1px 0;
+    position: relative;
+    white-space: normal;
+    overflow: visible;
+}
+ .pdf-shift-red {
+    background-color: rgba(255, 99, 99, 0.2);
+     color: #404040;
+  }
+
+.pdf-shift-green {
+    background-color: rgba(75, 192, 75, 0.2);
+     color: #404040;
+  }
+ .pdf-shift-blue {
+    background-color: rgba(99, 148, 255, 0.2);
+     color: #404040;
+  }
+  .pdf-shift-yellow {
+    background-color: rgba(255, 206, 86, 0.2);
+     color: #404040;
+  }
+ .pdf-time{
+     font-size: 0.8em;
+     font-weight: bold;
+      display: block;
+     text-align: center;
+   }
+ .pdf-name {
+    font-size: 0.8em;
+    font-weight: normal;
+     display: block;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.3;
+ }
+  .pdf-calendar-page{
+    page-break-before: always;
+      padding: 10px;
+      box-sizing: border-box;
+       width: 100%;
+       display: flex;
+       flex-direction: column;
+        height: 100%;
+       justify-content: center;
+       page-break-inside: avoid;
+  }
+  .pdf-calendar-page:first-child{
+    page-break-before: avoid;
+     height: auto;
+       display: flex;
+      flex-direction: column;
+        justify-content: center;
+      align-items: center;
+      overflow: hidden; /* prevent page 1 overflowing */
+}
+
+/* Style for the first page */
+.pdf-container > div:first-child {
+page-break-before: avoid;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+height: auto;
+padding: 20px;
+ overflow: hidden; /* prevent page 1 overflowing */
+}
+
+  .pdf-container > div:first-child .pdf-team-table{
+        max-width: 90%;
+          width: 90%;
+  }
+
+    .pdf-container > div:first-child .pdf-team-table tbody tr:nth-child(1){
+        background-color: rgba(255, 99, 99, 0.1);
+    }
+    .pdf-container > div:first-child .pdf-team-table tbody tr:nth-child(2){
+        background-color: rgba(75, 192, 75, 0.1);
+    }
+        .pdf-container > div:first-child .pdf-team-table tbody tr:nth-child(3){
+        background-color: rgba(99, 148, 255, 0.1);
+        }
+    .pdf-container > div:first-child .pdf-team-table tbody tr:nth-child(4){
+            background-color: rgba(255, 206, 86, 0.1);
+       }
+
     .header {
     display: flex;
     align-items: center;

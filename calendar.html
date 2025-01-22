@@ -35,7 +35,7 @@
 
     <div id="mainContent" style="display: none">
         <div class="header">
-            <img src="https://www.cyfence.com/wp-content/uploads/2021/09/%E0%B8%A5%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.jpg"
+            <img src="https://www.cyfence.com/wp-content/uploads/2023/10/logo.png"
                 alt="Cyfence Logo" class="logo">
             <div class="user-container">
                 <div class="user-info">
@@ -52,23 +52,23 @@
 
         <div class="container">
             <div class="team-info">
-                <div class="team-card red" onclick="toggleTeamMembers('red')">
-                    <h3>เวรที่ 1</h3>
-                    <div class="team-leader" id="red-team-leader">
-                    </div>
-                    <div class="team-members" id="red-members">
-                    </div>
-                    <div class="expand-icon">▼</div>
-                </div>
-
                 <!-- Yellow Team -->
                 <div class="team-card yellow" onclick="toggleTeamMembers('yellow')">
-                    <h3>เวรที่ 2</h3>
+                    <h3>เวรที่ 1</h3>
                     <div class="team-leader" id="yellow-team-leader">
                         <!-- Leader will be populated by JavaScript -->
                     </div>
                     <div class="team-members" id="yellow-members">
                         <!-- Members will be populated by JavaScript -->
+                    </div>
+                    <div class="expand-icon">▼</div>
+                </div>
+
+                <div class="team-card red" onclick="toggleTeamMembers('red')">
+                    <h3>เวรที่ 2</h3>
+                    <div class="team-leader" id="red-team-leader">
+                    </div>
+                    <div class="team-members" id="red-members">
                     </div>
                     <div class="expand-icon">▼</div>
                 </div>
@@ -111,14 +111,14 @@
 
             <div class="filters-container">
                 <div class="shift-filters">
-                    <label class="shift-filter">
-                        <input type="checkbox" value="red" checked class="shift-checkbox" onchange="updateFilters()" />
-                        <span class="checkmark red">เวรที่ 1</span>
-                    </label>
                    <label class="shift-filter">
                        <input type="checkbox" value="yellow" checked class="shift-checkbox"
                             onchange="updateFilters()" />
-                        <span class="checkmark yellow">เวรที่ 2</span>
+                        <span class="checkmark yellow">เวรที่ 1</span>
+                    </label>
+                    <label class="shift-filter">
+                        <input type="checkbox" value="red" checked class="shift-checkbox" onchange="updateFilters()" />
+                        <span class="checkmark red">เวรที่ 2</span>
                     </label>
                     <label class="shift-filter">
                        <input type="checkbox" value="blue" checked class="shift-checkbox" onchange="updateFilters()" />
@@ -150,6 +150,7 @@
                    </div>
                 </div>
                 <button onclick="exportToPDF()" class="export-btn">Export to PDF</button>
+                <button onclick="exportToCSV()" class="export-btn">Export to CSV</button>
                 <button onclick="printCalendar()" class="export-btn">Print Calendar</button>
            </div>
             <div id="calendar-container"></div>
@@ -163,7 +164,8 @@
             </div>
         </div>
     </div>
-
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
